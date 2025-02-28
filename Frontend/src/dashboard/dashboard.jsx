@@ -8,7 +8,7 @@ import TestInformation from './testinformation';
 
 
 
-function Dashboard() {
+function Dashboard({setMainSection}) {
 
     const [userName, setUserName] = useState("");
     const [currentCourseCount, setCurrentCourseCount] = useState(2); //this is just for ui... logic has to be setup later
@@ -38,7 +38,7 @@ function Dashboard() {
             <div className="progress_and_courses">
                 <div className="progress_container">
                     <div className="title_and_dropdown_container">
-                        <h3 style={{ opacity: '0.9' }}>Progress</h3>
+                        <h3 style={{ opacity: '0.9' }} >Progress</h3>
                         <select name="timeline" >
                             <option value="This week">This week</option>
                             <option value="Last week">Last week</option>
@@ -49,7 +49,7 @@ function Dashboard() {
                 </div>
                 <div className="courses_container">
                     <div className="heading_and_view_all_container">
-                        <h3 style={{ opacity: '0.9' }}>My Courses <span>({currentCourseCount})</span></h3>
+                        <h3 style={{ opacity: '0.9' }} role='button' onClick={()=>setMainSection('courses')} >My Courses <span>({currentCourseCount})</span></h3>
                         <a href='#' style={{ color: "#0d6efd" }}>view all</a>
                     </div>
                     <div className="content_container" >

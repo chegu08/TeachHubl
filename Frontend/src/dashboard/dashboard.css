@@ -28,11 +28,13 @@
 }
 
 .dashboard .personal_detail{
-    padding:20px;
+    padding:20px ;
+    padding-left:44px;
     width:100%;
     display:flex;
     align-items: center;
     justify-content: space-between;
+    /* background-color: blue; */
     
 }
 
@@ -106,6 +108,10 @@
     justify-content: space-between;
     padding:20px;
     /* background-color: blue; */
+}
+
+.dashboard .progress_and_courses .courses_container .heading_and_view_all_container h3:hover{
+    cursor: pointer;
 }
 
 .dashboard .progress_and_courses .courses_container .heading_and_view_all_container h3 span, .dashboard  .upcoming_agenda_and_tests .tests_container .heading_and_view_all_container h3 span{

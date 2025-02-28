@@ -22,7 +22,7 @@ function CourseContent({ num }) {
         borderRadius: "2px",
         margin: "10px 0px",
         position: "relative",
-        "z-index": "1",
+        "zIndex": "1",
         top: "0",
         left: "0"
     };
@@ -33,7 +33,7 @@ function CourseContent({ num }) {
         backgroundColor: "#0d6efd",
         borderRadius: "2px",
         position: "absolute",
-        "z-index": "2",
+        "zIndex": "2",
         top: "0",
         left: "0"
     };
