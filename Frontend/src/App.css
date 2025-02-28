@@ -1,0 +1,18 @@
+.app{
+    width:100vw;
+    height:100vh;
+    display:flex;
+    flex-direction: row;
+    font-family: 'Poppins',sans-serif;
+}
+
+.app .main_block{
+    height:100vh;
+    width:85vw;
+    display:flex;
+    flex-direction: column;
+}
+
+/* .app .main_block::-webkit-scrollbar{
+    display: none;
+} */

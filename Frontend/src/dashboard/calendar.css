@@ -1,0 +1,29 @@
+.minimalcalendar{
+    /* background-color: blue; */
+    width:100%;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.minimalcalendar table ,.minimalcalendar th, .minimalcalendar td {
+    border-collapse: collapse;
+    /* background-color: rgb(145, 161, 214); */
+    border: 1px solid rgb(145, 161, 214);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding:10px;
+}
+
+.minimalcalendar table{
+margin-bottom: 20px;
+}
+
+.minimalcalendar th{
+    color:rgb(145, 161, 214);
+    font-size: small;
+    height:40px;
+    background-color: rgb(222, 224, 231);
+}
