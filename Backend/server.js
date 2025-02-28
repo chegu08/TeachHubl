@@ -5,8 +5,9 @@ const dotenv = require('dotenv')
 const mongoose = require('mongoose')
 
 
-dotenv.config({path:'D:Github/TeachHubl/.env'})
+dotenv.config({path:'D:/Github/TeachHubl/.env'})
 const mongourl = process.env.MONGO_URL
+console.log(mongourl)
 
 const corsOptions = {
     orgin: '*',

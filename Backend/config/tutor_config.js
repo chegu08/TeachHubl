@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-require('dotenv').config({path:'D:Github/TeachHubl/.env'})
+require('dotenv').config({path:'D:/Github/TeachHubl/.env'})
 const firebaseapp = require('firebase/app')
 //import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -23,7 +23,7 @@ const app = firebaseapp.initializeApp(firebaseConfig, "tutor_app");
 //const analytics = getAnalytics(app);
 const admin = require("firebase-admin");
 
-const serviceAccount = require(TUTOR_SERVICE_ACCOUNT);
+const serviceAccount = require(process.env.TUTOR_SERVICE_ACCOUNT);
 
 const adminApp = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)

@@ -1,8 +1,8 @@
 // Import the functions you need from the SDKs you need
-require('dotenv').config({path:'D:Github/TeachHubl/.env'})
+require('dotenv').config({path:'D:/Github/TeachHubl/.env'})
 const { initializeApp } = require('firebase/app');
 const admin = require("firebase-admin");
-const serviceAccount = require(STUDENT_SERVICE_ACCOUNT);
+const serviceAccount = require(process.env.STUDENT_SERVICE_ACCOUNT);
 //const test=require('firebase-admin/app')
 
 // TODO: Add SDKs for Firebase products that you want to use
