@@ -26,6 +26,8 @@ const signupRouter = require('./routes/signupRouter')
 app.use('/signup', signupRouter)
 const loginRouter = require('./routes/loginRouter')
 app.use('/login', loginRouter)
+const testRouter=require('./routes/testRouter')
+app.use('/test',testRouter)
 
 
 const port = process.env.PORT || 4000
