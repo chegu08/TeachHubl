@@ -15,5 +15,8 @@
     height:0.5px;
 }
 
+.info_container div p:hover{
+    cursor: pointer;
+}
 
 
