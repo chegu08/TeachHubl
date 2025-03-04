@@ -9,7 +9,7 @@ const sendEmailForNewTest = async (stu, tut, startDate, startTime) => {
     const emailOptions = {
         Source: "yogeshpandi857@gmail.com",
         Destination: {
-            ToAddresses: ['oswald.mecse@gmail.com']
+            ToAddresses: ['cheguevera597@gmail.com']
         },
         ReplyToAddresses: [],
         Message: {

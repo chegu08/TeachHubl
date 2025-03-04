@@ -1,9 +1,10 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-require('dotenv').config({path:'D:/Github/TeachHubl/.env'})
-const { agenda, jobs, dynamicallydefiningjobs } = require('./schedule')
-const { listentoChangeStream } = require('./changeStream')
+require('dotenv').config({ path: 'D:/Github/TeachHubl/.env' })
+const { jobs } = require('./notification/schedule')
+const { listentoChangeStream } = require('./notification/changestream')
+const { agenda } = require('./config/config')
 
 const mongoose = require('mongoose')
 
@@ -31,6 +32,7 @@ async function termination() {
 const init = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URL)
+        console.log("connected to database ...")
         await agenda.start()
         await listentoChangeStream()
         console.log("Change Stream is set...")
