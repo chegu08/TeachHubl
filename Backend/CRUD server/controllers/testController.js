@@ -4,6 +4,7 @@ const Agenda=require("agenda");
 const {v4:uuidv4} =require("uuid");
 
 
+
 const createTest = async (req, res) => {
     const testDetails = req.body
     try {
@@ -229,10 +230,49 @@ const deleteTest = async (req, res) => {
     }
 }
 
+const getUpcomingtestdetails=async (req,res)=>{
+    try{
+        const studentid=req.params.id;
+        // implement the logic to get the class id of the student from database
+
+
+        
+        // logic to get all upcoming tests for the student
+        const classid="testclassid" //for testing purposes
+        const upcomingtests=await TestModel.find({classId:classid});
+        const detailofUpcomingTests = upcomingtests.map((test) => ({
+            testId: test.testId,
+            startDate: new Date(test.startDate).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }),
+            startTime: new Date(test.startTime).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata" }),
+          }));
+        res.status(200).json({detailofUpcomingTests});
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).json({Error:err})
+    }
+};
+
+const getTestDetails=async (req,res)=>{
+    try{
+        const testId=req.params.id;
+        const testDetails=await TestModel.findOne({testId:testId});
+        console.log("test ID : ",testId)
+        console.log(testDetails);
+        res.status(200).json({testDetails});
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
 module.exports = {
     createTest,
     uploadresult,
     uploadfeedback,
     uploadresponse,
-    deleteTest
+    deleteTest,
+    getUpcomingtestdetails,
+    getTestDetails
 }

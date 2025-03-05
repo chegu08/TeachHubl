@@ -6,11 +6,12 @@ import Header from './header/header.jsx'
 import Courses from './courses/courses.jsx'
 import TestPage from "./pages/testpage.jsx";
 
-import { useState } from 'react';
+import { useState} from 'react';
 import { Route, Routes } from "react-router-dom";
 
 function App() {
   const [mainSection, setMainSection] = useState("dashboard");
+
 
   const MainPage = () => {
     return (<>

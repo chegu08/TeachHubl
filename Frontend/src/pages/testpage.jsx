@@ -3,7 +3,10 @@ import './testpage.css'
 import arrowleft from '../assets/arrow-left-circle.svg'
 import arrowright from '../assets/arrow-right-circle.svg'
 import { useState, useEffect,useRef } from 'react'
-import { debounce } from 'lodash'
+import { useLocation } from 'react-router-dom'
+// import { debounce } from 'lodash'
+import axios from 'axios'
+
 
 function Timer ({curtime}) {
     const [time,setTime]=useState(curtime);
@@ -29,45 +32,57 @@ function TestPage() {
     const [answers, setAnswers] = useState([[""]]);
     const [marked, setMarked] = useState([false]);
     const [completedprogressbarwidth, setCompletedprogressBarWidth] = useState('0%');
-    const timer=useRef(15);
+    const timer=useRef();
     const [testCompleted,setTestCompleted]=useState(false);
-    const questions = [
-        {
-            type: "singlecorrect",
-            question: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio sunt saepe ea, est maiores impedit praesentium quas consequuntur repudiandae necessitatibus officia veritatis tenetur quis, dolore accusantium ad fugit mollitia dolor! Deserunt, possimus perspiciatis laudantium dolores ex facilis amet incidunt, porro inventore necessitatibus ipsum sapiente dolor ducimus? Quibusdam perspiciatis nisi suscipit!`,
-            options: ['Option 1', 'Option 2', 'Option 3', "Option 4"]
-        },
-        {
-            type: "multicorrect",
-            question: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio sunt saepe ea, est maiores impedit praesentium quas consequuntur repudiandae necessitatibus officia veritatis tenetur quis, dolore accusantium ad fugit mollitia dolor! Deserunt, possimus perspiciatis laudantium dolores ex facilis amet incidunt, porro inventore necessitatibus ipsum sapiente dolor ducimus? Quibusdam perspiciatis nisi suscipit!`,
-            options: ['Option 1', 'Option 2', 'Option 3', "Option 4"]
-        },
-        {
-            type: "numerical",
-            question: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio sunt saepe ea, est maiores impedit praesentium quas consequuntur repudiandae necessitatibus officia veritatis tenetur quis, dolore accusantium ad fugit mollitia dolor! Deserunt, possimus perspiciatis laudantium dolores ex facilis amet incidunt, porro inventore necessitatibus ipsum sapiente dolor ducimus? Quibusdam perspiciatis nisi suscipit!`,
-            options: ['']
-        }
-    ]
+    const currentLocation=useLocation().pathname.substring(7);
+    const [questions,setQuestions]=useState([{}]);
 
     useEffect(() => {
-        setAnswers(questions.map((que, ind) => (
-            que.type == 'numerical' ? Array(que.options.length).fill("") : Array(que.options.length).fill("0")
-        )));
-        setMarked(Array(questions.length).fill(false));
+        async function fetch(){
+            const fetchtestdetails=(await axios.get(`http://localhost:4000/test/${currentLocation}`)).data?.testDetails;
+            if(fetchtestdetails.testType=='Standard'){
+                setQuestions(()=>fetchtestdetails.questionForStandardTest.map((que,_)=>(
+                    {
+                        question:que.question,
+                        type:que.answerType,
+                        options:que.options
+                    }
+                )));
+                timer.current=fetchtestdetails.duration*3600;
+            }
+        }
+        fetch();
+        console.log(currentLocation);
     }, [])
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if(timer.current>0){
-                timer.current=timer.current-1;
-            }
-            else if(timer.current==0){
-                setTestCompleted(true);
-            }
-        }, 1000);
+    useEffect(()=>{
 
-        return () => clearInterval(interval);
-    }, []);
+        //console.log("questions length: ",questions.length);
+        if(Object.keys(questions[0]).length !== 0){
+            setAnswers(questions.map((que, ind) => (
+                que.type == 'Numerical' ? Array(1).fill("") : Array(que.options.length).fill("0")
+            )));
+            setMarked(Array(questions.length).fill(false));
+            console.log("Questions : ",questions);
+
+        } 
+    },[questions]);
+
+    useEffect(() => {
+        if(Object.keys(questions[0]).length !== 0){
+            const interval = setInterval(() => {
+                if(timer.current>0){
+                    timer.current=timer.current-1;
+                }
+                else if(timer.current==0){
+                    setTestCompleted(true);
+                }
+            }, 1000);
+    
+            return () => clearInterval(interval);
+        }
+        
+    }, [questions]);
 
     useEffect(() => {
         console.log("Answers: ",answers);
@@ -80,7 +95,7 @@ function TestPage() {
     }, [answers, marked])
 
     const Question = ({ num }) => {
-        if (questions[num - 1].type == 'singlecorrect') {
+        if (Object.keys(questions[0]).length !== 0&&questions[num - 1].type.toLowerCase() == 'singlecorrect') {
             return (
                 <>
                     <h3>Question {num}</h3>
@@ -107,7 +122,7 @@ function TestPage() {
                 </>
             )
         }
-        else if (questions[num - 1].type == 'multicorrect') {
+        else if (Object.keys(questions[0]).length !== 0&&questions[num - 1].type.toLowerCase() == 'multicorrect') {
             return (
                 <>
                     <h3>Question {num}</h3>
@@ -135,7 +150,7 @@ function TestPage() {
                 </>
             )
         }
-        else {
+        else if(Object.keys(questions[0]).length !== 0){
             return (
                 <>
                     <h3>Question {num}</h3>
@@ -153,7 +168,7 @@ function TestPage() {
     };
 
     const handleunmarkQuestion = () => {
-        if (questions[questionNumber - 1].type == 'numerical') {
+        if (questions[questionNumber - 1].type.toLowerCase() == 'numerical') {
             setAnswers((pre) => pre.map((arr, ind) => (ind == questionNumber - 1 ? [''] : arr)));
         }
         else {
@@ -163,7 +178,6 @@ function TestPage() {
     };
 
     
-
     return (
         
         <div className="testpage">
@@ -179,7 +193,7 @@ function TestPage() {
                     <button className="mark_and_next">Review and next</button>
                     <button className="unmark" onClick={handleunmarkQuestion}>Unmark</button>
                 </div>
-                <Timer curtime={timer.current}/>
+                {Object.keys(questions[0]).length!==0&&<Timer curtime={timer.current}/>}
             </div>
             <div className="questions">
                 <Question num={questionNumber} />

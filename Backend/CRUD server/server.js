@@ -6,7 +6,7 @@ const mongoose = require('mongoose')
 
 
 dotenv.config({path:'D:/Github/TeachHubl/.env'})
-const mongourl = process.env.MONGO_URL
+const mongourl = process.env.MONGO_CRUD_URL
 console.log(mongourl)
 
 const corsOptions = {
@@ -36,7 +36,12 @@ const port = process.env.PORT || 4000
 
 const init = async () => {
     try {
-        const connection = await mongoose.connect(mongourl);
+        const connection = await mongoose.connect(mongourl,{
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            maxPoolSize: 50, // Increase pool size if needed
+            serverSelectionTimeoutMS: 30000, // Increase timeout
+          });
         //console.log(connection)
         console.log("database connected successfully")
         app.listen(port, () => {

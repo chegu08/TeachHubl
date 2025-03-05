@@ -5,6 +5,7 @@ import ProgressChart from './progressChart';
 import CourseContent from './coursecontent';
 import Calendar from './calendar';
 import TestInformation from './testinformation';
+import axios from 'axios'
 
 
 
@@ -19,6 +20,19 @@ function Dashboard({setMainSection}) {
     //     setUserName(LocalStorageUserName);
     //     console.log(LocalStorageUserName);
     // }, []);
+    const [upcomingtests,setUpcomingTests]=useState([{}]);
+
+    
+
+    useEffect(async ()=>{
+        const fetchupcomingtestdetails=async (studId)=>{
+            const details= await axios.get(`http://localhost:4000/test/${studId}/upcoming`);
+            return details;
+        };
+        const testdetails=await fetchupcomingtestdetails("cheguevera"); //this is just for testing purposes
+        console.log(testdetails.data.detailofUpcomingTests);
+        setUpcomingTests(testdetails.data.detailofUpcomingTests);
+    },[]);
 
     return (
         <div className='dashboard'>
@@ -89,11 +103,11 @@ function Dashboard({setMainSection}) {
                 </div>
                 <div className="tests_container">
                     <div className="heading_and_view_all_container">
-                        <h3 style={{ opacity: '0.9' }}>Upcoming Tests <span>(3)</span></h3>
+                        <h3 style={{ opacity: '0.9' }}>Upcoming Tests <span>({upcomingtests.length})</span></h3>
                         <a href='#' style={{ color: "#0d6efd" }}>view all</a>
                     </div>
                     <div className='tests' >
-                        <TestInformation />
+                        <TestInformation upcomingtests={upcomingtests}/>
                     </div>
                 </div>
 
