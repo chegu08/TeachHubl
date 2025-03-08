@@ -9,7 +9,7 @@ function TestInformation({upcomingtests}) {
                 upcomingtests.map((test, ind) => (
                     <div className={test.testId} key={ind} >
                         <p role='button' onClick={() => { window.open(`/tests/${test.testId}`) }}>{test.testId}</p>
-                        <span>{ test.startTime} left</span>
+                        <span>{ String(test.startDate).split('/').join('-')} {test.startTime}</span>
                         <hr></hr>
                     </div>
                 ))

@@ -1,7 +1,17 @@
 const Router=require("express").Router();
 
-const { createTest, uploadresult, uploadfeedback, uploadresponse, deleteTest,getUpcomingtestdetails,getTestDetails} = require('../controllers/testController')
+const { 
+    createTest, 
+    uploadresult, 
+    uploadfeedback, 
+    uploadresponse, 
+    deleteTest,
+    getUpcomingtestdetails,
+    getTestDetails,
+    getAllTests
+} = require('../controllers/testController')
 
+Router.get('/all/:id',getAllTests)
 Router.get('/:id/upcoming',getUpcomingtestdetails)
 Router.get('/:id',getTestDetails)
 Router.post('/', createTest)

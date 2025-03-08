@@ -4,25 +4,31 @@ import Dashboard from './dashboard/dashboard.jsx'
 import Sidebar from './sidebar/sidebar.jsx'
 import Header from './header/header.jsx'
 import Courses from './courses/courses.jsx'
+import Tests from "./tests/tests.jsx";
 import TestPage from "./pages/testpage.jsx";
 
-import { useState} from 'react';
+import { useEffect, useState} from 'react';
 import { Route, Routes } from "react-router-dom";
 
-function App() {
+
+const MainPage = () => {
   const [mainSection, setMainSection] = useState("dashboard");
+  useEffect(()=>{
+   console.log(mainSection)
+},[mainSection])
+  return (<>
+    <Sidebar setMainSection={setMainSection} />
+    <div className="main_block">
+      <Header />
+      {mainSection == "dashboard" && <Dashboard setMainSection={setMainSection}/>}
+      {mainSection == "courses" && <Courses />}
+      {mainSection =='tests'&&<Tests />}
+    </div>
+  </>)
+};
 
 
-  const MainPage = () => {
-    return (<>
-      <Sidebar setMainSection={setMainSection} />
-      <div className="main_block">
-        <Header />
-        {mainSection == "dashboard" && <Dashboard setMainSection={setMainSection} />}
-        {mainSection == "courses" && <Courses />}
-      </div>
-    </>)
-  };
+function App() {
 
   return (
     <div className='app' >

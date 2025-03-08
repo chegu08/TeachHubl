@@ -83,7 +83,7 @@ const uploadresult = async (req, res) => {
         }
         else {
             let mark = 0;
-            scores.forEach((score) => mark += score)
+            scores.forEach((score) => mark += score);
             const modifiedTest = await TestModel.updateOne({ testId: testId }, {
                 $set: {
                     result:
@@ -116,12 +116,12 @@ const uploadresponse = async (req, res) => {
             return res.status(400).json({ Error: "Some mandatory fields are missing" })
         }
 
-        const test = await TestModel.findOne({ testId: testId })
+        const test = await TestModel.findOne({ testId: testId });
 
-        if (!test) {
-            console.log("Invalid testId ...no test found for this test")
-            return res.status(404).json({ Error: "Invalid testId ...no test found for this test" })
-        }
+        // if (!test) {
+        //     console.log("Invalid testId ...no test found for this test")
+        //     return res.status(404).json({ Error: "Invalid testId ...no test found for this test" })
+        // }
 
         if (test.testType.toLowerCase() === 'custom') {
             const modifiedTest = await TestModel.updateOne({ testId: testId }, {
@@ -143,27 +143,33 @@ const uploadresponse = async (req, res) => {
 
             //this is the evaluation process for the test
             const scores = []
-
-
-            for (const i in response) {
-                // console.log(test.questionForStandardTest[i]['answer'])
-                // console.log(response[i])
-
-                if (JSON.stringify(test.questionForStandardTest[i]['answer']) == JSON.stringify(response[i]))
-                    console.log("true")
-
-
-                let mark = (JSON.stringify(test.questionForStandardTest[i]['answer']) == JSON.stringify(response[i])) ? test.questionForStandardTest[i].marks : 0;
-                scores.push(mark)
+            for(let i=0;i<test.questionForStandardTest.length;i++)
+            {
+                const factor=test.questionForStandardTest[i].answer.length;
+                if(test.questionForStandardTest[i].answerType=='Numerical'){
+                    Number(response[i][0])==Number(test.questionForStandardTest[i].answer[0])?scores.push(test.questionForStandardTest[i].marks):scores.push(0);
+                    continue;
+                };
+                let curmark=0;
+                for(let j=0;j<response[i].length;j++)
+                {
+                    if(response[i][j]==0) continue;
+                    if(test.questionForStandardTest[i].answer.includes(j)) {
+                        curmark+=(test.questionForStandardTest[i].marks/factor);
+                    }
+                    else {
+                        curmark=0;
+                        break;
+                    }
+                }
+                scores.push(curmark);
             }
-
-
-
+            
             try {
                 const response = await axios.put('/test/result', {
                     testId,
                     scores
-                }, { baseURL: "http://localhost:3000" })
+                }, { baseURL: "http://localhost:4000" })
                 if (response) {
                     console.log(response.data)
                     console.log("Result for the standard test has been calculated and uploaded")
@@ -235,15 +241,14 @@ const getUpcomingtestdetails=async (req,res)=>{
         const studentid=req.params.id;
         // implement the logic to get the class id of the student from database
 
-
         
         // logic to get all upcoming tests for the student
         const classid="testclassid" //for testing purposes
-        const upcomingtests=await TestModel.find({classId:classid});
+        const upcomingtests=await TestModel.find({classId:classid,completed:false});
         const detailofUpcomingTests = upcomingtests.map((test) => ({
             testId: test.testId,
             startDate: new Date(test.startDate).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }),
-            startTime: new Date(test.startTime).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata" }),
+            startTime: test.startTime,
           }));
         res.status(200).json({detailofUpcomingTests});
     }
@@ -256,10 +261,42 @@ const getUpcomingtestdetails=async (req,res)=>{
 const getTestDetails=async (req,res)=>{
     try{
         const testId=req.params.id;
-        const testDetails=await TestModel.findOne({testId:testId});
-        console.log("test ID : ",testId)
-        console.log(testDetails);
+        const testDetails=(await TestModel.findOne({testId:testId}))._doc;
+        //console.log("test ID : ",testId);
+        const modifiedTestDetials={
+            classId:testDetails.classId,
+            testType:testDetails.testType,
+            startDate:testDetails.startDate,
+            startTime:testDetails.startTime,
+            duration:testDetails.duration
+        };
+        if(testDetails.testType.toLowerCase()=='standard'){
+            modifiedTestDetials['questionForStandardTest']=testDetails['questionForStandardTest'].map((que,_)=>({
+                question:que.question,
+                answerType:que.answerType,
+                marks:que.marks,
+                options:que.options
+            }))
+        };
+        //console.log(modifiedTestDetials);
         res.status(200).json({testDetails});
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
+const getAllTests=async (req,res)=>{
+    try{
+        const studId=req.params.id;
+        // implement the logic to get the class id of the student from database
+
+        // logic to get all tests for the students
+        const classid='testclassid' // for testing purposes
+        const allTests=(await TestModel.find({classId:classid}));
+        //console.log(allTests);
+        res.status(200).json({allTests});
     }
     catch(err){
         console.log(err);
@@ -274,5 +311,6 @@ module.exports = {
     uploadresponse,
     deleteTest,
     getUpcomingtestdetails,
-    getTestDetails
+    getTestDetails,
+    getAllTests
 }

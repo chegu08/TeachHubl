@@ -24,14 +24,15 @@ function Dashboard({setMainSection}) {
 
     
 
-    useEffect(async ()=>{
+    useEffect(()=>{
         const fetchupcomingtestdetails=async (studId)=>{
             const details= await axios.get(`http://localhost:4000/test/${studId}/upcoming`);
-            return details;
+            setUpcomingTests(details.data.detailofUpcomingTests);
         };
-        const testdetails=await fetchupcomingtestdetails("cheguevera"); //this is just for testing purposes
-        console.log(testdetails.data.detailofUpcomingTests);
-        setUpcomingTests(testdetails.data.detailofUpcomingTests);
+        // const testdetails=await fetchupcomingtestdetails("cheguevera"); //this is just for testing purposes
+        // console.log(testdetails.data.detailofUpcomingTests);
+        //setUpcomingTests(testdetails.data.detailofUpcomingTests);
+        fetchupcomingtestdetails();
     },[]);
 
     return (
