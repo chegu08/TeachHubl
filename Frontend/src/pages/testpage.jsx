@@ -260,6 +260,8 @@ function TestPage() {
             :answers[ind].map((set,_)=>(questions[ind].type=='Numerical'?Number(set):(set=='1'?1:0)))
         ));
 
+        console.log(userresponse);
+
         await axios.put(`http://localhost:4000/test/response`,{testId:currentLocation,response:userresponse});
     };
 

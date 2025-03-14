@@ -6,6 +6,7 @@ import Header from './header/header.jsx'
 import Courses from './courses/courses.jsx'
 import Tests from "./tests/tests.jsx";
 import TestPage from "./pages/testpage.jsx";
+import TestAnalysis from "./pages/testAnalysis.jsx";
 
 import { useEffect, useState} from 'react';
 import { Route, Routes } from "react-router-dom";
@@ -35,6 +36,7 @@ function App() {
       <Routes >
         <Route path="/" element={ <MainPage />} />
         <Route path="/tests/:id" element={<TestPage />}/>
+        <Route path="/analysis/:id" element={<TestAnalysis />} />
       </Routes>
     </div>
   )

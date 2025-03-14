@@ -116,6 +116,8 @@ const uploadresponse = async (req, res) => {
             return res.status(400).json({ Error: "Some mandatory fields are missing" })
         }
 
+        console.log(response);
+
         const test = await TestModel.findOne({ testId: testId });
 
         // if (!test) {
@@ -304,6 +306,48 @@ const getAllTests=async (req,res)=>{
     }
 };
 
+const getTestStatistics=async (req,res)=>{
+    try{
+        const testId=req.params.testId;
+        let statistics= await TestModel.findOne({testId:testId});
+        statistics=statistics.toObject();
+        //console.log(statistics);
+        if(statistics.testType=='Standard'){
+            const status=[]
+            for(let i=0;i<statistics.result.scores.length;i++)
+            {
+                if(statistics.result.scores[i]!=0){
+                    status.push("correct");
+                }
+                else {
+                    let marked=false;
+                    //console.log(`response[${i}]`,statistics.response[i]);
+                    for(let j=0;j<statistics.response[i].length;j++)
+                    {
+                        if(
+                            (statistics.questionForStandardTest[i].answerType!='Numerical'&&statistics.response[i][j]==1)||
+                            (statistics.questionForStandardTest[i].answerType=='Numerical'&&statistics.response[i].length>0)
+                        )
+                        {
+                            console.log(statistics.questionForStandardTest[i].answer[0])
+                            marked=true;
+                            break;
+                        }
+                    }
+                    status.push(marked?"incorrect":"unmarked");
+                }
+            }
+            statistics['status']=status;
+        }
+        console.log(statistics);
+        res.status(200).json({statistics});
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
 module.exports = {
     createTest,
     uploadresult,
@@ -312,5 +356,6 @@ module.exports = {
     deleteTest,
     getUpcomingtestdetails,
     getTestDetails,
-    getAllTests
+    getAllTests,
+    getTestStatistics
 }

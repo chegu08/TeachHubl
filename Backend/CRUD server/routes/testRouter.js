@@ -8,9 +8,12 @@ const {
     deleteTest,
     getUpcomingtestdetails,
     getTestDetails,
-    getAllTests
+    getAllTests,
+    getTestStatistics
 } = require('../controllers/testController')
 
+
+Router.get('/statistics/:testId',getTestStatistics)
 Router.get('/all/:id',getAllTests)
 Router.get('/:id/upcoming',getUpcomingtestdetails)
 Router.get('/:id',getTestDetails)

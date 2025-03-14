@@ -1,9 +1,11 @@
 import './tests.css'
 import {useState,useEffect} from 'react';
+import {useNavigate} from 'react-router-dom'
 import axios from 'axios'
 
 function Tests(){
     const [alltests,setAllTests]=useState();
+    const navigation=useNavigate();
     useEffect(()=>{
         async function fetchalltests(){
             const allTests=(await axios.get('http://localhost:4000/test/all/cheguevera')).data.allTests;
@@ -25,7 +27,7 @@ function Tests(){
                     {
                         alltests&&alltests.map((test,ind)=>{
                             const date=test.startDate.substring(0,10).split('-').reverse().join("-")
-                            return (<div key={ind}>
+                            return (<div key={ind} onClick={()=>navigation(`/analysis/${test.testId}`)}>
                                 <span className="test_name" style={{width:"40%",fontSize:"large"}}>
                                     {test.testId}
                                 </span>
