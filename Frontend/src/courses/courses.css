@@ -43,6 +43,7 @@
     padding :0px 20px;
     display: flex;
     flex-direction: column;
+
 }
 
 .courses .content_and_timetable .content_of_courses .course_status{
@@ -77,5 +78,31 @@
     width:100%;
     flex-grow: 1;
     /* background-color: red; */
+}
+
+.courses .content_and_timetable .timetable .todays_class{
+    height:50px;
+    width:90%;
+    border : 1px solid rgb(145, 161, 214);
+    border-radius: 5px;
+    margin-top:10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding:0px 20px;
+}
+
+.courses .content_and_timetable .timetable .todays_class:hover{
+    border: 1px solid #0d6efd;
+    cursor: pointer;
+}
+
+.courses .content_and_timetable .timetable .todays_class .timing{
+    font-size: small;
+    color: rgb(90, 100, 135);
+}
+
+.courses .content_and_timetable .timetable h3{
+    margin-bottom:7px;
 }
 

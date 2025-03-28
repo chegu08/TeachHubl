@@ -7,6 +7,7 @@ function Courses() {
     const [selectedButton, setSelectedButton] = useState("all");
     const [courseInformation, setCourseInformation] = useState(null);
     const studId = "lkajnsglknaoi";
+    const [todayStudentSchedule,setTodayStudentSchedule]=useState([]);
     // this is just temporary
 
 
@@ -15,7 +16,12 @@ function Courses() {
             const response = await axios.get(`http://localhost:4000/class/student/getInfo/${studId}`);
             setCourseInformation(response.data.allCourses);
         }
+        async function fetchTodayStudentSchedule(studId){
+            const response= await axios.get(`http://localhost:4000/schedule/class/student/${studId}`);
+            setTodayStudentSchedule(response.data.todaysSlots);
+        }
         fetchCourseInformation(studId);
+        fetchTodayStudentSchedule(studId);
     }, []);
 
 
@@ -49,13 +55,16 @@ function Courses() {
                     </div>
                 </div>
                 <div className="timetable">
-                    <h3>Upcoming Today</h3>
-                    {/* <div className="background">
-
-                        <div className="foreground">
-
-                        </div>
-                    </div> */}
+                    <h3>Today's Classes</h3>
+                    {
+                        todayStudentSchedule.length>0&&
+                        todayStudentSchedule.map((_class,ind)=>(
+                            <div className="todays_class" key={ind}>
+                                <strong className="className">{_class.className}</strong>
+                                <span className="timing">{_class.startTime} - {_class.endTime}</span>
+                            </div>
+                        ))
+                    }
                 </div>
             </div>
         </div>

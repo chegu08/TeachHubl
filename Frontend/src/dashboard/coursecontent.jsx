@@ -3,7 +3,7 @@ import { useEffect,useState } from "react";
 
 function CourseContent({ courseDetails }) {
 
-    const percentageCourseCompleted = (courseDetails.completed / courseDetails.totalClasses) * 100;
+    const percentageCourseCompleted =Math.round((courseDetails.completed / courseDetails.totalClasses) * 100);
 
 
     const fullLengthProgressBarStyle = {

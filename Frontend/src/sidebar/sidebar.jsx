@@ -17,7 +17,7 @@ function Sidebar({setMainSection}) {
             <button className="dashboard" onClick={()=>setMainSection("dashboard")}>Dashboard</button>
             <button className="courses" onClick={()=>setMainSection("courses")}>Courses</button>
             <button className="tests" onClick={()=>setMainSection("tests")}>Tests</button>
-            <button className="calendar" onClick={()=>setMainSection("calendar")}>Calendar</button>
+            <button className="resources" onClick={()=>setMainSection("resources")}>Resources</button>
         </div>
     )
 }

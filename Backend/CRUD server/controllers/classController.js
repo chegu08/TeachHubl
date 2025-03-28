@@ -1,7 +1,9 @@
 const Class=require('../models/classDetailModel');
 const student=require('../models/studentDetailModel');
 const tutor=require('../models/tutorDetailModel');
-const {v4:uuid}=require('uuid')
+const classSchedule=require('../models/classScheduleModel')
+const {v4:uuid}=require('uuid');
+const ClassSchedule = require('../models/classScheduleModel');
 
 const createClass=async (req,res)=>{
     try{
@@ -17,7 +19,8 @@ const createClass=async (req,res)=>{
             cancelledDate,
             refundDetailId,
             classCount, 
-            subject
+            subject,
+            schedule
         }=req.body;
 
         const studentIdFromdatabase=await student.findOne({uid:studId});
@@ -51,8 +54,23 @@ const createClass=async (req,res)=>{
             completedClasses:0
         }
 
+        const class_schedule={
+            scheduleId:uuid(),
+            classId:newClass.classId,
+            className,
+            startDate,
+            endDate,
+            numberOfClasses:classCount,
+            schedule
+        };
+
+        // this logic is incomplete yet...
+        // also store the tutor schedule from the schedule available
+
         try{
             await Class.create(newClass);
+            await ClassSchedule.create(class_schedule);
+            
         } catch(err) {
             console.log(err);
             return res.status(500).json({Error:"Cannot insert class into database"});
