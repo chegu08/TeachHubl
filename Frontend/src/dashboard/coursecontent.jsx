@@ -1,16 +1,7 @@
-function CourseContent({ num }) {
+import { useEffect,useState } from "react";
 
-    //const backgroundColor=(num==1)?"yellow":"red";
 
-    const courseDetails = (num == 1) ? {
-        courseName: "Crap",
-        totalClasses: 20,
-        completed: 18
-    } : {
-        courseName: "Pee",
-        totalClasses: 30,
-        completed: 21
-    };
+function CourseContent({ courseDetails }) {
 
     const percentageCourseCompleted = (courseDetails.completed / courseDetails.totalClasses) * 100;
 

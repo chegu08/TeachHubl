@@ -14,7 +14,11 @@ const classSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    class: {
+    className: {
+        type: String,
+        required: true
+    },
+    subject: {
         type: String,
         required: true
     },
@@ -61,9 +65,13 @@ const classSchema = new mongoose.Schema({
     classCount: {
         type: Number,
         required: true
+    },
+    completedClasses:{
+        type:Number,
+        required:true
     }
 })
 
-const Class = mongoose.model("class",classSchema);
+const Class = mongoose.model("class", classSchema);
 
-module.exports =  Class
+module.exports = Class

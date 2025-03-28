@@ -1,3 +1,4 @@
+const { unique } = require('agenda/dist/job/unique')
 const mongoose = require('mongoose')
 const studentSchema = new mongoose.Schema({
     name: {
@@ -27,7 +28,8 @@ const studentSchema = new mongoose.Schema({
     },
     uid: {
         type: String,
-        required: true
+        required: true,
+        unique:true
     }
 })
 

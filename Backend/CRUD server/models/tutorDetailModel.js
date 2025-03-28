@@ -42,7 +42,8 @@ const tutorSchema = new mongoose.Schema({
     photo: String,
     uid: {
         type: String,
-        required: true
+        required: true,
+        unique:true
     }
 })
 

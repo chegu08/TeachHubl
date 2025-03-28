@@ -11,8 +11,13 @@ import axios from 'axios'
 
 function Dashboard({setMainSection}) {
 
+    const studId="lkajnsglknaoi";
+    // this is just temporary
+
     const [userName, setUserName] = useState("");
-    const [currentCourseCount, setCurrentCourseCount] = useState(2); //this is just for ui... logic has to be setup later
+    const [courseDetails,setCourseDetails]=useState([]);
+    const [currentCourseCount, setCurrentCourseCount] = useState(0);
+    const [currentCourseIndex,setCurrentCourseIndex]=useState(0);
 
     // useEffect(() => {
     //     const LocalStorage = localStorage.getItem("current_storage");
@@ -23,7 +28,6 @@ function Dashboard({setMainSection}) {
     const [upcomingtests,setUpcomingTests]=useState([{}]);
 
     
-
     useEffect(()=>{
         const fetchupcomingtestdetails=async (studId)=>{
             const details= await axios.get(`http://localhost:4000/test/${studId}/upcoming`);
@@ -33,6 +37,19 @@ function Dashboard({setMainSection}) {
         // console.log(testdetails.data.detailofUpcomingTests);
         //setUpcomingTests(testdetails.data.detailofUpcomingTests);
         fetchupcomingtestdetails();
+    },[]);
+
+    useEffect(()=>{
+        async function fetchCourseDetails(studId){
+            // the backend logic is not set yet 
+            // set it up you bastard
+            const response= await axios.get(`http://localhost:4000/class/student/${studId}`);
+            
+            setCurrentCourseCount(response.data.classDetails.length);
+            setCourseDetails(response.data.classDetails);
+
+        }
+        fetchCourseDetails(studId);
     },[]);
 
     return (
@@ -68,16 +85,16 @@ function Dashboard({setMainSection}) {
                         <a href='#' style={{ color: "#0d6efd" }}>view all</a>
                     </div>
                     <div className="content_container" >
-                        {(currentCourseCount <= 2 && <button className="shift_left" style={{ flexGrow: "0.5", height: "100%" }} disabled><h2>{"<"}</h2></button>)
+                        {(currentCourseCount <= 2 && <button className="shift_left" style={{ flexGrow: "0.5", height: "100%" }} disabled ><h2>{"<"}</h2></button>)
                             ||
-                            (currentCourseCount > 2 && <button className="shift_left" style={{ flexGrow: "0.5", height: "100%" }} ><h2>{"<"}</h2></button>)}
+                            (currentCourseCount > 2 && <button className="shift_left" style={{ flexGrow: "0.5", height: "100%" }} onClick={()=>setCurrentCourseIndex(pre=>((pre-1+currentCourseCount)%currentCourseCount))}><h2>{"<"}</h2></button>)}
                         <div className="content" style={{ flexGrow: "9", height: "100%" }}>
-                            <CourseContent num={1}></CourseContent>
-                            <CourseContent num={2}></CourseContent>
+                            {currentCourseCount>0&&<CourseContent courseDetails={courseDetails[currentCourseIndex]} />}
+                            {currentCourseCount>1&&<CourseContent courseDetails={courseDetails[(currentCourseIndex+1)%currentCourseCount]} />}
                         </div>
-                        {(currentCourseCount <= 2 && <button className="shift_left" style={{ flexGrow: "0.5", height: "100%" }} disabled><h2>{">"}</h2></button>)
+                        {(currentCourseCount <= 2 && <button className="shift_right" style={{ flexGrow: "0.5", height: "100%" }} disabled><h2>{">"}</h2></button>)
                             ||
-                            (currentCourseCount > 2 && <button className="shift_left" style={{ flexGrow: "0.5", height: "100%" }} ><h2>{">"}</h2></button>)}
+                            (currentCourseCount > 2 && <button className="shift_right" style={{ flexGrow: "0.5", height: "100%" }} onClick={()=>setCurrentCourseIndex(pre=>((pre+1)%currentCourseCount))}><h2>{">"}</h2></button>)}
                     </div>
                 </div>
             </div>

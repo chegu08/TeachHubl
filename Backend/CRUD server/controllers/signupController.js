@@ -111,8 +111,6 @@ const tutorGoogleSignup = async (req, res) => {
             name: mentorDetails.name,
             age: mentorDetails.age,
             phoneNumber: mentorDetails.phoneNumber,
-            profession: mentorDetails.profession,
-            preferredSubjects: mentorDetails.preferredSubjects,
             email: mentorDetails.email,
             gender: mentorDetails.gender,
             photo: mentorDetails.photo,

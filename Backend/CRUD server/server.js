@@ -28,6 +28,8 @@ const loginRouter = require('./routes/loginRouter')
 app.use('/login', loginRouter)
 const testRouter=require('./routes/testRouter')
 app.use('/test',testRouter)
+const classRouter=require('./routes/classRouter');
+app.use('/class',classRouter);
 
 
 const port = process.env.PORT || 4000

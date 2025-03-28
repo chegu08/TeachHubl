@@ -1,28 +1,32 @@
 import './courseList.css'
 import courseimg from '../assets/istockphoto-1919863292-2048x2048.jpg'
+// this image is just temporary ...after setting all the necessary information 
+// every class created must have an image
+// Database should be modified for that
 
-function CourseList() {
-
-    const allLists=[];
-    for(let i=0;i<5;i++)
-    {
-        allLists.push(<div className='list' key={i}>
+function CourseList({allCourses,selectedButton}) {
+    
+    return (
+        <>
+        {
+            allCourses.filter((course)=>selectedButton=='all'||selectedButton==course.status).map((course,ind)=>(
+                <div className='list' key={ind}>
             <img src={courseimg} />
             <div className="details">
                 <div className="date_and_subject">
-                    <span className="date">13th september</span> • <span className="subject">Computer</span>
+                    <span className="date">{course.startDate}</span> • <span className="subject">{course.subject}</span>
                     <h3 className="course_name">
-                        Cryptographic principles
+                        {course.coursename}
                     </h3>
                 </div>
                 <p className="tutor_name">
-                    Kunwar Singh
+                    {course.tutorName}
                 </p>
             </div>
-        </div>)
-    }
-    return (
-        <>{allLists}</>
+        </div>
+            ))
+        }
+        </>
     )
 }
 
