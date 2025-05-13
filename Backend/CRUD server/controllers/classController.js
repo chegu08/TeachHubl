@@ -3,6 +3,7 @@ const student=require('../models/studentDetailModel');
 const tutor=require('../models/tutorDetailModel');
 const classSchedule=require('../models/classScheduleModel')
 const {v4:uuid}=require('uuid');
+const bcrypt =require('bcrypt');
 const ClassSchedule = require('../models/classScheduleModel');
 
 const createClass=async (req,res)=>{
@@ -54,6 +55,19 @@ const createClass=async (req,res)=>{
             completedClasses:0
         }
 
+        const scheduleWithLinks=await Promise.all(schedule.map(async (sch)=>{
+            const hashedStudentId=await bcrypt.hash(studentIdFromdatabase.uid,10);
+            const hashedTutorId=await bcrypt.hash(tutorIdFromDatabase.uid,10);
+            const slotsWithLinks=sch.slots.map(slot=>({
+                ...slot,
+                classLink:`http://localhost:5173/liveClass?student=${encodeURIComponent(hashedStudentId)}&tutor=${encodeURIComponent(hashedTutorId)}`
+            }));
+            return {...sch,slots:slotsWithLinks};
+        }));
+
+        console.dir(scheduleWithLinks,{depth:4});
+
+        
         const class_schedule={
             scheduleId:uuid(),
             classId:newClass.classId,
@@ -61,8 +75,10 @@ const createClass=async (req,res)=>{
             startDate,
             endDate,
             numberOfClasses:classCount,
-            schedule
+            schedule:scheduleWithLinks
         };
+
+        //console.dir(schedule,{depth:5});
 
         // this logic is incomplete yet...
         // also store the tutor schedule from the schedule available

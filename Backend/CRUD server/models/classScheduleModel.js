@@ -1,42 +1,46 @@
 const mongoose = require('mongoose');
 
-const ScheduleSchema= new mongoose.Schema({
-    date:{
-        type:Date,
-        required:true
+const ScheduleSchema = new mongoose.Schema({
+    date: {
+        type: Date,
+        required: true
     },
-    slots:{
-        type:[{
-            startTime:{
-                type:String,
-                required:true, // store it in HH:MM format
-                validate:{
-                    validator:function (v){
-                        const hours=Number(v.substring(0,2));
-                        if(hours<0 || hours>=24) return false;
-                        const minutes=Number(v.substring(3));
-                        if(minutes<0||minutes>=60) return false;
+    slots: {
+        type: [{
+            startTime: {
+                type: String,
+                required: true, // store it in HH:MM format
+                validate: {
+                    validator: function (v) {
+                        const hours = Number(v.substring(0, 2));
+                        if (hours < 0 || hours >= 24) return false;
+                        const minutes = Number(v.substring(3));
+                        if (minutes < 0 || minutes >= 60) return false;
                         return true;
                     },
-                    message:"Incorrect format of startTime ...Expected HH:MM format"
+                    message: "Incorrect format of startTime ...Expected HH:MM format"
                 }
             },
-            endTime:{
-                type:String,
-                required:true,  // store it in HH:MM format
-                validate:{
-                    validator:function (v){
-                        const hours=Number(v.substring(0,2));
-                        if(hours<0 || hours>=24) return false;
-                        const minutes=Number(v.substring(3));
-                        if(minutes<0||minutes>=60) return false;
+            endTime: {
+                type: String,
+                required: true,  // store it in HH:MM format
+                validate: {
+                    validator: function (v) {
+                        const hours = Number(v.substring(0, 2));
+                        if (hours < 0 || hours >= 24) return false;
+                        const minutes = Number(v.substring(3));
+                        if (minutes < 0 || minutes >= 60) return false;
                         return true;
                     },
-                    message:"Incorrect format of endTime ...Expected HH:MM format"
+                    message: "Incorrect format of endTime ...Expected HH:MM format"
                 }
+            },
+            classLink: {
+                type: String,
+                required: true
             }
         }],
-        required:true
+        required: true
     }
 });
 
@@ -55,21 +59,21 @@ const classScheduleSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    startDate:{
-        type:Date,
-        required:true
+    startDate: {
+        type: Date,
+        required: true
     },
-    endDate:{
-        type:Date,
-        required:true
+    endDate: {
+        type: Date,
+        required: true
     },
-    numberOfClasses:{
-        type:Number,
-        required:true
+    numberOfClasses: {
+        type: Number,
+        required: true
     },
-    schedule:{
-        type:[ScheduleSchema],
-        required:true
+    schedule: {
+        type: [ScheduleSchema],
+        required: true
     }
 });
 

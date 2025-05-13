@@ -7,6 +7,7 @@ import Courses from './courses/courses.jsx'
 import Tests from "./tests/tests.jsx";
 import TestPage from "./pages/testpage.jsx";
 import TestAnalysis from "./pages/testAnalysis.jsx";
+import VideoCallPage from "./video_call/videoCall.jsx";
 
 import { useEffect, useState} from 'react';
 import { Route, Routes } from "react-router-dom";
@@ -37,6 +38,7 @@ function App() {
         <Route path="/" element={ <MainPage />} />
         <Route path="/tests/:id" element={<TestPage />}/>
         <Route path="/analysis/:id" element={<TestAnalysis />} />
+        <Route path="/liveClass" element={<VideoCallPage />} />
       </Routes>
     </div>
   )

@@ -42,7 +42,8 @@ const getTodayScheduleForStudent = async (req, res) => {
                             classId: schedule.classId,
                             className: schedule.className,
                             startTime: slot.startTime,
-                            endTime: slot.endTime
+                            endTime: slot.endTime,
+                            Link:slot.classLink
                         }));
                     });
                 });
