@@ -6,7 +6,7 @@
     overflow:hidden;
 }
 
-.classRoom_setup .my_video_container{
+.classRoom_setup .my_video_container, .classRoom_setup .whiteboard-container{
     position:relative;
     z-index:1;
     top:0%;
@@ -61,9 +61,64 @@
 .classRoom_setup .sidebar{
     height:100%;
     width:20%;
+    overflow-y: auto;
 }
 
 .classRoom_setup .controls button img{
     height:100%;
     width:90%;
+}
+
+.classRoom_setup .sidebar .whiteboardpages{
+    /* background-color: green; */
+    padding:10px;
+    min-height:150px;
+    max-height:200px;
+    overflow-y: auto;
+    border: 1px solid rgb(13, 110, 253);
+    border-radius: 5px;
+}
+
+.classRoom_setup .sidebar .whiteboardpages h2{
+    color:rgb(13, 110, 253);
+    text-align:center;
+    margin:auto;
+}
+
+.classRoom_setup .sidebar .whiteboardpages .btn{
+    text-align: center;
+    margin-bottom:5px;
+
+}
+
+.classRoom_setup .sidebar .whiteboard-tooling-container{
+    width:100%;
+    /* background-color: green; */
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+    justify-content: space-around;
+    gap:20px;
+
+}
+
+.classRoom_setup .sidebar .whiteboard-tooling-container .tools-container,
+.classRoom_setup .sidebar .whiteboard-tooling-container .color-container
+{
+display: flex;
+flex-direction: column;
+align-items: center;
+
+}
+
+.classRoom_setup .sidebar .whiteboard-tooling-container .tools-container h3,
+.classRoom_setup .sidebar .whiteboard-tooling-container .color-container h3
+{
+    text-align: center;
+    color:rgb(13, 110, 253);
+    width:100%;
+}
+
+.classRoom_setup .sidebar .whiteboard-tooling-container .add-page-container button{
+    text-align: center;
 }

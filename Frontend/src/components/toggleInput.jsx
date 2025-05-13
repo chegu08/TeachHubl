@@ -46,7 +46,7 @@ const style = {
 
 function ToggleInput({purpose,inputState,setInputState}) {
     return (
-        <div className="toggle" style={{height:"100px",width:"100%",display:"flex",justifyContent:"space-around"}}>
+        <div className="toggle" style={{height:"50px",width:"100%",display:"flex",justifyContent:"space-around"}}>
             <span>{purpose}</span>
             <button className="background_container" style={inputState==false?style.offStyle.background_container:style.onStyle.background_container} 
             onClick={()=>setInputState(pre=>!pre)}>
