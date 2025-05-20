@@ -1,46 +1,33 @@
 import "@fontsource/poppins";
 import './App.css'
-import Dashboard from './dashboard/dashboard.jsx'
-import Sidebar from './sidebar/sidebar.jsx'
-import Header from './header/header.jsx'
-import Courses from './courses/courses.jsx'
-import Tests from "./tests/tests.jsx";
-import TestPage from "./pages/testpage.jsx";
+
 import TestAnalysis from "./pages/testAnalysis.jsx";
 import VideoCallPage from "./video_call/videoCall.jsx";
+import TutorMainPage from "./tutor/mainpage.jsx";
+import HomePage from "./pages/homePage.jsx";
+import TestPage from "./pages/testpage.jsx";
+import MainPage from "./pages/mainPage.jsx";
 
-import { useEffect, useState} from 'react';
+import { useState } from 'react';
 import { Route, Routes } from "react-router-dom";
 
-
-const MainPage = () => {
-  const [mainSection, setMainSection] = useState("dashboard");
-  useEffect(()=>{
-   console.log(mainSection)
-},[mainSection])
-  return (<>
-    <Sidebar setMainSection={setMainSection} />
-    <div className="main_block">
-      <Header />
-      {mainSection == "dashboard" && <Dashboard setMainSection={setMainSection}/>}
-      {mainSection == "courses" && <Courses />}
-      {mainSection =='tests'&&<Tests />}
-    </div>
-  </>)
-};
-
+import { mainSectionContext } from "./pages/mainPage.jsx";
 
 function App() {
-
+  const [mainSection, setMainSection] = useState("dashboard");
   return (
+    <mainSectionContext.Provider value={[mainSection,setMainSection]} >
     <div className='app' >
       <Routes >
         <Route path="/" element={ <MainPage />} />
         <Route path="/tests/:id" element={<TestPage />}/>
         <Route path="/analysis/:id" element={<TestAnalysis />} />
         <Route path="/liveClass" element={<VideoCallPage />} />
+        <Route path="/tutor" element={<TutorMainPage />} />
+        <Route path="/home" element={<HomePage />} />
       </Routes>
     </div>
+    </mainSectionContext.Provider>
   )
 }
 

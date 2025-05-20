@@ -22,16 +22,18 @@ app.use(express.urlencoded({ extended: true }))
 
 
 //middleware for routes
-const signupRouter = require('./routes/signupRouter')
+const signupRouter = require('./routes/signupRouter');
 app.use('/signup', signupRouter)
-const loginRouter = require('./routes/loginRouter')
+const loginRouter = require('./routes/loginRouter');
 app.use('/login', loginRouter)
-const testRouter=require('./routes/testRouter')
+const testRouter=require('./routes/testRouter');
 app.use('/test',testRouter)
 const classRouter=require('./routes/classRouter');
 app.use('/class',classRouter);
-const classScheduleRouter=require("./routes/classScheduleRouter")
+const classScheduleRouter=require("./routes/classScheduleRouter");
 app.use('/schedule/class',classScheduleRouter);
+const tutorRouter=require("./routes/tutorRouter");
+app.use("/tutor",tutorRouter);
 
 
 const port = process.env.PORT || 4000

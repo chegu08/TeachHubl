@@ -1,0 +1,105 @@
+.homepage{
+    width:100vw;
+    height:100vh;
+    overflow: auto;
+}
+
+.homepage .best-courselist-container{
+    width:100%;
+    height:70%;
+    
+}
+
+.homepage .best-courselist-container h2{
+    /* width:100%;
+    display: flex;
+    justify-content: center; */
+    text-align: center;
+    padding:20px;
+}
+
+.homepage .best-courselist-container .search-box-container{
+    width:100%;
+    height:10%;
+    /* padding:0px 10px; */
+    /* background-color: red; */
+    display: flex;
+    justify-content: center;
+    gap:0px 10px;
+}
+
+.homepage .best-courselist-container .search-box-container .searchbox{
+    width:200px;
+    background-color: rgb(235, 238, 242);
+    outline:none;
+    border-radius:5px;
+    border:none;    
+    padding:10px;
+    height:40px;
+    font-size:medium;
+}
+
+.homepage .best-courselist-container .search-box-container .searchbox:focus,
+.homepage .best-courselist-container .search-box-container .searchbox:hover{
+    border: 2px solid rgb(145, 161, 214);
+}
+
+.homepage .best-courselist-container .search-box-container button{
+    width:100px;
+    background-color: rgb(194, 196, 199);
+    outline:none;
+    border-radius:5px;
+    border:none;    
+    padding:5px;
+    height:40px;
+    font-size:medium;
+    color:white;
+}
+
+.homepage .best-courselist-container .search-box-container button:hover{
+    border:2px solid rgb(110, 111, 112);
+    cursor: pointer;
+}
+
+.homepage .best-courselist-container .best-courselist{
+    width:100%;
+    height:60vh;
+    display: flex;
+    flex-wrap:nowrap;
+    gap:20px;
+    align-items: center;
+    overflow-x: auto;
+    padding:0px 20px;
+}
+
+.homepage .best-courselist-container .best-courselist::-webkit-scrollbar{
+    display: none;
+}
+
+.homepage .best-courselist-container .best-courselist .course{
+    height:80%;
+    /* background-color:blue; */
+    min-width:250px;
+    border-radius: 10px;
+    border: 1px solid rgb(145, 161, 214);
+    overflow: hidden;
+}
+
+
+.homepage .best-courselist-container .best-courselist .course .info-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width:100%;
+}
+
+
+.homepage .best-courselist-container .best-courselist .course span,
+.homepage .best-courselist-container .best-courselist .course .info-container a{
+    margin-left:20px;
+}
+
+
+
+
+

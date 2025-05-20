@@ -1,5 +1,5 @@
 import './courseList.css'
-import courseimg from '../assets/istockphoto-1919863292-2048x2048.jpg'
+import courseimg from '../assets/istockphoto-1919863292-2048x2048.jpg';
 // this image is just temporary ...after setting all the necessary information 
 // every class created must have an image
 // Database should be modified for that

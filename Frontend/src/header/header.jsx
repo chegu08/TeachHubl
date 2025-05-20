@@ -2,14 +2,15 @@ import './header.css'
 import calendarIcon from '../assets/calendar4-week.svg'
 import messagingIcon from '../assets/chat-dots.svg'
 import notificationIcon from '../assets/bell.svg'
-
+import {useNavigate} from 'react-router-dom'
 import profileIcon from '../assets/image.svg' //this is just for testing purposes
 
 function Header(){
+    const navigate=useNavigate();
     return (
         <div className='header'>
             <div className="nav_elements_container">
-                <button className="home">Home</button>
+                <button className="home" onClick={()=>navigate("/home")}>Home</button>
                 <button className="event">Event</button>
                 <button className="teachers">Teachers</button>
                 <button className="about">About</button>

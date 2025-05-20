@@ -1,7 +1,6 @@
 const Class=require('../models/classDetailModel');
 const student=require('../models/studentDetailModel');
 const tutor=require('../models/tutorDetailModel');
-const classSchedule=require('../models/classScheduleModel')
 const {v4:uuid}=require('uuid');
 const bcrypt =require('bcrypt');
 const ClassSchedule = require('../models/classScheduleModel');
