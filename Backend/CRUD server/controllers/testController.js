@@ -249,7 +249,7 @@ const getUpcomingtestdetails = async (req, res) => {
 
         // logic to get all upcoming tests for the student
 
-        const upcomingtests = await Promise.all(classids.map(classid => TestModel.find({ classId: classid, completed: false })));
+        const upcomingtests = await Promise.all( classids.map(async classid => await TestModel.find({ classId: classid, completed: false })));
 
         const detailofUpcomingTests = upcomingtests.flat().map((test) => ({
             testId: test.testId,
@@ -281,7 +281,7 @@ const getUncorrectedTestDetails = async (req, res) => {
 
         // logic to get all upcoming tests for the tutor
 
-        const uncorrectedtests = await Promise.all(classids.map(classid => TestModel.find({ classId: classid, completed: true,feedback:new Array(0) })));
+        const uncorrectedtests = await Promise.all(classids.map(async classid => await TestModel.find({ classId: classid, completed: true,feedback:new Array(0) })));
 
         const detailofUncorrectedTests = uncorrectedtests.flat().map((test) => ({
             testId: test.testId,

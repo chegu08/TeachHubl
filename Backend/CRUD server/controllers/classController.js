@@ -158,9 +158,37 @@ const getAllCourseInformation=async (req,res)=>{
     }
 };
 
+const getAllCourseInformationForTutor = async (req,res)=>{
+    try {
+        const tutorId=req.params.tutorId;
+        const courseInfo=await Class.find({tutorId:tutorId});
+        const dateOptions={day:"numeric",month:"long",year:"numeric"};
+        function dateDiffInDays(date1, date2) {
+            const diffTime = Math.abs(date2 - date1);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+        }
+        const courseListDetails=await Promise.all(courseInfo.map(async (course,_)=>{
+            const studentName=(await student.findOne({uid:course.studId})).name;
+            return {
+                subject:course.subject,
+                coursename:course.className,
+                studentName,
+                startDate:new Date(course.startDate).toLocaleDateString("en-GB",dateOptions),
+                status:(dateDiffInDays(new Date(), new Date(course.endDate))>0)?"current":"completed"
+            }
+        }));
+        console.log(courseListDetails);
+        res.status(200).json({allCourses:courseListDetails});
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
 module.exports={
     createClass,
     getClassDetailsForStudent,
     getAllCourseInformation,
-    getClassDetailsForTutors
+    getClassDetailsForTutors,
+    getAllCourseInformationForTutor
 }

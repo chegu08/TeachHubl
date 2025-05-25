@@ -80,7 +80,7 @@ function TutorDashboard ({setMainSection}){
                 </div>
                 <div className="courses_container">
                     <div className="heading_and_view_all_container">
-                        <h3 style={{ opacity: '0.9' }} role='button' onClick={()=>setMainSection('courses')} >My Courses <span>({currentCourseCount})</span></h3>
+                        <h3 style={{ opacity: '0.9' }} role='button' onClick={()=>setMainSection('my_courses')} >My Courses <span>({currentCourseCount})</span></h3>
                         <a href='#' style={{ color: "#0d6efd" }}>view all</a>
                     </div>
                     <div className="content_container" >

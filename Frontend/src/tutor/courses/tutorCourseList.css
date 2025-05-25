@@ -1,0 +1,40 @@
+.list{
+    width:90%;
+    border:1px solid rgb(145, 161, 214);
+    border-radius: 5px;
+    background-color: white;
+    margin:auto;
+    height:200px;
+    margin-top:15px;
+    margin-bottom: 15px;
+    display:flex;
+    overflow: hidden;
+}
+
+.list:hover{
+    border: 1px solid #0d6efd;
+    cursor: pointer;
+}
+
+.list img{
+    height:100%;
+    width:35%;
+}
+
+.list .details{
+    /* background-color: red; */
+    flex-grow: 1;
+    padding:20px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.list .details .date_and_subject{
+    color:rgb(90, 100, 135);
+    font-size: medium;
+}
+
+.list .details .date_and_subject .course_name{
+    color:black;
+}
