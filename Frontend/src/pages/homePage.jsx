@@ -1,6 +1,6 @@
 import './homePage.css';
 import Header from '../header/header';
-import TopbackgroundImage from '../assets/background images/view-arrangement-with-keyboard-notebooks.jpg'
+import TopbackgroundImage from '../assets/background images/backgroundimage.png'
 import { useState, useEffect } from 'react';
 import courseimg from '../assets/istockphoto-1919863292-2048x2048.jpg'
 import axios from 'axios';
@@ -15,7 +15,7 @@ function HomePage() {
 
         async function fetchBestTutors() {
             const bestTutors = (await axios.get('http://localhost:4000/tutor/best')).data;
-    
+
             setBestTutors(bestTutors);
         }
 
@@ -27,7 +27,7 @@ function HomePage() {
     return (
         <div className="homepage">
             <Header />
-            <img src={TopbackgroundImage} width={"100%"} height={"70%"} style={{ transform: "scaleX(-1)" }} />
+            <img src={TopbackgroundImage} width={"100%"} height={"70%"} />
             <div className='best-courselist-container'>
                 <h2><strong>we offer the best courses for you</strong></h2>
                 <div className='search-box-container'>

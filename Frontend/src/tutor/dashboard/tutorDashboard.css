@@ -1,0 +1,184 @@
+.tutor-dashboard{
+    width:100%;
+    height:90%;
+    font-family: 'Poppins';
+    display: flex; 
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow-y:auto;
+}
+
+.tutor-dashboard::-webkit-scrollbar{
+    display: none;
+}
+
+.tutor-dashboard .background{
+    position:fixed;
+    display: flex;   
+    width:100%;
+    height:100%;
+    flex-direction: column-reverse;
+    z-index: -1;
+}
+
+.tutor-dashboard .background .bluebackground{
+    background-color: #F9EEDF;
+    height:65%;
+    width:100%;
+}
+
+.tutor-dashboard .personal_detail{
+    padding:20px ;
+    padding-left:44px;
+    width:100%;
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    /* background-color: blue; */
+    
+}
+
+.tutor-dashboard .personal_detail .completed_courses{
+    display: flex;
+    padding:20px;
+}
+
+.tutor-dashboard .personal_detail .completed_courses .course_stat{
+    display: flex;
+    flex-direction: column;
+    padding: 0px 10px;
+}
+
+.tutor-dashboard .progress_and_courses{
+    margin-top:10px;
+    width:100%;
+    height:45%;
+    /* background-color:blue; */
+    display:flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 0px 10px;
+}
+
+.tutor-dashboard .progress_and_courses .progress_container{
+    height:100%;
+    width:35%;
+    background-color: white; 
+    border-radius: 7px;
+    border: 1px solid rgb(145, 161, 214);
+}
+
+.tutor-dashboard .progress_and_courses .courses_container{
+    height:100%;
+    width:55%;
+    background-color:white;
+    border-radius: 7px;
+    border: 1px solid rgb(145, 161, 214);
+    display: flex;
+    flex-direction: column;
+}
+
+.tutor-dashboard .progress_and_courses .progress_container .title_and_dropdown_container, .tutor-dashboard .upcoming_agenda_and_tests .upcoming_agenda_container .title_and_dropdown_container{
+    display: flex;
+    padding:20px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tutor-dashboard .progress_and_courses .progress_container .title_and_dropdown_container select,.tutor-dashboard .upcoming_agenda_and_tests .upcoming_agenda_container .title_and_dropdown_container select{
+    border: 1px solid rgb(145, 161, 214);
+    border-radius: 5px;
+    outline:none;
+    height:30px;
+    width:150px;
+    padding: 0px 10px;
+    color:rgb(56, 63, 86);
+    /* transition: all 1s ease-in-out; */
+}
+
+.tutor-dashboard .progress_and_courses .progress_container .title_and_dropdown_container select:hover,.tutor-dashboard .upcoming_agenda_and_tests .upcoming_agenda_container .title_and_dropdown_container select:hover{
+    cursor:pointer;
+    border-color: #0d6efd;
+}
+
+.tutor-dashboard .progress_and_courses .courses_container .heading_and_view_all_container, .tutor-dashboard  .upcoming_agenda_and_tests .tests_container .heading_and_view_all_container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding:20px;
+    /* background-color: blue; */
+}
+
+.tutor-dashboard .progress_and_courses .courses_container .heading_and_view_all_container h3:hover{
+    cursor: pointer;
+}
+
+.tutor-dashboard .progress_and_courses .courses_container .heading_and_view_all_container h3 span, .tutor-dashboard  .upcoming_agenda_and_tests .tests_container .heading_and_view_all_container h3 span{
+    color:rgb(145, 161, 214);
+    font-size: large;
+}
+
+.tutor-dashboard .progress_and_courses .courses_container .content_container{
+    padding:10px;
+    width:100%;
+    flex-grow: 1;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    /* background-color: green; */
+}
+
+.tutor-dashboard .progress_and_courses .courses_container .content_container button{
+    background: none;
+    border:none;
+    cursor:pointer;
+}
+
+.tutor-dashboard .progress_and_courses .courses_container .content_container .content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tutor-dashboard .upcoming_agenda_and_tests{
+    margin-top:30px;
+    width:100%;
+    height:60%;
+    /* background-color:blue; */
+    display:flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 0px 10px;
+    margin-bottom: 50px;
+}
+
+.tutor-dashboard .upcoming_agenda_and_tests .upcoming_agenda_container{
+    height:100%;
+    width:55%;
+    background-color: white; 
+    border-radius: 7px;
+    border: 1px solid rgb(145, 161, 214);
+    display:flex;
+    flex-direction: column;
+}
+
+.tutor-dashboard .upcoming_agenda_and_tests .tests_container{
+    height:100%;
+    width:35%;
+    background-color: white; 
+    border-radius: 7px;
+    border: 1px solid rgb(145, 161, 214);
+    display:flex;
+    flex-direction: column;
+}
+
+.tutor-dashboard .upcoming_agenda_and_tests .tests_container .tests{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    padding:10px;
+    overflow-y: auto;
+
+}

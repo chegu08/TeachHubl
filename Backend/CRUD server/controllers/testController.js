@@ -1,7 +1,8 @@
-const TestModel= require('../models/testDetailsModel');
-const axios =require("axios");
-const Agenda=require("agenda");
-const {v4:uuidv4} =require("uuid");
+const TestModel = require('../models/testDetailsModel');
+const ClassModel = require('../models/classDetailModel');
+const axios = require("axios");
+const Agenda = require("agenda");
+const { v4: uuidv4 } = require("uuid");
 
 
 
@@ -145,28 +146,26 @@ const uploadresponse = async (req, res) => {
 
             //this is the evaluation process for the test
             const scores = []
-            for(let i=0;i<test.questionForStandardTest.length;i++)
-            {
-                const factor=test.questionForStandardTest[i].answer.length;
-                if(test.questionForStandardTest[i].answerType=='Numerical'){
-                    Number(response[i][0])==Number(test.questionForStandardTest[i].answer[0])?scores.push(test.questionForStandardTest[i].marks):scores.push(0);
+            for (let i = 0; i < test.questionForStandardTest.length; i++) {
+                const factor = test.questionForStandardTest[i].answer.length;
+                if (test.questionForStandardTest[i].answerType == 'Numerical') {
+                    Number(response[i][0]) == Number(test.questionForStandardTest[i].answer[0]) ? scores.push(test.questionForStandardTest[i].marks) : scores.push(0);
                     continue;
                 };
-                let curmark=0;
-                for(let j=0;j<response[i].length;j++)
-                {
-                    if(response[i][j]==0) continue;
-                    if(test.questionForStandardTest[i].answer.includes(j)) {
-                        curmark+=(test.questionForStandardTest[i].marks/factor);
+                let curmark = 0;
+                for (let j = 0; j < response[i].length; j++) {
+                    if (response[i][j] == 0) continue;
+                    if (test.questionForStandardTest[i].answer.includes(j)) {
+                        curmark += (test.questionForStandardTest[i].marks / factor);
                     }
                     else {
-                        curmark=0;
+                        curmark = 0;
                         break;
                     }
                 }
                 scores.push(curmark);
             }
-            
+
             try {
                 const response = await axios.put('/test/result', {
                     testId,
@@ -238,113 +237,149 @@ const deleteTest = async (req, res) => {
     }
 }
 
-const getUpcomingtestdetails=async (req,res)=>{
-    try{
-        const studentid=req.params.id;
+const getUpcomingtestdetails = async (req, res) => {
+    try {
+        const studentid = req.params.id;
         // implement the logic to get the class id of the student from database
 
-        
+        console.log("studentId : ", studentid);
+
+        const classes = await ClassModel.find({ studId: studentid }).select('classId');
+        const classids = classes.map(cls => cls.classId);
+
         // logic to get all upcoming tests for the student
-        const classid="testclassid" //for testing purposes
-        const upcomingtests=await TestModel.find({classId:classid,completed:false});
-        const detailofUpcomingTests = upcomingtests.map((test) => ({
+
+        const upcomingtests = await Promise.all(classids.map(classid => TestModel.find({ classId: classid, completed: false })));
+
+        const detailofUpcomingTests = upcomingtests.flat().map((test) => ({
             testId: test.testId,
             startDate: new Date(test.startDate).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }),
             startTime: test.startTime,
-          }));
-        res.status(200).json({detailofUpcomingTests});
+        }));
+
+        console.log("details of upcoming test", detailofUpcomingTests);
+        res.status(200).json({ detailofUpcomingTests });
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.status(500).json({Error:err})
+        res.status(500).json({ Error: err })
     }
 };
 
-const getTestDetails=async (req,res)=>{
-    try{
-        const testId=req.params.id;
-        const testDetails=(await TestModel.findOne({testId:testId}))._doc;
+const getUncorrectedTestDetails = async (req, res) => {
+    try {
+        const tutorid = req.params.tutorId;
+        // implement the logic to get the class id of the tutor from database
+
+        console.log(tutorid);
+
+
+        const classes = await ClassModel.find({ tutorId: tutorid }).select('classId');
+        const classids = classes.map(cls => cls.classId);
+
+        console.log(classids);
+
+        // logic to get all upcoming tests for the tutor
+
+        const uncorrectedtests = await Promise.all(classids.map(classid => TestModel.find({ classId: classid, completed: true,feedback:new Array(0) })));
+
+        const detailofUncorrectedTests = uncorrectedtests.flat().map((test) => ({
+            testId: test.testId,
+            startDate: new Date(test.startDate).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }),
+            startTime: test.startTime,
+        }));
+
+        console.log("details of upcoming test", detailofUncorrectedTests);
+        res.status(200).json({ detailofUncorrectedTests });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({ Error: err })
+    }
+};
+
+const getTestDetails = async (req, res) => {
+    try {
+        const testId = req.params.id;
+        const testDetails = (await TestModel.findOne({ testId: testId }))._doc;
         //console.log("test ID : ",testId);
-        const modifiedTestDetials={
-            classId:testDetails.classId,
-            testType:testDetails.testType,
-            startDate:testDetails.startDate,
-            startTime:testDetails.startTime,
-            duration:testDetails.duration
+        const modifiedTestDetials = {
+            classId: testDetails.classId,
+            testType: testDetails.testType,
+            startDate: testDetails.startDate,
+            startTime: testDetails.startTime,
+            duration: testDetails.duration
         };
-        if(testDetails.testType.toLowerCase()=='standard'){
-            modifiedTestDetials['questionForStandardTest']=testDetails['questionForStandardTest'].map((que,_)=>({
-                question:que.question,
-                answerType:que.answerType,
-                marks:que.marks,
-                options:que.options
+        if (testDetails.testType.toLowerCase() == 'standard') {
+            modifiedTestDetials['questionForStandardTest'] = testDetails['questionForStandardTest'].map((que, _) => ({
+                question: que.question,
+                answerType: que.answerType,
+                marks: que.marks,
+                options: que.options
             }))
         };
         //console.log(modifiedTestDetials);
-        res.status(200).json({testDetails});
+        res.status(200).json({ testDetails });
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.status(500).json({Error:err});
+        res.status(500).json({ Error: err });
     }
 };
 
-const getAllTests=async (req,res)=>{
-    try{
-        const studId=req.params.id;
+const getAllTests = async (req, res) => {
+    try {
+        const studId = req.params.id;
         // implement the logic to get the class id of the student from database
 
         // logic to get all tests for the students
-        const classid='testclassid' // for testing purposes
-        const allTests=(await TestModel.find({classId:classid}));
+        const classid = 'testclassid' // for testing purposes
+        const allTests = (await TestModel.find({ classId: classid }));
         //console.log(allTests);
-        res.status(200).json({allTests});
+        res.status(200).json({ allTests });
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.status(500).json({Error:err});
+        res.status(500).json({ Error: err });
     }
 };
 
-const getTestStatistics=async (req,res)=>{
-    try{
-        const testId=req.params.testId;
-        let statistics= await TestModel.findOne({testId:testId});
-        statistics=statistics.toObject();
+const getTestStatistics = async (req, res) => {
+    try {
+        const testId = req.params.testId;
+        let statistics = await TestModel.findOne({ testId: testId });
+        statistics = statistics.toObject();
         //console.log(statistics);
-        if(statistics.testType=='Standard'){
-            const status=[]
-            for(let i=0;i<statistics.result.scores.length;i++)
-            {
-                if(statistics.result.scores[i]!=0){
+        if (statistics.testType == 'Standard') {
+            const status = []
+            for (let i = 0; i < statistics.result.scores.length; i++) {
+                if (statistics.result.scores[i] != 0) {
                     status.push("correct");
                 }
                 else {
-                    let marked=false;
+                    let marked = false;
                     //console.log(`response[${i}]`,statistics.response[i]);
-                    for(let j=0;j<statistics.response[i].length;j++)
-                    {
-                        if(
-                            (statistics.questionForStandardTest[i].answerType!='Numerical'&&statistics.response[i][j]==1)||
-                            (statistics.questionForStandardTest[i].answerType=='Numerical'&&statistics.response[i].length>0)
-                        )
-                        {
+                    for (let j = 0; j < statistics.response[i].length; j++) {
+                        if (
+                            (statistics.questionForStandardTest[i].answerType != 'Numerical' && statistics.response[i][j] == 1) ||
+                            (statistics.questionForStandardTest[i].answerType == 'Numerical' && statistics.response[i].length > 0)
+                        ) {
                             console.log(statistics.questionForStandardTest[i].answer[0])
-                            marked=true;
+                            marked = true;
                             break;
                         }
                     }
-                    status.push(marked?"incorrect":"unmarked");
+                    status.push(marked ? "incorrect" : "unmarked");
                 }
             }
-            statistics['status']=status;
+            statistics['status'] = status;
         }
         console.log(statistics);
-        res.status(200).json({statistics});
+        res.status(200).json({ statistics });
     }
-    catch(err){
+    catch (err) {
         console.log(err);
-        res.status(500).json({Error:err});
+        res.status(500).json({ Error: err });
     }
 };
 
@@ -357,5 +392,6 @@ module.exports = {
     getUpcomingtestdetails,
     getTestDetails,
     getAllTests,
-    getTestStatistics
+    getTestStatistics,
+    getUncorrectedTestDetails
 }

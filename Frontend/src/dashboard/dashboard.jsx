@@ -25,10 +25,12 @@ function Dashboard({setMainSection}) {
     //     setUserName(LocalStorageUserName);
     //     console.log(LocalStorageUserName);
     // }, []);
-    const [upcomingtests,setUpcomingTests]=useState([{}]);
+    const [upcomingtests,setUpcomingTests]=useState([]);
 
     
     useEffect(()=>{
+
+        
         const fetchupcomingtestdetails=async (studId)=>{
             const details= await axios.get(`http://localhost:4000/test/${studId}/upcoming`);
             setUpcomingTests(details.data.detailofUpcomingTests);
@@ -36,7 +38,7 @@ function Dashboard({setMainSection}) {
         // const testdetails=await fetchupcomingtestdetails("cheguevera"); //this is just for testing purposes
         // console.log(testdetails.data.detailofUpcomingTests);
         //setUpcomingTests(testdetails.data.detailofUpcomingTests);
-        fetchupcomingtestdetails();
+        fetchupcomingtestdetails(studId);
     },[]);
 
     useEffect(()=>{

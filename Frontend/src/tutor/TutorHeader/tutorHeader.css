@@ -1,0 +1,52 @@
+.header{
+    height: 10%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content:space-between;
+}
+
+.header .nav_elements_container{
+    margin:10px;
+    padding:20px;
+    display:flex;
+    align-items:center;
+    justify-content: center;
+}
+
+.header .nav_elements_container button{
+    font-size: 15px;
+    color:black;
+    background-color: white;
+    border:none;
+    padding:15px;
+}
+
+.header .nav_elements_container button:hover{
+    cursor:pointer;
+    /* background-color: white; */
+    color: rgb(151, 171, 190);
+    border:none;
+}
+
+.header .shortcuts_and_profile_container{
+    margin:10px;
+    padding:20px;
+    display:flex;
+    align-items:center;
+    justify-content: center;
+}
+
+.header .shortcuts_and_profile_container button{
+    color:black;
+    background-color: white;
+    border:none;
+    padding:15px;
+}
+
+.header .shortcuts_and_profile_container button:hover{
+    cursor:pointer;
+    opacity:0.5;
+}
+
+

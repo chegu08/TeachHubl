@@ -115,6 +115,23 @@ const getClassDetailsForStudent=async (req,res)=>{
     }
 };
 
+const getClassDetailsForTutors= async (req,res) =>{
+    try {
+        const tutorId=req.params.tutorId;
+        const classes=await Class.find({tutorId:tutorId});
+        const classDetails=classes.map((val,_)=>({
+            courseName:val.className,
+            totalClasses:val.classCount,
+            completed:val.completedClasses
+        }));
+        res.status(200).json({classDetails:classDetails});
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
+
 const getAllCourseInformation=async (req,res)=>{
     try{
         const studId=req.params.studId;
@@ -144,5 +161,6 @@ const getAllCourseInformation=async (req,res)=>{
 module.exports={
     createClass,
     getClassDetailsForStudent,
-    getAllCourseInformation
+    getAllCourseInformation,
+    getClassDetailsForTutors
 }
