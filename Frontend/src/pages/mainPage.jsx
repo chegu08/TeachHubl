@@ -10,17 +10,17 @@ export const mainSectionContext=createContext();
 
 
 function MainPage () {
-  const [mainSection,setMainSection]=useContext(mainSectionContext);
+  const [studentmainSection,setStudentMainSection]=useContext(mainSectionContext);
 //   useEffect(()=>{
 //    console.log(mainSection)
 // },[mainSection])
   return (<>
-    <Sidebar setMainSection={setMainSection} />
+    <Sidebar setStudentMainSection={setStudentMainSection} />
     <div className="main_block">
       <Header />
-      {mainSection == "dashboard" && <Dashboard setMainSection={setMainSection}/>}
-      {mainSection == "courses" && <Courses />}
-      {mainSection =='tests'&&<Tests />}
+      {studentmainSection == "dashboard" && <Dashboard setMainSection={setStudentMainSection}/>}
+      {studentmainSection == "courses" && <Courses />}
+      {studentmainSection =='tests'&&<Tests />}
     </div>
   </>)
 };

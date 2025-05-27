@@ -2,7 +2,7 @@ import './sidebar.css'
 import logo from '../assets/WhatsApp Image 2025-02-19 at 20.32.04_9336c379.svg'
 import searchlogo from '../assets/search.svg'
 
-function Sidebar({setMainSection}) {
+function Sidebar({setStudentMainSection}) {
     return (
         <div className='sidebar'>
             <div className="name_and_logo">
@@ -14,10 +14,10 @@ function Sidebar({setMainSection}) {
                 <input type="text" className="text" placeholder='Search' />
             </div>
             <hr></hr>
-            <button className="dashboard" onClick={()=>setMainSection("dashboard")}>Dashboard</button>
-            <button className="courses" onClick={()=>setMainSection("courses")}>Courses</button>
-            <button className="tests" onClick={()=>setMainSection("tests")}>Tests</button>
-            <button className="resources" onClick={()=>setMainSection("resources")}>Resources</button>
+            <button className="dashboard" onClick={()=>setStudentMainSection("dashboard")}>Dashboard</button>
+            <button className="courses" onClick={()=>setStudentMainSection("courses")}>Courses</button>
+            <button className="tests" onClick={()=>setStudentMainSection("tests")}>Tests</button>
+            <button className="resources" onClick={()=>setStudentMainSection("resources")}>Resources</button>
         </div>
     )
 }

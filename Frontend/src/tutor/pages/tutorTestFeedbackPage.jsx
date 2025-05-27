@@ -1,13 +1,15 @@
-import './testAnalysis.css'
-import { useLocation } from 'react-router-dom';
-import { useState, useEffect, useMemo } from 'react'
-import axios from 'axios'
-import { Bar,Pie } from 'react-chartjs-2'
-import { Chart, LinearScale, CategoryScale, BarElement, Legend, Tooltip, plugins,ArcElement } from 'chart.js'
+import "./tutorTestFeedbackPage.css";
+import { useParams,useNavigate } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
+import axios from 'axios';
+import { Bar,Pie } from 'react-chartjs-2';
+import { Chart, LinearScale, CategoryScale, BarElement, Legend, Tooltip, plugins,ArcElement } from 'chart.js';
+import React from 'react';
+
 
 Chart.register(LinearScale, CategoryScale, BarElement, Legend, Tooltip,ArcElement);
 
-const ReportChart = ({ testStatistics, type }) => {
+const ReportChart = React.memo(({ testStatistics, type }) => {
     console.log("Logging from chart: ", testStatistics);
     const totalQuestions = testStatistics.questionForStandardTest.length;
     let correct = 0, incorrect = 0, unmarked = 0;
@@ -74,14 +76,123 @@ const ReportChart = ({ testStatistics, type }) => {
         </div>
 
     );
-};
+});
 
-function TestAnalysis() {
+const FeedbackTextArea = ({num,feedback,setFeedback}) =>{
 
-    const testId = useLocation().pathname.substring(10);
+    const handleOnChangeFeedback = (value,num) =>{
+        setFeedback(pre=>{
+            const newfeedback=[...pre];
+            newfeedback[num-1]=value;
+            return newfeedback;
+        });
+    }
+
+        return (
+            <textarea className="feedback_input" value={feedback[num-1]} onChange={e=>handleOnChangeFeedback(e.target.value,num)}/>
+        )
+    };
+
+
+const Question = React.memo(({ num ,questions}) => {
+
+    console.log("question component is changin")
+
+    const styleforWronglyMarkedResponse = {
+        backgroundColor: "rgb(250, 225, 228)",
+        border: "1px solid rgb(220, 53, 69)"
+    }
+
+    const styleforCorrectlyMarkedResponse = {
+        backgroundColor: "rgb(235, 255, 246)",
+        border: "1px solid rgb(13, 253, 117)"
+    }
+
+    const styleForCorrectAnswer = {
+        backgroundColor: "rgb(240, 245, 251)",
+        border: "1px solid rgb(13, 110, 253)"
+    }
+
+    const styleForUnmarked = {
+        backgroundColor: 'white'
+    }
+
+    if (Object.keys(questions[0]).length !== 0 && questions[num - 1].type.toLowerCase() == 'singlecorrect') {
+        return (
+            <>
+                <h3>Question {num}</h3>
+                <p>{questions[num - 1].question}</p>
+                <div className="options">
+                    {
+                        questions[num - 1].options.map((option, ind) => {
+                            return (
+                                <div key={ind}
+                                    style={questions[num - 1].answer.includes(ind) ? (questions[num - 1].response[ind] == 1 ? styleforCorrectlyMarkedResponse : styleForCorrectAnswer)
+                                        : (questions[num - 1].response[ind] == 1 ? styleforWronglyMarkedResponse : styleForUnmarked)}>
+                                    <label htmlFor={ind}>{option}</label>
+                                    <span id={ind} name={"answer"} />
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            </>
+        )
+    }
+    else if (Object.keys(questions[0]).length !== 0 && questions[num - 1].type.toLowerCase() == 'multicorrect') {
+        return (
+            <>
+                <h3>Question {num}</h3>
+                <p>{questions[num - 1].question}</p>
+                <div className="options">
+                    {
+                        questions[num - 1].options.map((option, ind) => {
+                            return (
+                                <div key={ind}
+                                    style={questions[num - 1].answer.includes(ind) ? (questions[num - 1].response[ind] == 1 ? styleforCorrectlyMarkedResponse : styleForCorrectAnswer)
+                                        : (questions[num - 1].response[ind] == 1 ? styleforWronglyMarkedResponse : styleForUnmarked)}>
+                                    <label htmlFor={ind}>{option}</label>
+                                    <span id={ind} name={ind} />
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            </>
+        )
+    }
+    else if (Object.keys(questions[0]).length !== 0) {
+        const space = ' '
+        return (
+            <>
+                <h3>Question {num}</h3>
+                <p>{questions[num - 1].question}</p>
+                <span className='number'
+                    style={questions[num - 1].response.length == 0 ? styleForUnmarked : (questions[num - 1].response[0] == questions[num - 1].answer[0] ? styleforCorrectlyMarkedResponse : styleforWronglyMarkedResponse)}
+                >
+                    {(questions[num - 1].response.length == 0 || (questions[num - 1].response.length > 0 && questions[num - 1].answer[0] == questions[num - 1].response[0])) && questions[num - 1].answer[0]}
+                    {
+                        questions[num - 1].response.length > 0 && questions[num - 1].answer[0] != questions[num - 1].response[0] &&
+                        <>
+                            <s >{questions[num - 1].response[0]}</s>
+                            <span>{space} {questions[num - 1].answer[0]}</span>
+                        </>
+                    }
+
+                </span>
+            </>
+        )
+    }
+});
+function TutorTestFeedbackPage () {
+
+    //console.log("top is re-rendered");
+    const navigation=useNavigate();
+    const testId=useParams().testId;
     const [testStatistics, setTestStatistics] = useState({});
     //const [totalQuestions, setTotalQuestions] = useState(0);
     const [questionNumber, setQuestionNumber] = useState(1);
+    const [feedback,setFeedback]=useState([""]);
     const [questions, setQuestions] = useState([{}]);
     const [chartType, setChartType] = useState("bar");
     //let questions=[{}];
@@ -91,6 +202,7 @@ function TestAnalysis() {
         async function fetchTestStatistics() {
             const response = await axios.get(`http://localhost:4000/test/statistics/${testId}`);
             setTestStatistics(response.data.statistics);
+            setFeedback(new Array(response.data.statistics.questionForStandardTest.length).fill(""));
             setQuestions(response.data.statistics.questionForStandardTest.map((que, ind) => (
                 {
                     question: que.question,
@@ -111,103 +223,23 @@ function TestAnalysis() {
 
     const memoizedtestStatics = useMemo(() => testStatistics, [testStatistics]);
 
-    useEffect(() => {
-        console.log(questions);
-        console.log("Test statistics : ", testStatistics);
-    }, [questions])
-
-
-    const Question = ({ num }) => {
-
-        const styleforWronglyMarkedResponse = {
-            backgroundColor: "rgb(250, 225, 228)",
-            border: "1px solid rgb(220, 53, 69)"
+    const handleSendFeedback = async ()=>{
+        console.log("clicked");
+        const response=await axios.put(`http://localhost:4000/test/feedback`,{
+            testId,feedback
+        });
+        if(response.status==200) {
+            alert('success');
+            navigation(-1);
         }
-
-        const styleforCorrectlyMarkedResponse = {
-            backgroundColor: "rgb(235, 255, 246)",
-            border: "1px solid rgb(13, 253, 117)"
-        }
-
-        const styleForCorrectAnswer = {
-            backgroundColor: "rgb(240, 245, 251)",
-            border: "1px solid rgb(13, 110, 253)"
-        }
-
-        const styleForUnmarked = {
-            backgroundColor: 'white'
-        }
-
-        if (Object.keys(questions[0]).length !== 0 && questions[num - 1].type.toLowerCase() == 'singlecorrect') {
-            return (
-                <>
-                    <h3>Question {num}</h3>
-                    <p>{questions[num - 1].question}</p>
-                    <div className="options">
-                        {
-                            questions[num - 1].options.map((option, ind) => {
-                                return (
-                                    <div key={ind}
-                                        style={questions[num - 1].answer.includes(ind) ? (questions[num - 1].response[ind] == 1 ? styleforCorrectlyMarkedResponse : styleForCorrectAnswer)
-                                            : (questions[num - 1].response[ind] == 1 ? styleforWronglyMarkedResponse : styleForUnmarked)}>
-                                        <label htmlFor={ind}>{option}</label>
-                                        <span id={ind} name={"answer"} />
-                                    </div>
-                                )
-                            })
-                        }
-                    </div>
-                </>
-            )
-        }
-        else if (Object.keys(questions[0]).length !== 0 && questions[num - 1].type.toLowerCase() == 'multicorrect') {
-            return (
-                <>
-                    <h3>Question {num}</h3>
-                    <p>{questions[num - 1].question}</p>
-                    <div className="options">
-                        {
-                            questions[num - 1].options.map((option, ind) => {
-                                return (
-                                    <div key={ind}
-                                        style={questions[num - 1].answer.includes(ind) ? (questions[num - 1].response[ind] == 1 ? styleforCorrectlyMarkedResponse : styleForCorrectAnswer)
-                                            : (questions[num - 1].response[ind] == 1 ? styleforWronglyMarkedResponse : styleForUnmarked)}>
-                                        <label htmlFor={ind}>{option}</label>
-                                        <span id={ind} name={ind} />
-                                    </div>
-                                )
-                            })
-                        }
-                    </div>
-                </>
-            )
-        }
-        else if (Object.keys(questions[0]).length !== 0) {
-            const space = ' '
-            return (
-                <>
-                    <h3>Question {num}</h3>
-                    <p>{questions[num - 1].question}</p>
-                    <span className='number'
-                        style={questions[num - 1].response.length == 0 ? styleForUnmarked : (questions[num - 1].response[0] == questions[num - 1].answer[0] ? styleforCorrectlyMarkedResponse : styleforWronglyMarkedResponse)}
-                    >
-                        {(questions[num - 1].response.length == 0 || (questions[num - 1].response.length > 0 && questions[num - 1].answer[0] == questions[num - 1].response[0])) && questions[num - 1].answer[0]}
-                        {
-                            questions[num - 1].response.length > 0 && questions[num - 1].answer[0] != questions[num - 1].response[0] &&
-                            <>
-                                <s >{questions[num - 1].response[0]}</s>
-                                <span>{space} {questions[num - 1].answer[0]}</span>
-                            </>
-                        }
-
-                    </span>
-                </>
-            )
+        else {
+            alert(`Server responded with status code ${response.status}... try again`);
         }
     };
 
     return (
-        <div className='test_analysis'>
+        <>
+        <div className='tutor_test_analysis'>
             <div className="question_navigation">
                 <strong style={{ fontSize: "large" }}>{testId}</strong>
                 <div className="instructions">
@@ -233,19 +265,21 @@ function TestAnalysis() {
             </div>
             <div className="questions_and_feedback">
                 <div className="questions">
-                    <Question num={questionNumber} />
+                    <Question num={questionNumber} questions={questions}/>
                 </div>
                 <div className="feedback">
                     <h2>Feedback: </h2>
+                    <FeedbackTextArea num={questionNumber} feedback={feedback} setFeedback={setFeedback}/>
                 </div>
             </div>
+            <button className="send-feedback-button" onClick={handleSendFeedback}>Send Feedback</button>
             <div className="statistics">
                 <div className="type_of_chart">
                     <h1 >REPORT</h1>
                     <select name="type of bar" id='type'
                         value={ chartType}
                         onChange={(e)=>setChartType(e.target.value)}
-                    >
+                        >
                         <option value="bar" >Bar</option>
                         <option value="pie" >Pie</option>
                     </select>
@@ -259,7 +293,9 @@ function TestAnalysis() {
 
             </div>
         </div>
+        </>
     )
-}
+};
 
-export default TestAnalysis
+
+export default TutorTestFeedbackPage;

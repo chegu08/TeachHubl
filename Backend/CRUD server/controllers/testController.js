@@ -105,8 +105,30 @@ const uploadresult = async (req, res) => {
 }
 
 const uploadfeedback = async (req, res) => {
+    try {
+        const {testId,feedback}=req.body;
+        
+        const test=await TestModel.findOne({testId:testId});
 
-}
+        // this has to be implemented after custom testing interface has been implemented
+        if(test.testType.toLowerCase()=='custom') {
+
+        }
+        else {
+            const modifiedTest=await TestModel.updateOne({testId:testId},{
+                $set :{
+                    feedback:feedback
+                }
+            })
+            console.log("Modified Test: " ,modifiedTest);
+            res.status(200).json({Message:"Feedback uploaded", modifiedTest:modifiedTest});
+        }
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
 
 
 const uploadresponse = async (req, res) => {
@@ -249,7 +271,7 @@ const getUpcomingtestdetails = async (req, res) => {
 
         // logic to get all upcoming tests for the student
 
-        const upcomingtests = await Promise.all( classids.map(async classid => await TestModel.find({ classId: classid, completed: false })));
+        const upcomingtests = await Promise.all(classids.map(async classid => await TestModel.find({ classId: classid, completed: false })));
 
         const detailofUpcomingTests = upcomingtests.flat().map((test) => ({
             testId: test.testId,
@@ -281,7 +303,7 @@ const getUncorrectedTestDetails = async (req, res) => {
 
         // logic to get all upcoming tests for the tutor
 
-        const uncorrectedtests = await Promise.all(classids.map(async classid => await TestModel.find({ classId: classid, completed: true,feedback:new Array(0) })));
+        const uncorrectedtests = (await Promise.all(classids.map(async classid => await TestModel.find({ classId: classid, completed: true, feedback: {$size:0} })))).flat();
 
         const detailofUncorrectedTests = uncorrectedtests.flat().map((test) => ({
             testId: test.testId,
@@ -332,13 +354,55 @@ const getAllTests = async (req, res) => {
         const studId = req.params.id;
         // implement the logic to get the class id of the student from database
 
+        const classids = await ClassModel.find({ studId: studId }).select('classId className');
+        // console.log("all test informaiton: ",classids);
+
         // logic to get all tests for the students
-        const classid = 'testclassid' // for testing purposes
-        const allTests = (await TestModel.find({ classId: classid }));
-        //console.log(allTests);
+        // const classid = 'testclassid' // for testing purposes
+        const allTests = (await Promise.all(
+            classids.map(async cls => {
+                const tests=await TestModel.find({classId:cls.classId});
+                return tests.map(test =>( {
+                    testId:test.testId,
+                    className:cls.className,
+                    startDate:test.startDate,
+                    status:test.completed?"Completed":"Not Completed"
+                }))
+            })
+        )).flat();
+        //console.log("allTests: ", allTests);
         res.status(200).json({ allTests });
     }
     catch (err) {
+        console.log(err);
+        res.status(500).json({ Error: err });
+    }
+};
+
+const getAllTutorTests = async (req, res) => {
+    try {
+        const tutorId = req.params.tutorId;
+        // implement the logic to get the class id of the student from database
+
+        const classids = await ClassModel.find({ tutorId: tutorId }).select('classId className');
+        // console.log("all test informaiton: ",classids);
+
+        // logic to get all tests for the students
+        // const classid = 'testclassid' // for testing purposes
+        const allTests = (await Promise.all(
+            classids.map(async cls => {
+                const tests=await TestModel.find({classId:cls.classId});
+                return tests.map(test =>( {
+                    testId:test.testId,
+                    className:cls.className,
+                    startDate:test.startDate,
+                    status:!test.completed?"Live":(test.feedback.length==0)?"Completed/Uncorrected":"Corrected"
+                }))
+            })
+        )).flat();
+        //console.log("allTests: ", allTests);
+        res.status(200).json({ allTests });
+    } catch (err) {
         console.log(err);
         res.status(500).json({ Error: err });
     }
@@ -393,5 +457,6 @@ module.exports = {
     getTestDetails,
     getAllTests,
     getTestStatistics,
-    getUncorrectedTestDetails
+    getUncorrectedTestDetails,
+    getAllTutorTests
 }

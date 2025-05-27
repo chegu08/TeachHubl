@@ -1,18 +1,18 @@
-import './tests.css'
+import './tutorTests.css';
 import {useState,useEffect} from 'react';
-import {useNavigate} from 'react-router-dom'
-import axios from 'axios'
+import {useNavigate} from 'react-router-dom';
+import axios from 'axios';
 
-function Tests(){
-    const studId="lkajnsglknaoi";
+function TutorTests () {
+    const tutorId="ljsdglkansdogitn";
     const [alltests,setAllTests]=useState();
     const navigation=useNavigate();
     useEffect(()=>{
-        async function fetchalltests(studId){
-            const allTests=(await axios.get(`http://localhost:4000/test/all/${studId}`)).data.allTests;
+        async function fetchalltests(tutorId){
+            const allTests=(await axios.get(`http://localhost:4000/test/all/tutor/${tutorId}`)).data.allTests;
             setAllTests(allTests);
         }
-        fetchalltests(studId);
+        fetchalltests(tutorId);
     },[]);
 
     return (
@@ -28,7 +28,7 @@ function Tests(){
                     {
                         alltests&&alltests.map((test,ind)=>{
                             const date=test.startDate.substring(0,10).split('-').reverse().join("-")
-                            return (<div key={ind} onClick={()=>navigation(`/analysis/${test.testId}`)}>
+                            return (<div key={ind} onClick={()=>navigation(`/tutor/feedback/${test.testId}`)}>
                                 <span className="test_name" style={{width:"40%",fontSize:"large"}}>
                                     {test.testId}
                                 </span>
@@ -50,6 +50,6 @@ function Tests(){
                 </div>
         </div>
     )
-}
+};
 
-export default Tests
+export default TutorTests
