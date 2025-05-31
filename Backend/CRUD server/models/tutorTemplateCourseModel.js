@@ -48,6 +48,14 @@ const tutorTemplateCourseSchema=new mongoose.Schema({
     thumbnailForImage:{
         type:String,
         required:true
+    },
+    maxPrice:{
+        type:Number,
+        required:true
+    },
+    maxClasses:{
+        type:Number,
+        required:true
     }
 });
 

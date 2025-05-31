@@ -11,7 +11,12 @@ function HomePage() {
 
     useEffect(() => {
         // this is just for ui ... implement the backend logic and then implement here
-        setBestCourses(new Array(10).fill({ courseName: "Course Name", subject: "Subject", photo: courseimg }));
+        // pagination concept is just implemented in backend
+        // implement it in frontend
+        async function fetchBestCourses() {
+            const bestCourses= await axios.get(`http://localhost:4000/tutor/alltemplate?limit=10&offset=${0}`);
+            setBestCourses(bestCourses.data);
+        }
 
         async function fetchBestTutors() {
             const bestTutors = (await axios.get('http://localhost:4000/tutor/best')).data;
@@ -20,6 +25,7 @@ function HomePage() {
         }
 
         fetchBestTutors();
+        fetchBestCourses();
 
     }, []);
 
@@ -38,18 +44,19 @@ function HomePage() {
                     {
                         bestCourses.map((course, ind) => (
                             <div className="course" key={ind}>
-                                <img src={courseimg} width={"100%"} height={"50%"} />
+                                <img src={course.image} width={"100%"} height={"50%"} />
                                 {/* the image used is just for ui... build the backend and complete it */}
                                 <div className="info-container">
                                     <div className="course_and_subject" >
                                         <span style={{ fontSize: "larger" }}><strong>{course.courseName}</strong></span>
                                         <br />
                                         <span style={{ fontSize: "small", color: "rgb(151, 171, 190)" }}>{course.subject}</span>
+                                        <br />
+                                        <span style={{ fontSize: "medium" }}>Max Price : ₹ {course.maxPrice }</span>
+                                        <br />
+                                        <span style={{ fontSize: "medium" }}>Max Classes : {course.maxClasses }</span>
                                     </div>
-                                    <a href={"/"} style={{ color: "rgb(13, 110, 253)" }}>view more</a>
-                                    {/* the anchor tag points to the home screen for now but it should actually point to a detailed page that shows
-                                        the whole information of the course as posted by the tutor 
-                                     */}
+                                    <a href={`/template-course/${course.courseId}`} style={{ color: "rgb(13, 110, 253)" }}>view more</a>
                                 </div>
                             </div>
                         ))

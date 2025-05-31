@@ -17,6 +17,8 @@ function TutorCreateCourse({ setMainSection }) {
     const [resourceFiles, setResourceFiles] = useState([null]);
     const [courseDescription, setCourseDescription] = useState("");
     const [previousTemplates, setPreviousTemplates] = useState([]);
+    const [maxprice,setMaxPrice]=useState();
+    const [maxClass,setMaxClass]=useState();
 
     useEffect(() => {
         async function fetchPreviousTemplates() {
@@ -43,11 +45,34 @@ function TutorCreateCourse({ setMainSection }) {
         setCourseImage(event.target.files[0]);
     };
 
+    const checkValidityOfFormData=()=>{
+
+        // checking whether the entered tempate name does not clash with other templates
+        for(const template of previousTemplates) {
+            if(courseName == template.name) {
+                alert('You already have a template with the same name...\nProvide a unique name');
+                return false;
+            }
+        }
+
+        if(maxprice<=0) {
+            alert('Max Price must not be Zero or lesser');
+            return false;
+        }
+
+        if(maxClass<=0) {
+            alert('Max Classes must not be Zero or lesser');
+            return false;
+        }
+
+        return true;
+    }
 
     const handleUploadTemplateCourse = async (e) => {
 
-        // implement the logic to check whether the course name 
-        // does not match with any other templates that the tutor has
+        if(!checkValidityOfFormData()) {
+            return ;
+        }
 
         const formdata = new FormData();
 
@@ -65,6 +90,8 @@ function TutorCreateCourse({ setMainSection }) {
         formdata.append('overview', courseOverview);
         formdata.append("agenda", courseAgenda);
         formdata.append('description', courseDescription);
+        formdata.append('maxPrice',maxprice);
+        formdata.append('maxClass',maxClass);
         chapters.forEach(chapter => {
             if (chapter !== '') {
                 formdata.append('chapters', chapter);
@@ -120,6 +147,14 @@ function TutorCreateCourse({ setMainSection }) {
                     <div className="input_container">
                         <label htmlFor="course_agenda">Course Agenda: </label>
                         <input type="text" id='course_agenda' value={courseAgenda} onChange={(e) => setCourseAgenda(e.target.value)} />
+                    </div>
+                    <div className="input_container">
+                        <label htmlFor="maxprice">Max Price: </label>
+                        <input type="number" id='maxprice' value={maxprice} onChange={(e) => setMaxPrice(e.target.value)} required/>
+                    </div>
+                    <div className="input_container">
+                        <label htmlFor="maxclass">Max Classes: </label>
+                        <input type="number" id='maxclass' value={maxClass} onChange={(e) => setMaxClass(e.target.value)} required/>
                     </div>
                     <div className="chapters_container">
                         <h1>Chapters</h1>

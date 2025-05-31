@@ -2,7 +2,7 @@ const { name } = require('agenda/dist/agenda/name');
 const Tutor = require('../models/tutorDetailModel');
 const TutorTemplateCourseModel = require('../models/tutorTemplateCourseModel');
 const { v4: uuidv4 } = require('uuid');
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand, GetO, GetObjectCommand } = require('@aws-sdk/client-s3');
 const aws_config = require("../config/aws-config");
 const { compressFile } = require('../utils/fileCompression');
 
@@ -33,7 +33,7 @@ const getBestTutors = async (req, res) => {
 const createNewTemplateCourse = async (req, res) => {
     try {
 
-        const { name, overview, description, subject, agenda, chapters, tutorId } = req.body;
+        const { name, overview, description, subject, agenda, chapters, tutorId,maxPrice } = req.body;
         const files = req.files;
 
         // always the first file from the files array is the course Image
@@ -85,12 +85,41 @@ const createNewTemplateCourse = async (req, res) => {
             agenda: agenda,
             chapters: chapters,
             thumbnailForImage: base64Thumbnail,
-            resourceKeys: s3ObjectKeys.filter((_, ind) => ind != 0)
+            resourceKeys: s3ObjectKeys.filter((_, ind) => ind != 0),
+            maxPrice:maxPrice
         };
 
         const newTemplateCourse = await TutorTemplateCourseModel.create(newTemplateCourseDetails);
 
         res.status(200).json({ newCourse: newTemplateCourse });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ Error: err });
+    }
+};
+
+const getAllTemplateCourses = async (req, res) => {
+    try {
+        const { limit, offset } = req.query;
+
+        const templateCoursesDetails = await TutorTemplateCourseModel.find().skip(offset * 10).limit(limit).select('templateCourseId name subject thumbnailForImage maxPrice maxClasses -_id');
+
+        const templateCourses = await Promise.all(
+            templateCoursesDetails.map(template => (
+                {
+                    courseId: template.templateCourseId,
+                    courseName: template.name,
+                    subject: template.subject,
+                    image: "data:image/jpeg;base64," + template.thumbnailForImage,
+                    maxPrice:template.maxPrice,
+                    maxClasses:template.maxClasses
+                }
+            ))
+        );
+
+        res.status(200).json(templateCourses);
+
 
     } catch (err) {
         console.log(err);
@@ -113,9 +142,78 @@ const getTemplateCourses = async (req, res) => {
     }
 };
 
+const getTemplateDetails = async (req, res) => {
+    try {
+        const templateId = req.params.templateId;
+
+        const templateDetails = await TutorTemplateCourseModel.findOne({ templateCourseId: templateId });
+
+        const tutorDetails = await Tutor.findOne({ uid: templateDetails.tutorId });
+
+        const tutor = {
+            name: tutorDetails.name,
+            yearsOfExperience: tutorDetails.yearsofExperience,
+            image: tutorDetails?.photo
+        }
+
+        const course = {
+            name: templateDetails.name,
+            subject: templateDetails.subject,
+            description: templateDetails.description,
+            overview: templateDetails?.overview,
+            agenda: templateDetails?.agenda,
+            chapters: templateDetails.chapters,
+            resources: templateDetails.resourceKeys.map(name => (name.split('_')[1])),
+            maxPrice:templateDetails.maxPrice,
+            maxClasses:templateDetails.maxClasses
+        };
+
+        res.status(200).json({ tutor, course });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ Error: err });
+    }
+};
+
+const getTemplateImage = async (req, res) => {
+    try {
+        const templateId = req.params.templateId;
+
+        const templateImageKey = await TutorTemplateCourseModel.findOne({ templateCourseId: templateId }).select('imageKey -_id');
+
+        const client = new S3Client({
+            region: aws_config.region,
+            credentials: aws_config.S3credentials
+        });
+
+        const command = new GetObjectCommand({
+            Bucket: aws_config.s3BucketName,
+            Key: templateImageKey.imageKey
+        });
+
+        const response = await client.send(command);
+
+        const stream = response.Body;
+
+        res.setHeader("Content-Type", response.ContentType || "image/jpeg");
+        res.setHeader("Content-Length", response.ContentLength);
+
+        stream.pipe(res);
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ Error: err });
+    }
+};
+
+
 module.exports = {
     getBestTutors,
     createNewTemplateCourse,
-    getTemplateCourses
+    getTemplateCourses,
+    getAllTemplateCourses,
+    getTemplateDetails,
+    getTemplateImage
 };
 
