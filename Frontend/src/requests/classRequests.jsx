@@ -84,7 +84,14 @@ function ClassRequests() {
                                         }
                                     </div>
                                 </div>
-                                <button className="cancel_request" onClick={()=>handleCancelRequest(req.requestId)}>Cancel request</button>
+                                {
+                                    req.requestStatus=="pending"&&
+                                    <button className="cancel_request" onClick={()=>handleCancelRequest(req.requestId)}>Cancel request</button>
+                                }
+                                {
+                                    req.requestStatus!="pending"&&
+                                    <p className="cancel_request">{req.requestStatus}</p>
+                                }
                             </div>
                         ))
                 }

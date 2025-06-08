@@ -1,0 +1,89 @@
+.tutor_requests_container{
+    width:100%;
+    height:100%;
+    /* background-color: red; */
+}
+
+.tutor_requests_container .heading {
+    padding: 20px;
+    padding-left: 42px;
+    /* background-color: blue; */
+    height: 15%;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.tutor_requests_container .button_container {
+    width:100%;
+    display: flex;
+    gap:20px;
+    padding-left: 42px;
+}
+
+.tutor_requests_container .button_container button {
+    border: 1px solid rgb(145, 161, 214);
+    color: rgb(145, 161, 214);
+    min-width: 80px;
+    height: 30px;
+    padding: 0px 10px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.tutor_requests_container .request_list_container{
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding:20px;
+    width:100%;
+    /* background-color: red; */
+    gap: 20px;
+}
+
+.tutor_requests_container .request_list_container .request{
+    width:95%;
+    border:1px solid rgb(145, 161, 214);
+    border-radius: 5px;
+    background-color: white;
+    margin:auto;
+    height:200px;
+    margin-top:15px;
+    margin-bottom: 15px;
+    display:flex;
+    
+    align-items: center;
+    overflow: hidden;
+}
+
+.tutor_requests_container .request_list_container .request .details{
+    /* background-color: red; */
+    flex-grow: 1;
+    padding:20px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.tutor_requests_container .request_list_container .request .details .chapters{
+    width:50%;
+    overflow-y: scroll;
+    overflow-x: auto;
+    height:60%;
+    border-radius: 2px;
+    border: 1px solid black;
+    padding:10px;
+}
+
+.tutor_requests_container .request_list_container .request .request_button {
+    height:30%;
+    padding:20px;
+    background-color: rgb(220, 53, 69);
+    color:white;
+    border:none;
+    border-radius: 5px;
+    font-size: medium;
+    margin-right:5%;
+    cursor: pointer;
+}
+

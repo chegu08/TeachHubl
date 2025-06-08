@@ -19,6 +19,7 @@ function TutorSidebar({setMainSection}){
                     <button className="tests" onClick={()=>setMainSection("tests")}>Tests</button>
                     <button className="resources" onClick={()=>setMainSection("resources")}>Resources</button>
                     <button className="create_course" onClick={()=>setMainSection("create_course")}>Create Courses</button>
+                    <button className="requests" onClick={()=>setMainSection("request")}>Requests</button>
                 </div>
     )
 }

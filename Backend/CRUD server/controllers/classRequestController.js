@@ -3,6 +3,7 @@ const TutorTemplateCourseModel=require("../models/tutorTemplateCourseModel");
 const StudentModel=require("../models/studentDetailModel");
 const TutorModel=require("../models/tutorDetailModel");
 const {v4:uuidv4} =require("uuid");
+const student = require("../models/studentDetailModel");
 
 const BASE64PREFIX="data:image/jpeg;base64,"
 
@@ -74,11 +75,55 @@ const getStudentRequests=async (req,res) =>{
     }
 };
 
+const getTutorRequests=async (req,res) =>{
+    try{
+        const {tutorId,status}=req.params;
+        
+        let requests;
+
+        if(status!="all") {
+            requests=await ClassRequestModel.find({tutorId,requestStatus:status});
+        }
+        else {
+            requests=await ClassRequestModel.find({tutorId});
+        }
+
+        const requestResults=await Promise.all(
+            requests.map(async (req)=>{
+                const student=await StudentModel.findOne({uid:req.studId});
+                const template=await TutorTemplateCourseModel.findOne({templateCourseId:req.templateId});
+                const templateThumbnail=template.thumbnailForImage;
+                const templateName=template.name;
+
+                return {
+                    ...req._doc,studentName:student.name,templateThumbnail,templateName,studId:student.uid
+                }
+            })
+        );
+
+        const tutorResults=requestResults.map(result=>({
+            requestId:result.requestId,
+            studId:result.studId,
+            tutorId:result.tutorId,
+            templateId:result.templateId,
+            chaptersRequested:result.chaptersRequested,
+            requestStatus:result.requestStatus,
+            studentName:result.studentName,
+            templateThumbnail:BASE64PREFIX+result.templateThumbnail,
+            templateName:result.templateName
+        }))
+
+        res.status(200).json(tutorResults);
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
 const cancelStudentRequest=async (req,res)=>{
     try {
         const {requestId}=req.body;
-
-        console.log(requestId);
         
         const studentRequest=await ClassRequestModel.findOne({requestId:requestId});
 
@@ -107,8 +152,41 @@ const cancelStudentRequest=async (req,res)=>{
     }
 };  
 
+const rejectStudentRequest=async (req,res)=>{
+    try{
+        const {requestId}=req.body;
+        
+        const studentRequest=await ClassRequestModel.findOne({requestId:requestId});
+
+        if(!studentRequest) {
+            return res.status(400).json({Error:"The request does not exist"});
+            
+        }
+
+        if(studentRequest.requestStatus!="pending") {
+            return res.status(400).json({Error:"This request can't be rejected anymore"});
+        }
+
+        const reponse=await ClassRequestModel.updateOne({requestId:requestId},{
+            $set:{
+                requestStatus:"rejected"
+            }
+        });
+
+        //console.log(reponse);
+        
+        res.status(200).json({Message:"Successfully rejected the request"});
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({Error:err});       
+    }
+};
+
 module.exports={
     sendRequestToTutor,
     getStudentRequests,
-    cancelStudentRequest
+    cancelStudentRequest,
+    getTutorRequests,
+    rejectStudentRequest
 };
