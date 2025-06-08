@@ -4,6 +4,7 @@
     /* background-color: red; */
     display: flex;
     flex-direction: column;
+    
     overflow-y: auto;
 }
 
@@ -11,6 +12,7 @@
     flex-grow: 1;
     width:100%;
     display: flex;
+    justify-content: center;
 }
 
 .template-course-page .body .course-information-container{
@@ -70,6 +72,8 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
+    z-index:1;
 }
 .template-course-page .body .tutor-information-container img{
     border: 1px solid black;
@@ -77,4 +81,101 @@
     width:90%;
     border-radius: 5px;
     overflow: hidden;
+}
+
+.template-course-page .body .tutor-information-container button{
+    height:50px;
+    background-color: rgb(13, 110, 253);
+    margin-top:20px;
+    outline:none;
+    border:none;
+    cursor:pointer;
+    border-radius: 5px;
+    color:white;
+    font-size:larger;
+}
+
+.template-course-page .body .background-blur{
+    height:100%;
+    width:100%;
+    position:absolute;
+    top:0;
+    left:0;
+    opacity:0.9;
+    z-index:2;
+    background-color: rgba(186, 193, 213, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.template-course-page .body .request-window{
+    position:absolute;
+    z-index: 5;
+    width:50%;
+    height:60%;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    margin-top:5%;
+    overflow-y :scroll;
+}
+
+.template-course-page .body .request-window .top{
+    height: 30px;
+    display: flex;
+    width:100%;
+    flex-direction: row-reverse;
+    margin-top:10px;
+    padding-right: 20px;
+}
+
+.template-course-page .body .request-window .top button{
+    outline:none;
+    border:none;
+    background: none;
+    font-size: larger;
+    cursor:pointer;
+}
+
+.template-course-page .body .request-window .chapters-and-request{
+    width:100%;
+    flex-grow: 1;
+    padding:20px 50px;
+}
+
+.template-course-page .body .request-window .chapters-and-request ul {
+    padding: 20px 50px;
+    gap:20px;
+    max-height: 400px;
+    width: 500px;
+    /* border:1px solid black; */
+    overflow-y: auto;
+}
+
+.template-course-page .body .request-window .chapters-and-request li {
+    width:100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top:10px;
+}
+
+.template-course-page .body .request-window .chapters-and-request button{
+    outline:none;
+    border:none;
+    cursor: pointer;
+    color:white;
+    border-radius: 5px;
+    background-color: rgb(13, 110, 253);
+    height:60px;
+    padding:20px;
+    font-size: medium;
+    margin-right:20px;
+    margin-left:20px;
+}
+
+.template-course-page .body .request-window .chapters-and-request li button{
+    outline:none;
+    background:none;
+    border:none;
+    cursor: pointer;
 }
