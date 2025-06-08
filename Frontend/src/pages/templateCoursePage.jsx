@@ -6,6 +6,8 @@ import axios from 'axios';
 import deleteIcon from '../assets/trash.svg'
 
 function TemplateCoursePage() {
+    // this is just for now... implement the logic later
+    const studId="lkajnsglknaoi";
 
     const courseId = useParams().courseId;
     const [course, setCourse] = useState({});
@@ -27,6 +29,27 @@ function TemplateCoursePage() {
         fetchCourseDetails();
 
     }, []);
+
+    const handleSendClassRequest=async ()=>{
+        const chaptersToSend=course.chapters?.filter((chap)=>!rejectedChapters.includes(chap));
+        if(chaptersToSend.length==0) {
+            alert("You must have atleast one chapter to send request");
+            return ;
+        }
+        // console.log("clicked");
+        const response=await axios.post("http://localhost:4000/request/class",{
+            studId,
+            templateId:courseId,
+            chapters:chaptersToSend
+        });
+        if(response.status==200) {
+            alert("Request to the tutor is sent");
+            setShowRequestWindow(false);
+        } 
+        else {
+            alert("Couldn't send request to the respective tutor...try someother time");
+        }
+    };
 
     return (
         <div className="template-course-page">
@@ -55,7 +78,7 @@ function TemplateCoursePage() {
                                 </ul>
                                 <div >
                                     <button className="reset" onClick={() => setRejectedChapters([])}>Reset to default</button>
-                                    <button className="send-request">Send Request</button>
+                                    <button className="send-request" onClick={handleSendClassRequest}>Send Request</button>
                                 </div>
                             </div>
                         </div>

@@ -34,6 +34,8 @@ const classScheduleRouter=require("./routes/classScheduleRouter");
 app.use('/schedule/class',classScheduleRouter);
 const tutorRouter=require("./routes/tutorRouter");
 app.use("/tutor",tutorRouter);
+const classRequestsRouter=require("./routes/classRequestRouter");
+app.use("/request/class",classRequestsRouter);
 
 
 const port = process.env.PORT || 4000
