@@ -1,10 +1,12 @@
 import "./tutorClassRequests.css";
 import { useState,useEffect,useRef } from "react";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 function TutorClassRequest() {
     // this is just for now... implement the whole logic later
         const tutorId = "ljsdglkansdogitn";
+        const navigation=useNavigate();
     
         const [requestStatusToShow, setRequestStatusToShow] = useState("pending");
         const [requests, setRequests] = useState([]);
@@ -43,6 +45,13 @@ function TutorClassRequest() {
                 alert(err);
             }
         };
+
+        const handleAcceptRequest = async (requestId,templateId,request) =>{
+            navigation(`/tutor/response?requestId=${requestId}&templateId=${templateId}`,{
+                state:request
+            });
+            // console.log(request);
+        };
     
     
         const Button = () => {
@@ -80,7 +89,7 @@ function TutorClassRequest() {
                                     {
                                         req.requestStatus=="pending"&&
                                         <>
-                                            <button className="request_button" onClick={()=>handleAcceptRequest(req.requestId)} style={{backgroundColor:"rgb(13, 110, 253)"}}>Accept</button>
+                                            <button className="request_button" onClick={()=>handleAcceptRequest(req.requestId,req.templateId,req)} style={{backgroundColor:"rgb(13, 110, 253)"}}>Accept</button>
                                             <button className="request_button" onClick={()=>handleRejectRequest(req.requestId)}>Reject</button>                 
                                         </>
                                     }

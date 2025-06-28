@@ -1,6 +1,7 @@
 const { name } = require('agenda/dist/agenda/name');
 const Tutor = require('../models/tutorDetailModel');
 const TutorTemplateCourseModel = require('../models/tutorTemplateCourseModel');
+const TutorScheduleModel=require("../models/tutorScheduleModel");
 const { v4: uuidv4 } = require('uuid');
 const { S3Client, PutObjectCommand, GetO, GetObjectCommand } = require('@aws-sdk/client-s3');
 const aws_config = require("../config/aws-config");
@@ -207,6 +208,45 @@ const getTemplateImage = async (req, res) => {
     }
 };
 
+const getTutorSchedule=async (req,res)=>{
+    try {
+
+        const tutorId=req.params.tutorId;
+        const {startDate,endDate}=req.query;
+
+        const schedule=await TutorScheduleModel.findOne({tutorId:tutorId});
+        
+        const scheduleWithMatchedDates=schedule?.schedule.filter(sch => {
+            const date=new Date(sch.date);
+            return (new Date(startDate))<=date&&date<=(new Date(endDate));
+        })
+
+        res.status(200).json({Message:"db logic is fine",scheduleWithMatchedDates});
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
+const getSlots=async (req,res)=>{
+    try {
+        const tutorId=req.params.tutorId;
+
+        const tutor=await Tutor.findOne({uid:tutorId});
+
+        const slots=tutor.tutorSlots.map(sl=>({
+            day:sl.day,
+            numOfSlots:sl.numOfSlots,
+            slots:sl.slots
+        }));
+
+        res.status(200).json({tutorSlots:slots});
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+}
 
 module.exports = {
     getBestTutors,
@@ -214,6 +254,8 @@ module.exports = {
     getTemplateCourses,
     getAllTemplateCourses,
     getTemplateDetails,
-    getTemplateImage
+    getTemplateImage,
+    getTutorSchedule,
+    getSlots
 };
 

@@ -183,10 +183,30 @@ const rejectStudentRequest=async (req,res)=>{
     }
 };
 
+const getMaxClassesAndPrice=async (req,res) => {
+    try  {
+        const {templateId}=req.params;
+        
+        const templateCourse=await TutorTemplateCourseModel.findOne({templateCourseId:templateId});
+
+        if(!templateCourse) {
+            console.log(templateId," This is the template Id");
+            return res.status(400).json({Error:"The template you are trying to request is not found"});
+        }
+
+        res.status(200).json({maxClasses:templateCourse.maxClasses,maxPrice:templateCourse.maxPrice});
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
 module.exports={
     sendRequestToTutor,
     getStudentRequests,
     cancelStudentRequest,
     getTutorRequests,
-    rejectStudentRequest
+    rejectStudentRequest,
+    getMaxClassesAndPrice
 };

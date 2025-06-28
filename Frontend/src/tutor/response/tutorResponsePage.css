@@ -1,0 +1,176 @@
+.tutor-response-page{
+    width:100vw;
+    height:100vh;
+    /* background-color: red; */
+    display: flex;
+    flex-direction: column;
+    
+    overflow-y: auto;
+}
+
+.tutor-response-page .body{
+    flex-grow: 1;
+    width:100%;
+    display: flex;
+    justify-content: center;
+}
+
+.tutor-response-page .body .course-information-container{
+    width:70%;
+    height:100%;
+    padding:0px 50px;
+}
+
+.tutor-response-page .body .course-information-container h1,
+.tutor-response-page .body .course-information-container p{
+    margin-top: 10px;
+}
+
+.tutor-response-page .body .course-information-container p{
+    font-size: large;
+    color: rgb(151, 171, 190);
+}
+
+.tutor-response-page .body .course-information-container img{
+    border-radius: 5px;
+    overflow: hidden;
+    border: none;
+    margin-top: 20px;
+}
+
+.tutor-response-page .body .course-information-container .input-container {
+    width:100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* background-color: red; */
+
+    padding:10px 0px;
+}
+
+.tutor-response-page .body .course-information-container .input-container input{
+    width:60%;
+    height: 50px;
+    padding: 10px;
+    font-size: larger;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid rgb(13, 110, 253);
+    /* color:rgb(13, 110, 253); */
+    background-color: rgba(13, 109, 253, 0.027);
+}
+
+.tutor-response-page .body .course-information-container .input-container label{
+    font-size: larger;
+}
+
+.tutor-response-page .body .course-information-container .schedule-container{
+    width:100%;
+    min-height: 500px;
+    border: 1px solid rgb(13, 110, 253);
+    margin:20px;
+    border-radius: 5px;
+    display:flex;
+    flex-direction: column;
+}
+
+.tutor-response-page .body .course-information-container .schedule-container .title_and_dropdown_container{
+    display: flex;
+    padding:20px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tutor-response-page .body .course-information-container .schedule-container .title_and_dropdown_container select{
+    border: 1px solid rgb(145, 161, 214);
+    border-radius: 5px;
+    outline:none;
+    height:30px;
+    width:150px;
+    padding: 0px 10px;
+    color:rgb(56, 63, 86);
+}
+
+.tutor-response-page .body .course-information-container .schedule-container .title_and_dropdown_container select:hover{
+    cursor:pointer;
+    border-color: #0d6efd;
+}
+
+.tutor-response-page .body .course-information-container .schedule-container .instructions{
+    max-height:80px;
+    display: flex;
+    /* flex-direction: column; */
+    /* flex-wrap: wrap; */
+    gap:10px;
+    margin:10px;
+    align-items: stretch;
+    /* justify-content: space-around; */
+}
+
+.tutor-response-page .body .course-information-container .schedule-container .instructions li{
+    display: flex;
+    align-items: center;
+    flex-grow:1;
+    margin:10px;
+}
+
+.tutor-response-page .body .course-information-container .schedule-container .instructions li span{
+    display: inline-block;
+    height:30px;
+    width:30px;
+    border: 1px solid black;
+    
+    border-radius: 2.5px;
+    flex-grow: 1;
+}
+
+
+.tutor-response-page .body .course-information-container .schedule-container .slot-fill-container p{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 50px;
+    color:black;
+}
+
+.tutor-response-page .body .course-information-container .schedule-container .slot-fill-container p button{
+    height:50px;
+    min-width:120px;
+    border:none;
+    outline:none;
+    cursor: pointer;
+    background-color: rgb(13, 110, 253);
+    color:white;
+    border-radius: 5px;
+    font-size: medium;
+    padding:5px 5px;
+}
+
+.tutor-response-page .body .student-information-container{
+    width:30%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index:1;
+}
+
+.tutor-response-page .body .student-information-container img{
+    border: 1px solid black;
+    height: 300px;
+    width:90%;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.tutor-response-page .body .student-information-container button{
+    height:50px;
+    background-color: rgb(13, 110, 253);
+    margin-top:20px;
+    outline:none;
+    border:none;
+    cursor:pointer;
+    border-radius: 5px;
+    color:white;
+    font-size:larger;
+}

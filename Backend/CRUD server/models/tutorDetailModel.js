@@ -1,4 +1,56 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+
+const slotSchema=new mongoose.Schema({
+    day:{
+        type:String,
+        required:true,
+        unique:true
+    },
+    numOfSlots:{
+        type:Number,
+        required:true,
+    },
+    slots:{
+        type:[{
+            startTime: {
+                type: String,
+                required: true, // store it in HH:MM format
+                validate: {
+                    validator: function (v) {
+                        const hours = Number(v.substring(0, 2));
+                        if (hours < 0 || hours >= 24) return false;
+                        const minutes = Number(v.substring(3));
+                        if (minutes < 0 || minutes >= 60) return false;
+                        return true;
+                    },
+                    message: "Incorrect format of startTime ...Expected HH:MM format"
+                }
+            },
+            endTime: {
+                type: String,
+                required: true,  // store it in HH:MM format
+                validate: {
+                    validator: function (v) {
+                        const hours = Number(v.substring(0, 2));
+                        if (hours < 0 || hours >= 24) return false;
+                        const minutes = Number(v.substring(3));
+                        if (minutes < 0 || minutes >= 60) return false;
+                        return true;
+                    },
+                    message: "Incorrect format of endTime ...Expected HH:MM format"
+                }
+            }
+        }],
+        required:true,
+        validate:{
+            validator: function (v) {
+                return v.length==this.numOfSlots
+            },
+            message:"The number of slots does not match with the actual slots given"
+        }
+    }
+});
+
 const tutorSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -10,7 +62,7 @@ const tutorSchema = new mongoose.Schema({
     },
     gender: {
         type: String,
-        requird: true
+        required: true
     },
     email: {
         type: String,
@@ -44,7 +96,17 @@ const tutorSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique:true
+    },
+    isActive:{
+        type:Boolean,
+        required:true,
+        default:true
+    },
+    tutorSlots:{
+        type:[slotSchema],
+        default:[]
     }
+
 })
 
 const tutor = mongoose.model("tutorDetail", tutorSchema)

@@ -19,7 +19,8 @@ const studentSignupWithEmailPassword = async (req, res) => {
             preferredSubjects: studentDetails.preferredSubjects,
             email: studentDetails.email,
             password: hashedPassword,
-            uid: studentDetails.uid
+            uid: studentDetails.uid,
+            photo:studentDetails.photo
         }
 
         try {
@@ -54,7 +55,8 @@ const mentorSignupWithEmailPassword = async (req, res) => {
             address: mentorDetails.address,
             yearsofExperience: mentorDetails.yearsofExperience,
             degree: mentorDetails.degree,
-            uid: mentorDetails.uid
+            uid: mentorDetails.uid,
+            isActive:mentorDetails.isActive
         }
 
         try {
@@ -84,7 +86,8 @@ const studentGoogleSignup = async (req, res) => {
             profession: studentDetails.profession,
             preferredSubjects: studentDetails.preferredSubjects,
             email: studentDetails.email,
-            uid: studentDetails.uid
+            uid: studentDetails.uid,
+            photo:studentDetails.photo
         }
 
         try {
@@ -117,7 +120,8 @@ const tutorGoogleSignup = async (req, res) => {
             address: mentorDetails.address,
             yearsofExperience: mentorDetails.yearsofExperience,
             degree: mentorDetails.degree,
-            uid: mentorDetails.uid
+            uid: mentorDetails.uid,
+            isActive:mentorDetails.isActive
         }
 
         try {

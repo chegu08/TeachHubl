@@ -9,6 +9,14 @@ import axios from 'axios';
 
 function TutorDashboard ({setMainSection}){
 
+    const currentDate=new Date();
+    const currentYear=currentDate.getFullYear();
+    const currentMonth=currentDate.getMonth();
+    const yearList=new Array(15).fill(currentYear);
+    for(let i=0;i<15;i++) {
+        yearList[i]=currentYear-i;
+    }
+    const monthList=["January","Febuary","March","April","May","June","July","August","September","October","November","December"];
     const tutorId="ljsdglkansdogitn";
     // this is just temporary
 
@@ -24,6 +32,8 @@ function TutorDashboard ({setMainSection}){
     //     console.log(LocalStorageUserName);
     // }, []);
     const [uncorrectedtests,setUncorrectedTests]=useState([]);
+    const [selectedYear,setSelectedYear]=useState(currentYear);
+    const [selectedMonth,setSelectedMonth]=useState(monthList[currentMonth]);
 
     
     useEffect(()=>{
@@ -101,22 +111,22 @@ function TutorDashboard ({setMainSection}){
                 <div className="upcoming_agenda_container">
                     <div className="title_and_dropdown_container">
                         <h3 style={{ opacity: '0.9' }}>Upcoming Agenda</h3>
-                        <select name="timeline" >
-                            <option value="January">January</option>
-                            <option value="Febuary">Febuary</option>
-                            <option value="March">March</option>
-                            <option value="April" >April</option>
-                            <option value="May" >May</option>
-                            <option value="June" >June</option>
-                            <option value="July" >July</option>
-                            <option value="August" >August</option>
-                            <option value="September" >September</option>
-                            <option value="October" >October</option>
-                            <option value="November" >November</option>
-                            <option value="December" >December</option>
+                        <select name="month" value={selectedMonth} onChange={(e)=>setSelectedMonth(e.target.value)}>
+                            {
+                                monthList.map((val,ind)=>(
+                                    <option value={val} key={ind}>{val}</option>
+                                ))
+                            }
+                        </select>
+                        <select name="year" value={selectedYear} onChange={(e)=>setSelectedYear(e.target.value)}>
+                            {
+                                yearList.map((val,ind)=>(
+                                    <option value={val} key={ind}>{val}</option>
+                                ))
+                            }
                         </select>
                     </div>
-                    <TutorCalendar />
+                    <TutorCalendar year={selectedYear} month={selectedMonth}/>
                 </div>
                 <div className="tests_container">
                     <div className="heading_and_view_all_container">

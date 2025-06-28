@@ -12,6 +12,7 @@ import TemplateCoursePage from "./pages/templateCoursePage.jsx";
 
 import TutorHomePage from "./tutor/pages/tutorHomePage.jsx";
 import TutorTestFeedbackPage from "./tutor/pages/tutorTestFeedbackPage.jsx";
+import TutorResponsePage from "./tutor/response/tutorResponsePage.jsx";
 
 import { useState } from 'react';
 import { Route, Routes } from "react-router-dom";
@@ -42,6 +43,7 @@ function App() {
           <Route path="/tutor" element={<TutorMainPage />} />
           <Route path='/tutor/home' element={<TutorHomePage />} />
           <Route path="/tutor/feedback/:testId" element={<TutorTestFeedbackPage />} />
+          <Route path="/tutor/response" element={<TutorResponsePage />} />
 
 
         </Routes>

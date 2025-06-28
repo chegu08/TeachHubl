@@ -84,6 +84,8 @@ function TemplateCoursePage() {
                         </div>
                     </>
                 }
+
+                
                 <div className="course-information-container">
                     <h1>{course.name}</h1>
                     <p>{course.subject}</p>
