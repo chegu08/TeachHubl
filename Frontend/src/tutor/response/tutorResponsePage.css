@@ -13,6 +13,7 @@
     width:100%;
     display: flex;
     justify-content: center;
+    position: relative;
 }
 
 .tutor-response-page .body .course-information-container{
@@ -173,4 +174,34 @@
     border-radius: 5px;
     color:white;
     font-size:larger;
+}
+
+.tutor-response-page .body .manual_slot_fill_container{
+    height:20%;
+    width:50%;
+    border: 2px solid rgb(13, 110, 253);
+    border-radius: 5px;
+    background-color: aliceblue;
+    display: flex;
+    flex-direction: column;
+    padding:0px 20px;
+}
+
+.tutor-response-page .body .manual_slot_fill_container span{
+    width: 100%;
+    height:50px ;
+    padding:10px 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.tutor-response-page .body .manual_slot_fill_container span button {
+    outline:none;
+    border:none;
+    border-radius: 5px;
+    background-color: rgb(220, 53, 69);
+    color:white;
+    padding:0px 20px;
+    font-size: medium;
+    cursor: pointer;
 }

@@ -27,3 +27,19 @@ margin-bottom: 20px;
     height:40px;
     background-color: rgb(222, 224, 231);
 }
+
+.minimalcalendar td{
+    position:relative;
+    cursor: pointer;
+}
+
+.minimalcalendar td .slots_left_to_fill {
+    position: absolute;
+    bottom:5px;
+    right:5px;
+    background-color: rgba(255, 166, 0, 0.734);
+    /* color:white; */
+    padding:0px 5px;
+    font-size: x-small;
+    border-radius: 50%;
+}

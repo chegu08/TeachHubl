@@ -1,5 +1,5 @@
 import "./tutorCalendar.css";
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 const monthMapping = {
     January: 0,
     February: 1,
@@ -16,14 +16,14 @@ const monthMapping = {
 };
 
 function getBackGroundColor(status) {
-    if(status=="unavailable") return "rgb(250, 225, 228)";
-    else if(status=="slots_left") return "rgba(41, 130, 255, 0.66)";
-    else if(status=="filled") return "rgb(235, 255, 246)";
-    else if(status=="out_of_range") return "rgb(222, 224, 231)";
+    if (status == "unavailable") return "rgb(250, 225, 228)";
+    else if (status == "slots_left") return "rgba(41, 130, 255, 0.66)";
+    else if (status == "filled") return "rgb(235, 255, 246)";
+    else if (status == "out_of_range") return "rgb(96, 97, 100)";
     else return "white";
 }
 
-function TutorCalendar({ year, month, calenderInfo: calenderInfoForResponsePage }) {
+function TutorCalendar({ year, month, calenderInfo: calenderInfoForResponsePage, setHoverOverDay }) {
 
     let numofDays;
     switch (month) {
@@ -63,26 +63,28 @@ function TutorCalendar({ year, month, calenderInfo: calenderInfoForResponsePage 
 
     useEffect(() => {
 
-            if(!calenderInfoForResponsePage) {
-                return ;
-            }
+        if (!calenderInfoForResponsePage) {
+            return;
+        }
 
-        const styleInfoMatrix=new Array(numofDays).fill({status:"out_of_range"});
+        const styleInfoMatrix = new Array(numofDays).fill({ status: "out_of_range" });
 
         calenderInfoForResponsePage.forEach(val => {
-            const date=new Date(val.date);
-            if(year==date.getFullYear()&&monthMapping[month]==date.getMonth()) {
-                styleInfoMatrix[date.getDate()-1]={status:val.status,backGroundColor:getBackGroundColor(val.status)};
-                if(val.slots) styleInfoMatrix[date.getDate()-1].slots=val.slots;
+            const date = new Date(val.date);
+            if (year == date.getFullYear() && monthMapping[month] == date.getMonth()) {
+                styleInfoMatrix[date.getDate() - 1] = { status: val.status, backGroundColor: getBackGroundColor(val.status) };
+                if (val.slots) {
+                    styleInfoMatrix[date.getDate() - 1].slots = { slots: val.slots, free_slots_remaining: val.slots.filter(slot => slot.slot_status == "free").length }
+                }
             }
         });
 
         setSlotsForTheMonth(styleInfoMatrix);
 
-        
+
         console.log(styleInfoMatrix);
 
-    }, [year,month,calenderInfoForResponsePage]);
+    }, [year, month, calenderInfoForResponsePage]);
 
 
     return (
@@ -105,9 +107,21 @@ function TutorCalendar({ year, month, calenderInfo: calenderInfoForResponsePage 
                             <tr key={i}>
                                 {
                                     arr.map((day, j) => (
-                                        <td key={j} style={slotsForTheMonth.length>0 ?{
-                                            backgroundColor:slotsForTheMonth[Number(day)-1]?.backGroundColor
-                                        }:{}}>{day}</td>
+                                        <td key={j} style={slotsForTheMonth.length > 0 ? {
+                                            backgroundColor: slotsForTheMonth[Number(day) - 1]?.backGroundColor
+                                        } : {}} onClick={(e) => {
+                                            if (!setHoverOverDay) return;
+                                                setHoverOverDay({date:Number(day)+1,left:e.clientX,bottom:e.clientY,notaday:day==""});
+                                        }} >
+                                            {day}
+                                            {
+                                                slotsForTheMonth[Number(day) - 1] &&
+                                                <div className="slots_left_to_fill">
+                                                    {slotsForTheMonth[Number(day) - 1].slots?.free_slots_remaining}
+                                                </div>
+                                            }
+
+                                        </td>
                                     ))
                                 }
                             </tr>
