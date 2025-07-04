@@ -1,5 +1,4 @@
 const mongoose=require("mongoose");
-const { validate } = require("./tutorTemplateCourseModel");
 
 const classRequestSchema = new mongoose.Schema({
     requestId:{
@@ -25,12 +24,25 @@ const classRequestSchema = new mongoose.Schema({
         validate:{
             validator:function (v){
                 return v.length>0
-            }
+            },
+            message:"Atleast one chapter must be requested"
         }
     },
     requestStatus:{
         type:String,
         required:true
+    },
+    responseId:{
+        type:String,
+        validate:{
+            validator: function (v) {
+                if(this.requestStatus=="accepted") {
+                    return typeof v==="string" && v.length>0
+                }
+                return true;
+            },
+            message:"Response Id not found for the accepted request"
+        }
     }
 });
 

@@ -147,6 +147,21 @@
     padding:5px 5px;
 }
 
+.tutor-response-page .body .course-information-container .send_response {
+    outline: none;
+    border:none;
+    min-height:50px;
+    min-width:100px;
+    padding:20px 20px ;
+    color:white;
+    border-radius: 5px;
+    background-color: rgb(220, 53, 69);
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-left: 15px;
+    font-size: large;
+}
+
 .tutor-response-page .body .student-information-container{
     width:30%;
     height: 100%;
@@ -187,7 +202,7 @@
     padding:0px 20px;
 }
 
-.tutor-response-page .body .manual_slot_fill_container span{
+.tutor-response-page .body .manual_slot_fill_container span,.tutor-response-page .body .confirmation_container span{
     width: 100%;
     height:50px ;
     padding:10px 10px;
@@ -195,7 +210,7 @@
     justify-content: space-between;
 }
 
-.tutor-response-page .body .manual_slot_fill_container span button {
+.tutor-response-page .body .manual_slot_fill_container span button,.tutor-response-page .body .confirmation_container span button {
     outline:none;
     border:none;
     border-radius: 5px;
@@ -204,4 +219,35 @@
     padding:0px 20px;
     font-size: medium;
     cursor: pointer;
+}
+
+.tutor-response-page .body .confirmation_container{
+    position: absolute;
+    bottom:15%;
+    left:25%;
+    height:30%;
+    width:40%;
+    border: 1px solid rgb(13, 110, 253);
+    border-radius: 5px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    overflow-y:auto;
+}
+
+.tutor-response-page .body .confirmation_container ul ,.tutor-response-page .body .confirmation_container li {
+    padding-left: 20px;
+}
+
+.tutor-response-page .body .confirmation_container .confirm{
+    min-height:50px;
+    background-color: rgb(13, 110, 253);
+    margin-top:20px;
+    outline:none;
+    border:none;
+    cursor:pointer;
+    border-radius: 5px;
+    color:white;
+    font-size:x-large;
+    margin:20px 20px;
 }

@@ -2,13 +2,15 @@ const { name } = require('agenda/dist/agenda/name');
 const Tutor = require('../models/tutorDetailModel');
 const TutorTemplateCourseModel = require('../models/tutorTemplateCourseModel');
 const TutorScheduleModel=require("../models/tutorScheduleModel");
+const ClassRequestModel=require("../models/classRequestsModel");
+const tutorResponseModel=require("../models/tutorReponseModel");
 const { v4: uuidv4 } = require('uuid');
 const { S3Client, PutObjectCommand, GetO, GetObjectCommand } = require('@aws-sdk/client-s3');
 const aws_config = require("../config/aws-config");
 const { compressFile } = require('../utils/fileCompression');
+const classRequestModel = require('../models/classRequestsModel');
 
-
-
+const BASE64PREFIX="data:image/jpeg;base64,"
 
 const getBestTutors = async (req, res) => {
     try {
@@ -248,6 +250,108 @@ const getSlots=async (req,res)=>{
     }
 }
 
+const uploadResponse=async (req,res) =>{
+    try {
+
+        const {requestId,templateId}=req.query;
+        const {price,classes,schedule,startDate,endDate}=req.body;
+
+        const request=await ClassRequestModel.findOne({requestId});
+
+        if(!request) {
+            res.status(400).json({Error:"The request for this class doesnot exist"});
+            return ;
+        }
+
+        if(request.requestStatus=="cancelled") {
+            res.status(400).json({Error:"The student has cancelled the request for this class"});
+            return ;
+        }
+
+        const valid_till=new Date(startDate);
+        valid_till.setDate(valid_till.getDate()-1);
+        const response={
+            responseId:uuidv4(),
+            requestId,
+            templateId,
+            studId:request.studId,
+            tutorId:request.tutorId,
+            price,
+            classes,
+            schedule,
+            startDate:new Date(startDate),
+            endDate:new Date(endDate),
+            valid_till
+        }
+
+        try {
+            await classRequestModel.updateOne({requestId},{
+                $set:{
+                    requestStatus:"accepted",
+                    responseId:response.responseId
+                }
+            });
+
+            await tutorResponseModel.create(response);
+
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({Error:"Error updating database ... try again later"});
+            return;
+        }
+        // console.log(schedule);
+
+        res.status(200).json({Message:"AllGood",response});
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+}
+
+const getResponsesForStudent=async (req,res) =>{
+    try{
+        const {studId}=req.params;
+
+        const responses=await tutorResponseModel.find({studId})
+
+        const responseResults=await Promise.all(
+            responses.map(async (res)=>{
+                const tutorName=(await Tutor.findOne({uid:res.tutorId})).name;
+                const template=await TutorTemplateCourseModel.findOne({templateCourseId:res.templateId});
+                const templateThumbnail=template.thumbnailForImage;
+                const templateName=template.name;
+                const chaptersRequested=(await ClassRequestModel.findOne({requestId:res.requestId})).chaptersRequested;
+                return {
+                    ...res._doc,tutorName,templateThumbnail,templateName,chaptersRequested
+                }
+            })
+        );
+
+        const studentResults=responseResults.map(result=>({
+            responseId:result.responseId,
+            requestId:result.requestId,
+            studId,
+            tutorId:result.tutorId,
+            templateId:result.templateId,
+            chaptersRequested:result.chaptersRequested,
+            tutorName:result.tutorName,
+            templateThumbnail:BASE64PREFIX+result.templateThumbnail,
+            templateName:result.templateName,
+            classes:result.classes,
+            price:result.price
+        }))
+
+        // console.log(studentResults);
+
+        res.status(200).json(studentResults);
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
 module.exports = {
     getBestTutors,
     createNewTemplateCourse,
@@ -256,6 +360,8 @@ module.exports = {
     getTemplateDetails,
     getTemplateImage,
     getTutorSchedule,
-    getSlots
+    getSlots,
+    uploadResponse,
+    getResponsesForStudent
 };
 

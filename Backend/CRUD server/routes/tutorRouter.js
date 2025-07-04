@@ -9,7 +9,9 @@ const {
     getTemplateDetails,
     getTemplateImage,
     getTutorSchedule,
-    getSlots
+    getSlots,
+    uploadResponse,
+    getResponsesForStudent
 }=require("../controllers/tutorController");
 
 Router.get('/best',getBestTutors);
@@ -19,6 +21,8 @@ Router.get('/template-information/:templateId',getTemplateDetails);
 Router.get('/template-image/:templateId',getTemplateImage);
 Router.get('/schedule/:tutorId',getTutorSchedule);
 Router.get('/slots/:tutorId',getSlots);
+Router.get('/response/student/:studId',getResponsesForStudent);
 Router.post('/template',upload.array('resources'),createNewTemplateCourse);
+Router.post('/response',uploadResponse);
 
 module.exports=Router;

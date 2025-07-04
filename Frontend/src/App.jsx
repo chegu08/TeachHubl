@@ -12,7 +12,7 @@ import TemplateCoursePage from "./pages/templateCoursePage.jsx";
 
 import TutorHomePage from "./tutor/pages/tutorHomePage.jsx";
 import TutorTestFeedbackPage from "./tutor/pages/tutorTestFeedbackPage.jsx";
-import TutorResponsePage from "./tutor/response/tutorResponsePage.jsx";
+import TutorResponsePage from "./tutor/pages/tutorResponsePage.jsx";
 
 import { useState } from 'react';
 import { Route, Routes } from "react-router-dom";

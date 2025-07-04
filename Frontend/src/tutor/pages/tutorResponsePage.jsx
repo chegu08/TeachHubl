@@ -1,5 +1,5 @@
 import "./tutorResponsePage.css";
-import { useSearchParams, useLocation } from "react-router-dom";
+import { useSearchParams, useLocation,useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
@@ -38,6 +38,7 @@ function sortArraySlots(array) {
 
 function TutorResponsePage() {
     const location = useLocation();
+    const navigation=useNavigate();
     // console.log(JSON.stringify(location.state));
     const [urlSearchParams, setUrlSeachParams] = useSearchParams();
     const requestId = urlSearchParams.get("requestId");
@@ -54,8 +55,8 @@ function TutorResponsePage() {
 
     const [maxPrice, setMaxPrice] = useState(0);
     const [maxClasses, setmaxClasses] = useState(0);
-    const [actualPrice, setActualPrice] = useState();
-    const [actualClasses, setActualClasses] = useState(0);
+    const [actualPrice, setActualPrice] = useState("");
+    const [actualClasses, setActualClasses] = useState("");
     const [slotsFilled, setSlotsFilled] = useState(0);
     const [selectedYear, setSelectedYear] = useState(currentYear);
     const [selectedMonth, setSelectedMonth] = useState(monthList[currentMonth]);
@@ -65,6 +66,7 @@ function TutorResponsePage() {
     const [endDate, setEndDate] = useState();
     const [calenderInfoForSlots, setCalenderInfoForSlots] = useState([]);
     const [hoverOverDay, setHoverOverDay] = useState(null);
+    const [showSlotsForConfirmation,setShowSlotsForConfirmation]=useState(false);
 
     useEffect(() => {
         async function fetchMaxClassesAndPrice() {
@@ -212,6 +214,34 @@ function TutorResponsePage() {
         setSlotsFilled(pre => pre + 1);
     };
 
+    const handleAcceptRequest =async () =>{
+        const scheduleForResponse=calenderInfoForSlots.filter(slot=>slot.status=="slots_left"||slot.status=="filled")
+        .filter(slot=>(slot.slots?.some(s=>s.slot_status=="occupied")||false))
+        .map(slot=>({
+            date:slot.date.split('T')[0],
+            slots:slot.slots.filter(s=>s.slot_status=="occupied").map(s=>({startTime:s.startTime,endTime:s.endTime}))
+        }));
+
+        try {
+            const response=await axios.post(`http://localhost:4000/tutor/response?requestId=${requestId}&templateId=${templateId}`,
+                {
+                    price:actualPrice,
+                    classes:actualClasses,
+                    schedule:scheduleForResponse,
+                    startDate,
+                    endDate
+                }
+            );
+            console.log(response.data);
+            alert("Response successfully sent...Navigating back to requests section");
+            navigation(-1);
+
+        } catch (err) {
+            console.log(err);
+            alert(err);
+        }
+    };
+
     useEffect(() => {
 
         // debouncing the end date input
@@ -222,6 +252,56 @@ function TutorResponsePage() {
         }
 
     }, [endDate]);
+
+    useEffect(()=>{
+        if(maxClasses==0||actualClasses=="") return ;
+
+        const timeout=setTimeout(() => {
+            if(actualClasses>maxClasses) {
+                alert(`The number of classes can't be more than ${maxClasses}`);
+            }
+            if(actualClasses<=0) {
+                alert("You have to take atleast 1 class");
+            }
+        },500);
+
+        return ()=>{
+            clearTimeout(timeout);
+        }
+
+    },[actualClasses,maxClasses]);
+
+    useEffect(()=>{
+        if(maxPrice==0||actualPrice=="") return ;
+
+        const timeout=setTimeout(()=>{
+            if(actualPrice>maxPrice) {
+                alert(`Price can't be more than what than ${maxPrice}`);
+            }
+            if(actualPrice<0) {
+                alert("Price has to be greater than 0");
+            }
+        },500);
+
+        return () =>clearTimeout(timeout);
+    },[actualPrice,maxPrice]);
+
+    useEffect(()=>{
+        if(startDate==undefined||startDate==null) return ;
+
+        const timeout=setTimeout(()=>{
+            const inputDate=new Date(startDate);
+            inputDate.setHours(0,0,0,0);
+            const cur_date_ignoring_time=new Date(currentDate);
+            cur_date_ignoring_time.setHours(0,0,0,0);
+
+            if(inputDate<=cur_date_ignoring_time) {
+                alert("Start date is today or already passed");
+            }
+        },1000);
+
+        return ()=>clearTimeout(timeout);
+    },[startDate]);
 
     return (
         <div className="tutor-response-page">
@@ -288,6 +368,7 @@ function TutorResponsePage() {
                             <li type="none"><span style={{ backgroundcolor: "white" }}></span><em>Not Filled</em></li>
                         </div>
                     </div>
+                    {actualClasses!=0&&slotsFilled==actualClasses&&<button className="send_response" onClick={()=>setShowSlotsForConfirmation(true)}>Send Response</button>}
                 </div>
                 <div className="student-information-container">
                     <img src={null} alt='No Profile Picture' height={"300px"} width={"90%"} />
@@ -332,6 +413,46 @@ function TutorResponsePage() {
                             </ul>
                         </div>
                     </div>
+                }
+                {
+                    showSlotsForConfirmation&&(
+                        <div className="confirmation_container">
+                            <span>
+                                {"Confirm Slots!"}
+                                <button onClick={() => { setShowSlotsForConfirmation(false) }}>X</button>
+                            </span>
+                            <ul type="none">
+                                {
+                                    calenderInfoForSlots
+                                        .filter((slot)=>slot.status=="slots_left"||slot.status=="filled")
+                                        .filter(slot => {
+                                            let anySlotOccupied=false;
+                                            const slot_len=slot.slots?.length||0;
+                                            for(let i=0;i<slot_len;i++) {
+                                                if(slot.slots[i].slot_status=="occupied") {
+                                                    anySlotOccupied=true;
+                                                    break;
+                                                }
+                                            }
+                                            return anySlotOccupied;
+                                        })
+                                        .map((dayWiseSlot,i)=>(
+                                            <ul key={i} type="none">
+                                                Date: {dayWiseSlot.date.split('T')[0]}
+                                                {
+                                                    dayWiseSlot.slots
+                                                        .filter(dslot=>dslot.slot_status=="occupied")
+                                                        .map((dslot,ind) =>(
+                                                            <li key={ind}>{dslot.startTime} - {dslot.endTime}</li>
+                                                        ))
+                                                }
+                                            </ul>
+                                        ))
+                                }
+                            </ul>
+                            <button className="confirm" onClick={()=>handleAcceptRequest()}>Confirm</button>
+                        </div>
+                    )
                 }
             </div>
         </div>

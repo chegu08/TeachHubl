@@ -136,7 +136,7 @@ const cancelStudentRequest=async (req,res)=>{
             return res.status(400).json({Error:"This request can't be cancelled anymore"});
         }
 
-        const reponse=await ClassRequestModel.updateOne({requestId:requestId},{
+        await ClassRequestModel.updateOne({requestId:requestId},{
             $set:{
                 requestStatus:"cancelled"
             }
