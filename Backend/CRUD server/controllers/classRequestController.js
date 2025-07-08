@@ -160,7 +160,6 @@ const rejectStudentRequest=async (req,res)=>{
 
         if(!studentRequest) {
             return res.status(400).json({Error:"The request does not exist"});
-            
         }
 
         if(studentRequest.requestStatus!="pending") {

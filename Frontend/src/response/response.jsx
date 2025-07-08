@@ -1,10 +1,13 @@
 import './response.css';
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 function Response() {
     // this is just for now... implement the whole logic later
     const studId = "lkajnsglknaoi";
+
+    const navigation=useNavigate();
     const [responses, setResponses] = useState([]);
 
     useEffect(() => {
@@ -23,17 +26,17 @@ function Response() {
     }, []);
 
 
-    const handleCancelRequest=async (requestId)=>{
-        try{
-            const response=await axios.delete("http://localhost:4000/request/class",{data:{requestId}});
-            alert(response.status);
-            location.reload();
+    // const handleCancelRequest=async (requestId)=>{
+    //     try{
+    //         const response=await axios.delete("http://localhost:4000/request/class",{data:{requestId}});
+    //         alert(response.status);
+    //         location.reload();
 
-        } catch(err) {
-            alert(err);
-        }
+    //     } catch(err) {
+    //         alert(err);
+    //     }
         
-    };
+    // };
 
 
     return (
@@ -56,8 +59,10 @@ function Response() {
                                         }
                                     </div>
                                 </div>    
-                                <button className="cancel_request" onClick={()=>handleCancelRequest(res.requestId)}>Cancel request</button>    
-                                <button className="cancel_request" style={{backgroundColor:"rgb(13, 110, 253)"}}>Check Out</button>
+                                {/* <button className="cancel_request" onClick={()=>handleCancelRequest(res.requestId)}>Cancel request</button>     */}
+                                <button className="cancel_request" style={{backgroundColor:"rgb(13, 110, 253)"}} onClick={()=>{
+                                    navigation(`/course-response/${res.responseId}`);
+                                }}>Check Out</button>
                             </div>
                         ))
                 }

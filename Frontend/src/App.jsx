@@ -7,6 +7,8 @@ import TutorMainPage from "./tutor/pages/mainpage.jsx";
 import HomePage from "./pages/homePage.jsx";
 import TestPage from "./pages/testpage.jsx";
 import MainPage from "./pages/mainPage.jsx";
+import ResponsePage from "./pages/responsePage.jsx";
+import PaymentPage from "./pages/paymentPage.jsx";
 import TemplateCoursePage from "./pages/templateCoursePage.jsx";
 
 
@@ -37,6 +39,8 @@ function App() {
           <Route path="/liveClass" element={<VideoCallPage />} />
           <Route path="/home" element={<HomePage />} />
           <Route path='/template-course/:courseId' element={<TemplateCoursePage />} />
+          <Route path="/course-response/:responseId" element={<ResponsePage />} />
+          <Route path="/payment" element={<PaymentPage />} />
 
 
           {/* theses routes are for tutors */}

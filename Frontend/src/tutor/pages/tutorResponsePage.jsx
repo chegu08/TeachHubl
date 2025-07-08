@@ -31,11 +31,6 @@ const monthMapping = {
     December: 11
 };
 
-function sortArraySlots(array) {
-    return array.sort((a, b) => Math.abs(a) < Math.abs(b));
-}
-
-
 function TutorResponsePage() {
     const location = useLocation();
     const navigation=useNavigate();

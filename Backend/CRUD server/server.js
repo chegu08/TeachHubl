@@ -15,7 +15,11 @@ const corsOptions = {
     methods: ["GET", "PUT", "POST", "DELETE"]
 }
 
+//rendering
+app.set('view engine','ejs');
+
 //middleware
+app.use(express.static("public"));
 app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -36,6 +40,8 @@ const tutorRouter=require("./routes/tutorRouter");
 app.use("/tutor",tutorRouter);
 const classRequestsRouter=require("./routes/classRequestRouter");
 app.use("/request/class",classRequestsRouter);
+const paymentRouter=require("./routes/paymentRouter");
+app.use("/payment",paymentRouter);
 
 
 const port = process.env.PORT || 4000

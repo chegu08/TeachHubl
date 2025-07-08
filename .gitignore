@@ -1,4 +1,4 @@
-.env
+**/.env
 **/node_modules/
 Backend/config/student_service_account.json
 Backend/config/tutor_service_account.json

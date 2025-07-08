@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/jpg" href="/WhatsApp Image 2025-02-19 at 20.32.04_9336c379.jpg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TeachHubl Payment</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    .payment_page {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .payment_page hr {
+      width: 1px;
+      height: 90%;
+      background-color: #ccc;
+      margin: auto 20px;
+      border: none;
+    }
+
+    .logo_and_title {
+      width: 40%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      padding: 20px;
+    }
+
+    .logo_and_title h1 {
+      font-size: 3.5rem;
+    }
+
+    .logo_and_title img {
+      width: 60%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .content_container {
+      width: 60%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 40px;
+    }
+
+    .summary {
+      border: 1px solid rgb(13, 110, 253);
+      border-radius: 8px;
+      padding: 25px;
+      margin-bottom: 30px;
+    }
+
+    .summary h2 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+    }
+
+    .summary .info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="payment_page">
+    <div class="logo_and_title">
+      <h1>TeachHubl</h1>
+      <img src="/WhatsApp Image 2025-02-19 at 20.32.04_9336c379.jpg" alt="TeachHubl Logo" />
+    </div>
+    <hr />
+    <div class="content_container">
+      <div class="summary">
+        <h2>Congratulations <%= studId %>!</h2>
+        <p class="info">
+          <span>Your payment of ₹ <%= amount %> has been completed!</span>
+        </p>
+        <p class="info">
+          <span>Payment Id:</span>
+          <span><%= razorpay_payment_id %></span>
+        </p>
+        <p class="info">
+          <span>Course:</span>
+          <span><%= courseName %></span>
+        </p>
+        <p class="info">
+          <span>Tutor:</span>
+          <span><%= tutorName %></span>
+        </p>
+        <p class="info">
+          <span>Start Date:</span>
+          <span><%= startDate %></span>
+        </p>
+        <p class="info">
+          <span>Happy Learning!</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

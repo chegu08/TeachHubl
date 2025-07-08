@@ -352,6 +352,29 @@ const getResponsesForStudent=async (req,res) =>{
     }
 };
 
+const getResponseDetails=async (req,res)=>{
+    try{
+        const {responseId}=req.params;
+
+        const response=await tutorResponseModel.findOne({responseId});
+
+        if(!response) {
+            res.status(400).json({Message:"Incorrect response Id"});
+            console.log("Incorrect response Id");
+            return ;
+        }
+
+        const request=await ClassRequestModel.findOne({requestId:response.requestId});
+
+        res.status(200).json({...response._doc,chaptersRequested:request.chaptersRequested});
+
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
 module.exports = {
     getBestTutors,
     createNewTemplateCourse,
@@ -362,6 +385,7 @@ module.exports = {
     getTutorSchedule,
     getSlots,
     uploadResponse,
-    getResponsesForStudent
+    getResponsesForStudent,
+    getResponseDetails
 };
 

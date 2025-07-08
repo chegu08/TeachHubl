@@ -11,7 +11,8 @@ const {
     getTutorSchedule,
     getSlots,
     uploadResponse,
-    getResponsesForStudent
+    getResponsesForStudent,
+    getResponseDetails
 }=require("../controllers/tutorController");
 
 Router.get('/best',getBestTutors);
@@ -22,6 +23,7 @@ Router.get('/template-image/:templateId',getTemplateImage);
 Router.get('/schedule/:tutorId',getTutorSchedule);
 Router.get('/slots/:tutorId',getSlots);
 Router.get('/response/student/:studId',getResponsesForStudent);
+Router.get('/response-details/:responseId',getResponseDetails);
 Router.post('/template',upload.array('resources'),createNewTemplateCourse);
 Router.post('/response',uploadResponse);
 

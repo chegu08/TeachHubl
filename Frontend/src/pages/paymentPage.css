@@ -1,0 +1,71 @@
+.payment_page{
+    margin:0px;
+    padding:0px;
+    height: 100vh;
+    width:100vw;
+    display: flex;
+}
+
+.payment_page hr{
+    width: 1px;
+    height:90%;
+    margin:auto;
+}
+
+.payment_page .logo_and_title {
+    height:100%;
+    width:40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content:space-evenly;
+}
+
+.payment_page .logo_and_title img {
+    height:60%;
+    width:60%;
+}
+
+.payment_page .logo_and_title h1{
+    font-size: 64px;
+    /* color:rgb(13, 110, 253); */
+}
+
+.payment_page .content_container{
+    height:100%;
+    width:60%;
+    /* background-color: red; */
+}
+
+.payment_page .content_container .summary {
+    width:90%;
+    margin:auto;
+    min-height:25%;
+    border: 1px solid rgb(13, 110, 253);
+    border-radius: 5px;
+    margin-top:5%;
+    padding:20px;
+    
+}
+
+.payment_page .content_container .summary .info{
+    color: gray;
+    font-size: medium;
+    display: flex;
+    justify-content: space-between;
+}
+
+.payment_page .content_container button {
+    margin-top:5%;
+    width:90%;
+    /* margin:auto ; */
+    margin-left: 5%;
+    height:50px;
+    background-color: rgb(13, 110, 253);
+    border-radius: 5px;
+    outline:none;
+    cursor: pointer;
+    color: white;
+    font-size: x-large;
+    border:none;
+}
