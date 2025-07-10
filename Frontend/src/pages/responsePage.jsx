@@ -118,7 +118,10 @@ function ResponsePage() {
                             total:course.price*1.18,
                             studId,
                             tutorId:course.tutorId,
-                            templateId:course.templateId
+                            templateId:course.templateId,
+                            schedule:course.schedule,
+                            classCount:course.classes,
+                            subject:course.subject
                         }
                     })}>Proceed to payment</button>
                 </div>

@@ -88,7 +88,7 @@ function TutorCourses({setMainSection}) {
                     </div>
                 </div>
                 <div className="timetable">
-                    <button onClick={()=>setMainSection("create_course")} >Create New Class</button>
+                    <button onClick={()=>setMainSection("create_course")} >Create New Courses</button>
                     <h3>Today's Classes</h3>
                     {
                         todayStudentSchedule.length > 0 &&

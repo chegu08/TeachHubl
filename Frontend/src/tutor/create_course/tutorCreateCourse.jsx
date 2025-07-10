@@ -70,6 +70,8 @@ function TutorCreateCourse({ setMainSection }) {
 
     const handleUploadTemplateCourse = async (e) => {
 
+        e.preventDefault();
+
         if(!checkValidityOfFormData()) {
             return ;
         }
@@ -91,7 +93,7 @@ function TutorCreateCourse({ setMainSection }) {
         formdata.append("agenda", courseAgenda);
         formdata.append('description', courseDescription);
         formdata.append('maxPrice',maxprice);
-        formdata.append('maxClass',maxClass);
+        formdata.append('maxClasses',maxClass);
         chapters.forEach(chapter => {
             if (chapter !== '') {
                 formdata.append('chapters', chapter);

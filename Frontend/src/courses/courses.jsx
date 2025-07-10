@@ -16,6 +16,7 @@ function Courses() {
         async function fetchCourseInformation(studId) {
             const response = await axios.get(`http://localhost:4000/class/student/getInfo/${studId}`);
             setCourseInformation(response.data.allCourses);
+            // console.log(response.data.allCourses);
         }
         async function fetchTodayStudentSchedule(studId) {
             const response = await axios.get(`http://localhost:4000/schedule/class/student/${studId}`);

@@ -30,6 +30,10 @@ const paymentSchema = new mongoose.Schema({
     description:{
         type:String,
         default:"Initial payment"
+    },
+    paymentDate:{
+        type:Date,
+        required:[true,"Payment Date is required"]
     }
 });
 

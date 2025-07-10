@@ -1,103 +1,9 @@
 const Class=require('../models/classDetailModel');
 const student=require('../models/studentDetailModel');
 const tutor=require('../models/tutorDetailModel');
-const {v4:uuid}=require('uuid');
-const bcrypt =require('bcrypt');
-const ClassSchedule = require('../models/classScheduleModel');
+const templateModel=require("../models/tutorTemplateCourseModel");
 
-const createClass=async (req,res)=>{
-    try{
-        const {
-            studId,
-            tutorId,
-            startDate,
-            className,
-            endDate,
-            duration,
-            paymentId,
-            cancelled,
-            cancelledDate,
-            refundDetailId,
-            classCount, 
-            subject,
-            schedule
-        }=req.body;
-
-        const studentIdFromdatabase=await student.findOne({uid:studId});
-        if(!studentIdFromdatabase) { 
-            return res.status(400).json({Error:"The provided student does not exist"});
-        }
-
-        const tutorIdFromDatabase=await tutor.findOne({uid:tutorId});
-        if(!tutorIdFromDatabase) {
-            return res.status(400).json({Error:"The provided tutor does not exist"});
-        }
-        
-        if(classCount<=0) {
-            return res.status(400).json({Error:"The count of classes cannot be less than or equal to zero"});
-        }
-
-        const newClass={
-            classId:uuid(),
-            studId,
-            tutorId,
-            startDate,
-            className,
-            endDate,
-            duration,
-            paymentId,
-            cancelled,
-            cancelledDate,
-            refundDetailId,
-            classCount,
-            subject,
-            completedClasses:0
-        }
-
-        const scheduleWithLinks=await Promise.all(schedule.map(async (sch)=>{
-            const hashedStudentId=await bcrypt.hash(studentIdFromdatabase.uid,10);
-            const hashedTutorId=await bcrypt.hash(tutorIdFromDatabase.uid,10);
-            const slotsWithLinks=sch.slots.map(slot=>({
-                ...slot,
-                classLink:`http://localhost:5173/liveClass?student=${encodeURIComponent(hashedStudentId)}&tutor=${encodeURIComponent(hashedTutorId)}`
-            }));
-            return {...sch,slots:slotsWithLinks};
-        }));
-
-        console.dir(scheduleWithLinks,{depth:4});
-
-        
-        const class_schedule={
-            scheduleId:uuid(),
-            classId:newClass.classId,
-            className,
-            startDate,
-            endDate,
-            numberOfClasses:classCount,
-            schedule:scheduleWithLinks
-        };
-
-        //console.dir(schedule,{depth:5});
-
-        // this logic is incomplete yet...
-        // also store the tutor schedule from the schedule available
-
-        try{
-            await Class.create(newClass);
-            await ClassSchedule.create(class_schedule);
-            
-        } catch(err) {
-            console.log(err);
-            return res.status(500).json({Error:"Cannot insert class into database"});
-        }
-
-        res.status(200).json({Message:"Successfully created an class"})
-
-    } catch(err) {
-        console.log(err);
-        res.status(500).json({Error:err});
-    }
-};
+const BASE64PREFIX="data:image/jpeg;base64,"
 
 const getClassDetailsForStudent=async (req,res)=>{
     try{
@@ -143,12 +49,15 @@ const getAllCourseInformation=async (req,res)=>{
         }
         const courseListDetails=await Promise.all(courseInfo.map(async (course,_)=>{
             const tutorName=(await tutor.findOne({uid:course.tutorId})).name;
+            const templateId=course.templateId;
+            const image=(await templateModel.findOne({templateCourseId:templateId})).thumbnailForImage;
             return {
                 subject:course.subject,
                 coursename:course.className,
                 tutorName,
                 startDate:new Date(course.startDate).toLocaleDateString("en-GB",dateOptions),
-                status:(dateDiffInDays(new Date(), new Date(course.endDate))>0)?"current":"completed"
+                status:(dateDiffInDays(new Date(), new Date(course.endDate))>0)?"current":"completed",
+                image:BASE64PREFIX+image
             }
         }));
         res.status(200).json({allCourses:courseListDetails});
@@ -169,15 +78,18 @@ const getAllCourseInformationForTutor = async (req,res)=>{
         }
         const courseListDetails=await Promise.all(courseInfo.map(async (course,_)=>{
             const studentName=(await student.findOne({uid:course.studId})).name;
+            const templateId=course.templateId;
+            const image=(await templateModel.findOne({templateCourseId:templateId})).thumbnailForImage;
             return {
                 subject:course.subject,
                 coursename:course.className,
                 studentName,
                 startDate:new Date(course.startDate).toLocaleDateString("en-GB",dateOptions),
-                status:(dateDiffInDays(new Date(), new Date(course.endDate))>0)?"current":"completed"
+                status:(dateDiffInDays(new Date(), new Date(course.endDate))>0)?"current":"completed",
+                image:BASE64PREFIX+image
             }
         }));
-        console.log(courseListDetails);
+        // console.log(courseListDetails);
         res.status(200).json({allCourses:courseListDetails});
     } catch (err) {
         console.log(err);
@@ -186,7 +98,6 @@ const getAllCourseInformationForTutor = async (req,res)=>{
 };
 
 module.exports={
-    createClass,
     getClassDetailsForStudent,
     getAllCourseInformation,
     getClassDetailsForTutors,

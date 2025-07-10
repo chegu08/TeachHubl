@@ -36,7 +36,7 @@ const getBestTutors = async (req, res) => {
 const createNewTemplateCourse = async (req, res) => {
     try {
 
-        const { name, overview, description, subject, agenda, chapters, tutorId,maxPrice } = req.body;
+        const { name, overview, description, subject, agenda, chapters, tutorId,maxPrice,maxClasses } = req.body;
         const files = req.files;
 
         // always the first file from the files array is the course Image
@@ -89,7 +89,8 @@ const createNewTemplateCourse = async (req, res) => {
             chapters: chapters,
             thumbnailForImage: base64Thumbnail,
             resourceKeys: s3ObjectKeys.filter((_, ind) => ind != 0),
-            maxPrice:maxPrice
+            maxPrice:maxPrice,
+            maxClasses:maxClasses
         };
 
         const newTemplateCourse = await TutorTemplateCourseModel.create(newTemplateCourseDetails);

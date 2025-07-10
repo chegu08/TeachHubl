@@ -109,7 +109,7 @@ const getTodayScheduleForTutor=async (req,res) =>{
         // Remove null values and flatten the array
         const todaysSlots = todaysclasses.flat().filter(Boolean);
 
-        console.log("Today's slots : ",todaysSlots);
+        // console.log("Today's slots : ",todaysSlots);
 
         return res.status(200).json({ todaysSlots });
     } catch (err) {

@@ -1,19 +1,27 @@
 const crypto=require("crypto");
 const {razorpay_instance} = require("../config/razorpay-config");
 const paymentModel=require("../models/paymentModel");
+const OrderDetailsModel=require("../models/paymentOrderDetailsModel");
 require('dotenv').config({path:"D:/GitHub/TeachHubl/.env"});
+const { UpdateTutorScheule,CreateClass }=require("../utils/creatingNewClass");
 // const {v4:uuidv4}=require("uuid");
 
-const cache={};
 
 const createOrder=async (req,res) =>{
     try {
 
-        const {amount,receipt,currency,studId,courseName,startDate,tutorName,tutorId,templateId}=req.body;
+        const {amount,receipt,currency,studId,courseName,startDate,tutorName,tutorId,templateId,schedule,endDate,classCount,subject}=req.body;
         const order=await razorpay_instance.orders.create({amount,receipt,currency});
-        cache[order.id]={studId,courseName,startDate,amount,tutorName,tutorId,templateId};
-        res.status(200).json(order);
+        const OrderDetails={orderId:order.id,studId,courseName,startDate,amount,tutorName,tutorId,templateId,schedule,endDate,classCount,subject};
 
+        // insert order details into database
+        try{
+            await OrderDetailsModel.insertOne(OrderDetails);
+        } catch(err) {
+            console.log(err);
+            return res.status(500).json({Error:"Error inserting order into database"});
+        }
+        res.status(200).json(order);
     } catch(err) {
         console.log(err);
         res.status(500).json({Err:err});
@@ -24,7 +32,10 @@ const verifySignature=async (req,res) =>{
     try {
         const {razorpay_order_id,razorpay_payment_id,razorpay_signature}= req.body;
 
-        if(!cache[razorpay_order_id]) {
+        const order = await OrderDetailsModel.findOne({orderId:razorpay_order_id});
+
+        console.log(order);
+        if(!order) {
             // render failure page couse this is temporary
             return res.status(400).json({Error:"Invalid details for payment"});
         }
@@ -42,22 +53,43 @@ const verifySignature=async (req,res) =>{
         const paymentDetails={
             paymentId:razorpay_payment_id,
             orderId:razorpay_order_id,
-            studId:cache[razorpay_order_id].studId,
-            amount:cache[razorpay_order_id].amount,
+            studId:order.studId,
+            amount:order.amount,
             description:"Initial payment",
-            tutorId:cache[razorpay_order_id].tutorId,
-            templateId:cache[razorpay_order_id].templateId
+            tutorId:order.tutorId,
+            templateId:order.templateId,
+            paymentDate:new Date()
         };
 
-        await paymentModel.insertOne(paymentDetails);
+        try{ 
+            await paymentModel.insertOne(paymentDetails);
+            const classId=await UpdateTutorScheule(order.tutorId,order.schedule,order.courseName);
+            await CreateClass({
+                studId:order.studId,
+                tutorId:order.tutorId,
+                startDate:order.startDate,
+                endDate:order.endDate,
+                paymentId:razorpay_payment_id,
+                classCount:order.classCount,
+                className:order.courseName,
+                schedule:order.schedule,
+                templateId:order.templateId,
+                subject:order.subject,
+                classId
+            });
+        } catch(err) {
+            console.log(err);
+            // render failure page cause this is temporary
+            return res.status(500).json({Error:"Error inserting payment details into database"}); 
+        }
 
         res.render('payment-success',{
-            studId:cache[razorpay_order_id].studId,
-            courseName:cache[razorpay_order_id].courseName,
-            startDate:cache[razorpay_order_id].startDate,
+            studId:order.studId,
+            courseName:order.courseName,
+            startDate:order.startDate,
             razorpay_payment_id,
-            amount:cache[razorpay_order_id].amount,
-            tutorName:cache[razorpay_order_id].tutorName
+            amount:order.amount,
+            tutorName:order.tutorName
         });  
 
     } catch(err) {

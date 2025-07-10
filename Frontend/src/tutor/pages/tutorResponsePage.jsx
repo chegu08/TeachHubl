@@ -79,13 +79,19 @@ function TutorResponsePage() {
             try {
                 const response = await axios.get(`http://localhost:4000/tutor/schedule/${tutorId}?startDate=2025-06-20&endDate=2025-08-20`);
                 const response1 = await axios.get(`http://localhost:4000/tutor/slots/${tutorId}`);
+                // console.log("R ",response.data);
                 setTutorSlots(response1.data.tutorSlots);
                 // console.log("tutor slots",response1.data.tutorSlots)
-                const existingSlots = response.data?.scheduleWithMatchedDates.map(sch => ({
+                // if(response.data.tutorSlots.length==0) {
+                //     console.log("Tutor currently has no slots");
+                // }
+                const existingSlots = response.data?.scheduleWithMatchedDates?.map(sch => ({
                     date: sch.date,
                     slots: sch.eventDetail.map(event => ({ startTime: event.startTime, endTime: event.endTime }))
                 }));
-                setExistingTutorSlots(existingSlots);
+                // console.log("Existing tutor slots: ",existingSlots);
+                
+                setExistingTutorSlots(pre=>(existingSlots?existingSlots:pre));
                 // console.log("existing ",existingSlots)
             } catch (err) {
                 console.log(err);

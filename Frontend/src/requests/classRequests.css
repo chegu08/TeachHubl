@@ -59,6 +59,7 @@
 .requests_container .request_list_container .request .details{
     /* background-color: red; */
     flex-grow: 1;
+    height:100%;
     padding:20px 30px;
     display: flex;
     flex-direction: column;
