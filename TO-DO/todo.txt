@@ -1,6 +1,5 @@
 Immediate to-do: Deadline(9-7-25)
-    1. Create Page for both students and tutor to view about a particular class(about-class Page).
-    2. Add features to the tutor page for creating a test.
+    2. Add features to the tutor page for creating a test for tutor.
     3. Send Email to both the student and tutor regarding newly created class.
     4. Add valid till feature for payment.
 
