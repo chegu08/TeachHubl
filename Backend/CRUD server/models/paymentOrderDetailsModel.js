@@ -86,6 +86,10 @@ const paymentOrderDetailSchema=new mongoose.Schema({
     subject:{
         type:String,
         required:[true,"Subject is required"]
+    },
+    chaptersRequested:{
+        type:[String],
+        required:[true,"Chapters Requested is required"]
     }
 });
 

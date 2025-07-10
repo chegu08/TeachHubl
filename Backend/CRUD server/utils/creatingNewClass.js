@@ -76,7 +76,7 @@ async function UpdateTutorScheule(tutorId,schedule,className) {
     }
 }
 
-async function CreateClass({studId,tutorId,startDate,className,endDate,paymentId,classCount,subject,schedule,templateId,classId}) {
+async function CreateClass({studId,tutorId,startDate,className,endDate,paymentId,classCount,subject,schedule,templateId,classId,chaptersRequested}) {
     try {
         const newClass={
             classId,
@@ -92,7 +92,8 @@ async function CreateClass({studId,tutorId,startDate,className,endDate,paymentId
             subject,
             completedClasses:0,
             templateId,
-            schedule
+            schedule,
+            chaptersRequested
         }
 
         const scheduleWithLinks=await Promise.all(schedule.map(async (sch)=>{

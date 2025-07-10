@@ -10,11 +10,13 @@ import MainPage from "./pages/mainPage.jsx";
 import ResponsePage from "./pages/responsePage.jsx";
 import PaymentPage from "./pages/paymentPage.jsx";
 import TemplateCoursePage from "./pages/templateCoursePage.jsx";
+import AboutClassPage from "./pages/aboutClassPage.jsx";
 
 
 import TutorHomePage from "./tutor/pages/tutorHomePage.jsx";
 import TutorTestFeedbackPage from "./tutor/pages/tutorTestFeedbackPage.jsx";
 import TutorResponsePage from "./tutor/pages/tutorResponsePage.jsx";
+import TutorAboutClassPage from "./tutor/pages/tutorAboutClassPage.jsx";
 
 import { useState } from 'react';
 import { Route, Routes } from "react-router-dom";
@@ -41,6 +43,7 @@ function App() {
           <Route path='/template-course/:courseId' element={<TemplateCoursePage />} />
           <Route path="/course-response/:responseId" element={<ResponsePage />} />
           <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/aboutClassPage" element={<AboutClassPage />}/>
 
 
           {/* theses routes are for tutors */}
@@ -48,6 +51,7 @@ function App() {
           <Route path='/tutor/home' element={<TutorHomePage />} />
           <Route path="/tutor/feedback/:testId" element={<TutorTestFeedbackPage />} />
           <Route path="/tutor/response" element={<TutorResponsePage />} />
+          <Route path="/tutorAboutClassPage" element={<TutorAboutClassPage />}/>
 
 
         </Routes>

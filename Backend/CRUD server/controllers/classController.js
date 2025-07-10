@@ -2,6 +2,7 @@ const Class=require('../models/classDetailModel');
 const student=require('../models/studentDetailModel');
 const tutor=require('../models/tutorDetailModel');
 const templateModel=require("../models/tutorTemplateCourseModel");
+const ClassScheduleModel=require("../models/classScheduleModel");
 
 const BASE64PREFIX="data:image/jpeg;base64,"
 
@@ -57,7 +58,9 @@ const getAllCourseInformation=async (req,res)=>{
                 tutorName,
                 startDate:new Date(course.startDate).toLocaleDateString("en-GB",dateOptions),
                 status:(dateDiffInDays(new Date(), new Date(course.endDate))>0)?"current":"completed",
-                image:BASE64PREFIX+image
+                image:BASE64PREFIX+image,
+                classId:course.classId,
+                templateId
             }
         }));
         res.status(200).json({allCourses:courseListDetails});
@@ -86,7 +89,9 @@ const getAllCourseInformationForTutor = async (req,res)=>{
                 studentName,
                 startDate:new Date(course.startDate).toLocaleDateString("en-GB",dateOptions),
                 status:(dateDiffInDays(new Date(), new Date(course.endDate))>0)?"current":"completed",
-                image:BASE64PREFIX+image
+                image:BASE64PREFIX+image,
+                classId:course.classId,
+                templateId
             }
         }));
         // console.log(courseListDetails);
@@ -97,9 +102,39 @@ const getAllCourseInformationForTutor = async (req,res)=>{
     }
 };
 
+const getClassDetailsForAboutPage_Student=async (req,res) =>{
+    try{
+
+        const {classId}=req.params;
+        const classDetail=await Class.findOne({classId});
+
+        const InfoToSend={
+            startDate:classDetail.startDate,
+            endDate:classDetail.endDate,
+            classCount:classDetail.classCount,
+            chaptersRequested:classDetail.chaptersRequested
+        };
+
+        const classschedule=await ClassScheduleModel.findOne({classId});
+        const schedule=classschedule.schedule.map((sch)=>{
+            return {
+                date:sch.date,
+                slots:sch.slots.map(slot=>({startTime:slot.startTime,endTime:slot.endTime}))
+            }
+        });
+
+        res.status(200).json({...InfoToSend,schedule});
+         
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
 module.exports={
     getClassDetailsForStudent,
     getAllCourseInformation,
     getClassDetailsForTutors,
-    getAllCourseInformationForTutor
+    getAllCourseInformationForTutor,
+    getClassDetailsForAboutPage_Student
 }

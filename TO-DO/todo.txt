@@ -1,19 +1,18 @@
-Done so far: 
-    1. payment from student via razorpay 
-
 Immediate to-do: Deadline(9-7-25)
-    3. Send Email to both the student and tutor regarding newly created class
-    4. Add valid till feature for payment
+    1. Create Page for both students and tutor to view about a particular class(about-class Page).
+    2. Add features to the tutor page for creating a test.
+    3. Send Email to both the student and tutor regarding newly created class.
+    4. Add valid till feature for payment.
 
 Complete Later: Deadline(18-7-25)
-    1. Send invoice to both student and tutor via mail
-    2. Create resourse section and add features to it.
-    3. Add profile section for student and tutors
+    1. Send invoice to both student and tutor via mail.
+    2. Create resource section and add features to it.
+    3. Add profile section for student and tutors.
     4. Login page for student and tutor and get photos from it .
-    5. Update all the hardcoded studId and tutorId in all files
-    6. Enable web push notification and toast notification
+    5. Update all the hardcoded studId and tutorId in all files.
+    6. Enable web push notification and toast notification.
     7. Add class dashboards (To show statistics class wise).
-    8. Add personal dashboards to the student in profile section .
+    8. Add personal dashboards to the student in profile section.
     9. Add earnings dashboard for tutor.
     10. Allow manual creation of one or more sessions for a class by tutor .
     11. Create chat page for both students and tutors.
@@ -21,4 +20,5 @@ Complete Later: Deadline(18-7-25)
     13. Creating a custom test.
     14. Update the progress bar in dashboard section of both students and tutors.
     15. Complete the feature for tutor to fill a slot even in a day he has no slot in response page.
+    16. Create statistics about the attendance and the test performance related to the class in about class page for student.
     

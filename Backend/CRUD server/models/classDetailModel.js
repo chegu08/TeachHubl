@@ -75,6 +75,10 @@ const classSchema = new mongoose.Schema({
     templateId:{
         type:String,
         required:[true,"Template Id of this class is required!"]
+    },
+    chaptersRequested:{
+        type:[String],
+        required:[true,"Chapters requested is required"]
     }
 })
 

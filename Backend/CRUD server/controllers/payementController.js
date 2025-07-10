@@ -10,9 +10,9 @@ const { UpdateTutorScheule,CreateClass }=require("../utils/creatingNewClass");
 const createOrder=async (req,res) =>{
     try {
 
-        const {amount,receipt,currency,studId,courseName,startDate,tutorName,tutorId,templateId,schedule,endDate,classCount,subject}=req.body;
+        const {amount,receipt,currency,studId,courseName,startDate,tutorName,tutorId,templateId,schedule,endDate,classCount,subject,chaptersRequested}=req.body;
         const order=await razorpay_instance.orders.create({amount,receipt,currency});
-        const OrderDetails={orderId:order.id,studId,courseName,startDate,amount,tutorName,tutorId,templateId,schedule,endDate,classCount,subject};
+        const OrderDetails={orderId:order.id,studId,courseName,startDate,amount,tutorName,tutorId,templateId,schedule,endDate,classCount,subject,chaptersRequested};
 
         // insert order details into database
         try{
@@ -75,7 +75,8 @@ const verifySignature=async (req,res) =>{
                 schedule:order.schedule,
                 templateId:order.templateId,
                 subject:order.subject,
-                classId
+                classId,
+                chaptersRequested:order.chaptersRequested
             });
         } catch(err) {
             console.log(err);

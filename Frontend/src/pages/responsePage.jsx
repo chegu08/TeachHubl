@@ -121,7 +121,8 @@ function ResponsePage() {
                             templateId:course.templateId,
                             schedule:course.schedule,
                             classCount:course.classes,
-                            subject:course.subject
+                            subject:course.subject,
+                            chaptersRequested:course.chaptersRequested
                         }
                     })}>Proceed to payment</button>
                 </div>

@@ -17,7 +17,7 @@ function loadScript(src) {
     })
 }
 
-async function displayRazorpay(amount, studId,courseName,startDate,tutorName,tutorId,templateId,schedule,endDate,classCount,subject) {
+async function displayRazorpay(amount, studId,courseName,startDate,tutorName,tutorId,templateId,schedule,endDate,classCount,subject,chaptersRequested) {
 
     const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js')
 
@@ -41,7 +41,8 @@ async function displayRazorpay(amount, studId,courseName,startDate,tutorName,tut
             schedule,
             endDate,
             classCount,
-            subject
+            subject,
+            chaptersRequested
         })).data;
 
         console.log(data)
@@ -74,7 +75,7 @@ async function displayRazorpay(amount, studId,courseName,startDate,tutorName,tut
 
 function PaymentPage() {
 
-    const { courseName, tutorName, startDate, endDate, subtotal, platformFee, total, studId,templateId,tutorId,schedule,classCount,subject } = useLocation().state;
+    const { courseName, tutorName, startDate, endDate, subtotal, platformFee, total, studId,templateId,tutorId,schedule,classCount,subject,chaptersRequested } = useLocation().state;
 
     return (
         <div className="payment_page">
@@ -97,7 +98,7 @@ function PaymentPage() {
                     <p className="info">Platform fee ( 18% ) <span>₹ {platformFee}</span></p>
                     <p className="info">Total <span>₹ {total}</span></p>
                 </div>
-                <button onClick={() => displayRazorpay(total, studId,courseName,startDate,tutorName,tutorId,templateId,schedule,endDate,classCount,subject)}>Pay ₹{total}</button>
+                <button onClick={() => displayRazorpay(total, studId,courseName,startDate,tutorName,tutorId,templateId,schedule,endDate,classCount,subject,chaptersRequested)}>Pay ₹{total}</button>
             </div>
         </div>
     );
