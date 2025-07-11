@@ -17,6 +17,7 @@ import TutorHomePage from "./tutor/pages/tutorHomePage.jsx";
 import TutorTestFeedbackPage from "./tutor/pages/tutorTestFeedbackPage.jsx";
 import TutorResponsePage from "./tutor/pages/tutorResponsePage.jsx";
 import TutorAboutClassPage from "./tutor/pages/tutorAboutClassPage.jsx";
+import CreateTestPage from "./tutor/pages/createTestpage.jsx";
 
 import { useState } from 'react';
 import { Route, Routes } from "react-router-dom";
@@ -52,6 +53,7 @@ function App() {
           <Route path="/tutor/feedback/:testId" element={<TutorTestFeedbackPage />} />
           <Route path="/tutor/response" element={<TutorResponsePage />} />
           <Route path="/tutorAboutClassPage" element={<TutorAboutClassPage />}/>
+          <Route path="/tutor/create-test/:classId" element={<CreateTestPage />} />
 
 
         </Routes>

@@ -1,5 +1,5 @@
 import "./tutorAboutClassPage.css";
-import { useSearchParams,useLocation } from 'react-router-dom';
+import { useSearchParams,useLocation,useNavigate } from 'react-router-dom';
 import { useState,useEffect } from "react";
 import axios from "axios";
 
@@ -13,6 +13,7 @@ function TutorAboutClassPage() {
     const classId=searchParams.get("classId");
     const templateId=searchParams.get("templateId");
     const studentName=useLocation().state.studName;
+    const navigation=useNavigate();
 
     const [course, setCourse] = useState({});
     const [tutor, setTutor] = useState({});
@@ -83,7 +84,7 @@ function TutorAboutClassPage() {
                 <div className="tutor-information-container">
                     <img src={tutor.image} alt='No Profile Picture' height={"300px"} width={"90%"} />
                     <h2 style={{ textAlign: "center", marginTop: "20px" }}>{studentName}</h2>
-                    <button>Create Test</button>
+                    <button onClick={()=>navigation(`/tutor/create-test/${classId}`)}>Create Test</button>
                 </div>
             </div>
         </div>

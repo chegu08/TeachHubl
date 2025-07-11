@@ -1,5 +1,4 @@
 Immediate to-do: Deadline(9-7-25)
-    2. Add features to the tutor page for creating a test for tutor.
     3. Send Email to both the student and tutor regarding newly created class.
     4. Add valid till feature for payment.
 
@@ -20,4 +19,7 @@ Complete Later: Deadline(18-7-25)
     14. Update the progress bar in dashboard section of both students and tutors.
     15. Complete the feature for tutor to fill a slot even in a day he has no slot in response page.
     16. Create statistics about the attendance and the test performance related to the class in about class page for student.
+    17. Fix bugs in create Test page
+    18. Fix bugs in test page for student... they are able to start the test before the startTime
+    19. Fix the bugs in websockets and whiteboard.
     
