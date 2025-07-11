@@ -1,10 +1,10 @@
-const TestModel =require('../models/TestModel')
+const TestModel = require('../../models/TestModel')
 
 const { ReminderForNewTest, RemainderForResultUpload } = require('./schedule')
 
 const changeStream = TestModel.watch()
 
-async function listentoChangeStream() {
+function listentoChangeStream() {
     //console.log("came in to the function")
     changeStream.on('change', async (change) => {
         switch (change.operationType) {

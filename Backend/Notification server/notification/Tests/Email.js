@@ -1,5 +1,5 @@
-const {SendEmailCommand}=require('@aws-sdk/client-ses')
-const {sesclient} =require('../config/config')
+const { SendEmailCommand } = require('@aws-sdk/client-ses')
+const { sesclient } = require('../../config/config')
 
 
 
@@ -122,7 +122,7 @@ const sendEmailForCancelledTest = async (stu, tut, testDate) => {
     }
 }
 
-module.exports={
+module.exports = {
     sendEmailForCancelledTest,
     sendEmailForNewTest,
     sendEmailForTestResult

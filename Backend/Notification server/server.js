@@ -2,9 +2,11 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 require('dotenv').config({ path: 'D:/Github/TeachHubl/.env' })
-const { jobs } = require('./notification/schedule')
-const { listentoChangeStream } = require('./notification/changestream')
-const { agenda } = require('./config/config')
+const { jobs: testJobs } = require('./notification/Tests/schedule');
+const { jobs: classJobs } = require("./notification/Classes/schedule");
+const { listentoChangeStream: testListenToChangeStream } = require('./notification/Tests/changestream');
+const { listentoChangeStream: classListenToChangeStream } = require('./notification/Classes/changestream');
+const { agenda } = require('./config/config');
 
 const mongoose = require('mongoose')
 
@@ -21,7 +23,11 @@ app.use(express.urlencoded({ extended: true }))
 async function termination() {
     await agenda.stop()
     //set all the canceling logic here
-    for (const jobName of jobs) {
+    for (const jobName of testJobs) {
+        await agenda.cancel({ name: jobName })
+        console.log(`${jobName} has been cancelled`)
+    }
+    for (const jobName of classJobs) {
         await agenda.cancel({ name: jobName })
         console.log(`${jobName} has been cancelled`)
     }
@@ -34,7 +40,8 @@ const init = async () => {
         await mongoose.connect(process.env.MONGO_URL)
         console.log("connected to database ...")
         await agenda.start()
-        await listentoChangeStream()
+        testListenToChangeStream();
+        classListenToChangeStream();
         console.log("Change Stream is set...")
         app.listen(4001, console.log("server is running on port 4001..."))
     }

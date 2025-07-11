@@ -14,7 +14,11 @@ const classSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    class: {
+    className: {
+        type: String,
+        required: true
+    },
+    subject: {
         type: String,
         required: true
     },
@@ -26,11 +30,13 @@ const classSchema = new mongoose.Schema({
         type: Date,
         required: [true, 'Ending date of the class is required']
     },
-    duration: {
-        //Duration is the number of hours the class is going to be held
-        type: Number,
-        required: [true, 'Class duration is required']
-    },
+    // duration: {
+    //     //Duration is the number of hours the class is going to be held
+    //     type: Number,
+    //     required: [true, 'Class duration is required']
+    // },
+    // this is taken out in hopes that it doesnot comply with the current codebase
+    // If this happens to cause any error , it will be uncommented again
     paymentId: {
         type: String,
         required: [true, 'Payment Id is required']
@@ -61,6 +67,18 @@ const classSchema = new mongoose.Schema({
     classCount: {
         type: Number,
         required: true
+    },
+    completedClasses:{
+        type:Number,
+        required:true
+    },
+    templateId:{
+        type:String,
+        required:[true,"Template Id of this class is required!"]
+    },
+    chaptersRequested:{
+        type:[String],
+        required:[true,"Chapters requested is required"]
     }
 });
 

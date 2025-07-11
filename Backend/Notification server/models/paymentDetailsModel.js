@@ -1,0 +1,42 @@
+const mongoose=require("mongoose");
+
+const paymentSchema = new mongoose.Schema({
+    paymentId:{
+        type:String,
+        unique:true,
+        required:true
+    },
+    orderId:{
+        type:String,
+        unique:true,
+        required:true
+    },
+    studId:{
+        type:String,
+        required:true
+    },
+    tutorId:{
+        type:String,
+        required:true
+    },
+    templateId:{
+        type:String,
+        required:true
+    },
+    amount:{
+        type:Number,
+        required:true
+    },
+    description:{
+        type:String,
+        default:"Initial payment"
+    },
+    paymentDate:{
+        type:Date,
+        required:[true,"Payment Date is required"]
+    }
+});
+
+const paymentModel=mongoose.model('payment',paymentSchema);
+
+module.exports=paymentModel;

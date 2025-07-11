@@ -1,5 +1,5 @@
 const { sendEmailForNewTest, sendEmailForTestResult } = require('./Email')
-const {agenda}=require('../config/config')
+const { agenda } = require('../../config/config')
 
 const jobs = []
 
@@ -47,4 +47,4 @@ const RemainderForResultUpload = async (jobName, stu, tut, score, maxScore, test
     }
 }
 
-module.exports = {jobs, ReminderForNewTest, RemainderForResultUpload }
+module.exports = { jobs, ReminderForNewTest, RemainderForResultUpload }
