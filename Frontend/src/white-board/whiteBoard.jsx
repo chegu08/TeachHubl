@@ -9,6 +9,8 @@ const database = 'http://localhost:4002'
 const WhiteBoard = ({ tool, socket, color, whiteboardId ,user,roomId}) => {
     const [elements, setElements] = useState([])
 
+    const classId="cb7dbc84-534c-468c-af49-b0acfd47b51e";
+
     //const socket=useRef(Socket).current;
     const canvasRef = useRef(null)
     const ctxRef = useRef(null)
@@ -20,7 +22,7 @@ const WhiteBoard = ({ tool, socket, color, whiteboardId ,user,roomId}) => {
             const currentCanvasElements = (await axios.get(`${database}/${classId}/${whiteboardId}`)).data.elements
             setElements(currentCanvasElements)
         }
-        FillCanvas("class2")
+        FillCanvas(classId)
     }, [])
 
     useEffect(() => {

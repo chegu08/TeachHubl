@@ -1,11 +1,9 @@
-Immediate to-do: Deadline(9-7-25)
-    4. Add valid till feature for payment.
-
-Complete Later: Deadline(18-7-25)
-    2. Create resource section and add features to it.
+Immediate to-do: Deadline(13-7-25)
     3. Add profile section for student and tutors.
     4. Login page for student and tutor and get photos from it.
     5. Update all the hardcoded studId and tutorId in all files.
+
+Complete Later: Deadline(18-7-25)
     6. Enable web push notification and toast notification.
     7. Add class dashboards (To show statistics class wise).
     8. Add personal dashboards to the student in profile section.
@@ -22,4 +20,6 @@ Complete Later: Deadline(18-7-25)
     19. Fix the bugs in websockets and whiteboard.
     20. Send invoice to both student and tutor via mail.
     21. Send Email to the tutor if a student cancels the class .
+    22. Add feature to allow resources that are already in s3 for tutor course templates.
+    23. Add feature to allow both students and tutors to manually store their resources in s3 directly and also calculate their remaining storage capacity(max is 100)
     

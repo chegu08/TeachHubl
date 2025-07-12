@@ -11,6 +11,7 @@ import ResponsePage from "./pages/responsePage.jsx";
 import PaymentPage from "./pages/paymentPage.jsx";
 import TemplateCoursePage from "./pages/templateCoursePage.jsx";
 import AboutClassPage from "./pages/aboutClassPage.jsx";
+import ResourceContentPage from "./commonPages/resourceContentpage.jsx";
 
 
 import TutorHomePage from "./tutor/pages/tutorHomePage.jsx";
@@ -55,6 +56,8 @@ function App() {
           <Route path="/tutorAboutClassPage" element={<TutorAboutClassPage />}/>
           <Route path="/tutor/create-test/:classId" element={<CreateTestPage />} />
 
+          {/* route common to both tutor and student */}
+          <Route path="/resource-content" element={<ResourceContentPage />} />
 
         </Routes>
       </mainSectionContext.Provider>

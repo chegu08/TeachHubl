@@ -61,11 +61,16 @@ function ResponsePage() {
                             }
                         </p>
                     </div>
+                            <h1>Price : ₹ {course.price}</h1>
+                            <h1>Classes : {course.classes}</h1>
+                            <h1>Starts On: {course.startDate?.split('T')[0]}</h1>
+                            <h1>Ends On: {course.endDate?.split('T')[0]}</h1>
+                            <h1>Valid Till : {course.valid_till?.split('T')[0]}</h1>
                     <div className="drop-down-container" style={{ marginTop: "20px" }} >
                         <h3>Chapters</h3>
                         <p>
                             {
-                                course?.chaptersRequested?.map((chap, ind) => (<p key={ind} style={{ marginLeft: "20px" }}>{chap}</p>))
+                                course?.chaptersRequested?.map((chap, ind) => (<span key={ind} style={{ marginLeft: "20px",display:"block" }}>{chap}</span>))
                             }
                         </p>
                     </div>
@@ -73,14 +78,10 @@ function ResponsePage() {
                         <h3>Resources</h3>
                         <p>
                             {
-                                course?.resources?.map((res, ind) => (<p key={ind} style={{ marginLeft: "20px" }}>{res}</p>))
+                                course?.resources?.map((res, ind) => (<span key={ind} style={{ marginLeft: "20px",display:"block" }}>{res}</span>))
                             }
                         </p>
                     </div>
-                    <h1>Price : ₹ {course.price}</h1>
-                    <h1>Classes : {course.classes}</h1>
-                    <h1>Starts On: {course.startDate?.split('T')[0]}</h1>
-                    <h1>Ends On: {course.endDate?.split('T')[0]}</h1>
 
                 </div>
                 <div className="tutor-information-container">
@@ -124,7 +125,10 @@ function ResponsePage() {
                             subject:course.subject,
                             chaptersRequested:course.chaptersRequested
                         }
-                    })}>Proceed to payment</button>
+                    })}
+                    disabled={(new Date()).setHours(0,0,0,0) > (new Date(course.valid_till).setHours(0,0,0,0))}
+                    style={((new Date()).setHours(0,0,0,0) > (new Date(course.valid_till).setHours(0,0,0,0)))?{cursor:"not-allowed",opacity:"0.5"}:{}}
+                    >Proceed to payment</button>
                 </div>
             </div>
         </div>

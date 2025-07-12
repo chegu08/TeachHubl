@@ -5,6 +5,7 @@ import Courses from '../courses/courses';
 import Tests from '../tests/tests';
 import ClassRequests from "../requests/classRequests";
 import Response from '../response/response';
+import Resources from '../resources/resources';
 
 import { useContext ,createContext} from 'react';
 
@@ -25,6 +26,7 @@ function MainPage () {
       {studentmainSection =='tests'&& <Tests />}
       {studentmainSection== "requests"&&<ClassRequests />}
       {studentmainSection=="responses"&&<Response />}
+      {studentmainSection=="resources"&&<Resources />}
     </div>
   </>)
 };

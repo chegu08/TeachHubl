@@ -30,7 +30,7 @@ function Room({socket, roomId, userId, role} ){
 
 
   const user='student'
-  // const classId="class2";
+  const classId="cb7dbc84-534c-468c-af49-b0acfd47b51e";
   // this is hardcoded currently
   // implement the logic to get the class id
 
@@ -154,7 +154,7 @@ function Room({socket, roomId, userId, role} ){
     useEffect(()=>{
 
       setWhiteboard(showwhiteboard?1:-1);
-      if(!showwhiteboard) getTotalPages('class2');
+      if(!showwhiteboard) getTotalPages(classId);
 
       if(currentUserVideoRef.current&&mystream){
         currentUserVideoRef.current.srcObject=mystream;
