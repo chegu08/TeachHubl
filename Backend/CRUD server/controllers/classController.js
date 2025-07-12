@@ -7,6 +7,8 @@ const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
 const aws_config = require("../config/aws-config");
 const NotesModel = require("../models/noteBookModel");
 const { renderNotesAsPdf } = require("../utils/renderNotesAsPdf");
+const fs=require("fs");
+const path=require("path");
 
 const BASE64PREFIX = "data:image/jpeg;base64,"
 
@@ -200,9 +202,15 @@ const getNotesContent = async (req, res) => {
 
         const noteBook = await NotesModel.findOne({ classId });
 
+        res.setHeader('Content-Type','application/pdf');
+        if(!noteBook) {
+            const filePath=path.join(__dirname,"..","public","teachhubl_note_message.pdf");
+            const stream=fs.createReadStream(filePath);
+            return stream.pipe(res);
+        }
+
         const pdfStream=renderNotesAsPdf(noteBook.pages);
 
-        res.setHeader('Content-Type','application/pdf');
         pdfStream.pipe(res);
 
     } catch (err) {

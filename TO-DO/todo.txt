@@ -1,25 +1,25 @@
 Immediate to-do: Deadline(13-7-25)
-    3. Add profile section for student and tutors.
-    4. Login page for student and tutor and get photos from it.
-    5. Update all the hardcoded studId and tutorId in all files.
+    9. Add earnings dashboard for tutor.
+    10. Allow manual creation of one or more sessions for a class by tutor.
+    11. Create chat page for both students and tutors.
 
 Complete Later: Deadline(18-7-25)
-    6. Enable web push notification and toast notification.
-    7. Add class dashboards (To show statistics class wise).
-    8. Add personal dashboards to the student in profile section.
-    9. Add earnings dashboard for tutor.
-    10. Allow manual creation of one or more sessions for a class by tutor .
-    11. Create chat page for both students and tutors.
     12. Create reviews for the class and tutor.
     13. Creating a custom test.
     14. Update the progress bar in dashboard section of both students and tutors.
     15. Complete the feature for tutor to fill a slot even in a day he has no slot in response page.
     16. Create statistics about the attendance and the test performance related to the class in about class page for student.
     17. Fix bugs in create Test page
-    18. Fix bugs in test page for student... they are able to start the test before the startTime
+    18. Fix bugs in test page for student... they are able to start the test before the startTime.
     19. Fix the bugs in websockets and whiteboard.
     20. Send invoice to both student and tutor via mail.
     21. Send Email to the tutor if a student cancels the class .
     22. Add feature to allow resources that are already in s3 for tutor course templates.
-    23. Add feature to allow both students and tutors to manually store their resources in s3 directly and also calculate their remaining storage capacity(max is 100)
+    23. Add feature to allow both students and tutors to manually store their resources in s3 directly and also calculate their remaining storage capacity(max is 100).
+    24. Fix the bug in filling slots...(when the tutor has manually filled some slots and then tries to auto fill it doesn't work).
+    25. Implement Calendar for students and tutors with the same cozy UI as in you click calendar icon in the header in justinmind website.
+    26. Add profile section for student and tutors.
+    27. Login page for student and tutor and get photos from it.
+    28. Update all the hardcoded studId and tutorId in all files.
+    29. Enable web push notification and toast notification as it needs auth.
     

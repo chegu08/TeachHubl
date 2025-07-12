@@ -55,12 +55,13 @@ function ResourceContentPage() {
     const [urlSearchParams, _] = useSearchParams();
 
     const resourceKey = decodeURIComponent(urlSearchParams.get("resourceKey"));
-    const isNotes = Boolean(urlSearchParams.get("isNotes"));
+    const isNotes = urlSearchParams.get("isNotes");
+    // console.log(isNotes);
     const classId=urlSearchParams.get("classId");
     const splitArray = resourceKey.split('.');
     const contentType = splitArray[splitArray.length - 1];
 
-    const contentURL = !isNotes ? `http://localhost:4000/class/resource-content?resourceKey=${encodeURIComponent(resourceKey)}&contentType=${mimeTypes[contentType]}`:`http://localhost:4000/class/notes-content/${classId}`;
+    const contentURL = isNotes=="false" ? `http://localhost:4000/class/resource-content?resourceKey=${encodeURIComponent(resourceKey)}&contentType=${mimeTypes[contentType]}`:`http://localhost:4000/class/notes-content/${classId}`;
 
     return (
         <div className="resource_content_page">
