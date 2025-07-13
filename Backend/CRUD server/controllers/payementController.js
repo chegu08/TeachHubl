@@ -63,8 +63,8 @@ const verifySignature=async (req,res) =>{
         };
 
         try{ 
-            await paymentModel.insertOne(paymentDetails);
             const classId=await UpdateTutorScheule(order.tutorId,order.schedule,order.courseName);
+            await paymentModel.insertOne({...paymentDetails,classId});
             const studName=(await StudModel.findOne({uid:order.studId})).name;
             await CreateClass({
                 studId:order.studId,

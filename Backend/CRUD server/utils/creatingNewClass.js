@@ -72,6 +72,7 @@ async function UpdateTutorScheule(tutorId,schedule,className) {
         return classId;
 
     } catch(err) {
+        console.log("Error is thrown from here");
         throw new Error(err);
     }
 }
@@ -130,6 +131,7 @@ async function CreateClass({studId,tutorId,startDate,className,endDate,paymentId
         
         
     } catch(err) {
+        console.log("Error with create log fn");
         throw new Error(err);
     }
 }

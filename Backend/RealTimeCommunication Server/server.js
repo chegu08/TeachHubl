@@ -3,7 +3,9 @@ const app = express();
 const { v4: uuid } = require("uuid");
 const cors = require("cors");
 const { Server } = require("socket.io");
-const mongoose = require('mongoose');
+const NotebookModel=require("./models/noteBookModel");
+const messageModel=require("./models/messageModel");
+const mongoose=require("mongoose");
 
 app.use(cors({ origin: "*" }));
 app.use(express.urlencoded({ extended: true }));
@@ -26,24 +28,6 @@ const server = app.listen(port, async () => {
 });
 
 const io = new Server(server, { cors: { origin: "*", methods: ["GET", "POST", "PUT", "DELETE"], } });
-
-
-const NotebookSchema = new mongoose.Schema({
-    classId: {
-        type: String,
-        required: true
-    },
-    pages: {
-        type: Array,
-        validate: {
-            validator: function (v) {
-                return v.length === this.totalPages
-            }
-        }
-    }
-})
-
-const NotebookModel = mongoose.model("NoteBook", NotebookSchema)
 
 app.get('/:classId', async (req, res) => {
     try {
@@ -111,10 +95,57 @@ app.post('/:classId/:pageNumber', async (req, res) => {
     }
 });
 
+// this is the io connection for chat
+
+/**
+ *  rooms are named such as <user1>&<user2>.
+ * 
+ * if a user has come with a socket id insert socket.id 
+ * into the room .
+ * 
+ * There can be multiple sockets for the same user.
+ * 
+ * if a socket has disconnected ,remove socket.id form room
+*/
+const roomDetailsForChat=new Map();
+
+/**
+ * TO check whether a user is online or not . 
+ * Just check in userStateDetails 
+ * 
+ * Also use the user state Details to know which chat the user has opened.
+ * 
+ * A user must be removed from user state details only after ensuring 
+ * that there is no socket.id in the associated room with 
+ * the disconnected userId
+ * 
+ * The format of userStateDetails is 
+ * 
+ * "userId":{
+ * 
+ *      totalConnections:number,
+ *      selectedChat:string
+ *  
+ * }
+*/
+const userStateDetail= new Map();
+
+io.of('/chat').on('connection',(socket)=>{
+    
+    const userId=socket.handshake.query;
+    console.log('userblahblah : ',userId);
+    // socket.emit('recv-message-list',`User with user id ${userId} has come online. Fetching all the messages...`);
+    // console.log(socket)
+    
+});
+
+
+
+// this is the io connection for webRTC and whiteBoard
 
 const roomDetails = new Map();
 
-io.on('connection', (socket) => {
+io.of('/').on('connection', (socket) => {
 
     socket.on('kjsdglj', () => {
         console.log("akkdfgnlkadngksndlgkbnsdbgtn");
@@ -152,5 +183,3 @@ io.on('connection', (socket) => {
     });
 
 });
-
-

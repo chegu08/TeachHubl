@@ -1,6 +1,7 @@
 import "@fontsource/poppins";
 import './App.css'
 
+// Pages for students
 import TestAnalysis from "./pages/testAnalysis.jsx";
 import VideoCallPage from "./video_call/videoCall.jsx";
 import TutorMainPage from "./tutor/pages/mainpage.jsx";
@@ -11,15 +12,19 @@ import ResponsePage from "./pages/responsePage.jsx";
 import PaymentPage from "./pages/paymentPage.jsx";
 import TemplateCoursePage from "./pages/templateCoursePage.jsx";
 import AboutClassPage from "./pages/aboutClassPage.jsx";
-import ResourceContentPage from "./commonPages/resourceContentpage.jsx";
 
-
+// pages for tutors
 import TutorHomePage from "./tutor/pages/tutorHomePage.jsx";
 import TutorTestFeedbackPage from "./tutor/pages/tutorTestFeedbackPage.jsx";
 import TutorResponsePage from "./tutor/pages/tutorResponsePage.jsx";
 import TutorAboutClassPage from "./tutor/pages/tutorAboutClassPage.jsx";
 import CreateTestPage from "./tutor/pages/createTestpage.jsx";
 import RevenueDashBoardPage from "./tutor/pages/revenueDashboardPage.jsx";
+
+// pages common for both
+import ResourceContentPage from "./commonPages/resourceContentpage.jsx";
+import ChatPage from "./commonPages/chatPage.jsx";
+
 
 import { useState } from 'react';
 import { Route, Routes } from "react-router-dom";
@@ -61,6 +66,7 @@ function App() {
 
           {/* route common to both tutor and student */}
           <Route path="/resource-content" element={<ResourceContentPage />} />
+          <Route path="/chat" element={<ChatPage />} />
 
         </Routes>
       </mainSectionContext.Provider>

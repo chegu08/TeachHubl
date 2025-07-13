@@ -9,6 +9,9 @@ import { useState } from 'react'
 
 
 function Header(){
+    
+    // this is temporary
+    const studId="lkajnsglknaoi"
     const navigate=useNavigate();
 
     const [showProfile,setShowProfile]=useState(false);
@@ -21,7 +24,9 @@ function Header(){
                 <button className="about">About</button>
             </div>
             <div className="shortcuts_and_profile_container">
-                <button className="messages"><img src={messagingIcon} height={"150%"} width={"150%"}/></button>
+                <button className="messages" onClick={()=>{
+                    window.open(`/chat?user=${studId}`,"_blank","noopener,noreferrer");
+                }}><img src={messagingIcon} height={"150%"} width={"150%"}/></button>
                 <button className="notifications"><img src={notificationIcon} height={"150%"} width={"150%"}/></button>
                 <button className="calendar"><img src={calendarIcon} height={"150%"} width={"150%"}/></button>
                 <button className="profile" onClick={()=>setShowProfile(pre=>!pre)}><img src={profileIcon} alt="profile" height={"150%"} width={"150%"} style={{borderRadius:"50%"}}/></button>
