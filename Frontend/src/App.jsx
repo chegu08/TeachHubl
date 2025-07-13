@@ -19,6 +19,7 @@ import TutorTestFeedbackPage from "./tutor/pages/tutorTestFeedbackPage.jsx";
 import TutorResponsePage from "./tutor/pages/tutorResponsePage.jsx";
 import TutorAboutClassPage from "./tutor/pages/tutorAboutClassPage.jsx";
 import CreateTestPage from "./tutor/pages/createTestpage.jsx";
+import RevenueDashBoardPage from "./tutor/pages/revenueDashboardPage.jsx";
 
 import { useState } from 'react';
 import { Route, Routes } from "react-router-dom";
@@ -55,6 +56,8 @@ function App() {
           <Route path="/tutor/response" element={<TutorResponsePage />} />
           <Route path="/tutorAboutClassPage" element={<TutorAboutClassPage />}/>
           <Route path="/tutor/create-test/:classId" element={<CreateTestPage />} />
+          <Route path="/tutor/revenue/:tutorId" element={<RevenueDashBoardPage />} />
+          
 
           {/* route common to both tutor and student */}
           <Route path="/resource-content" element={<ResourceContentPage />} />

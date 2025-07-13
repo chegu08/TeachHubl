@@ -49,4 +49,47 @@
     opacity:0.5;
 }
 
+.header .profile_container {
+    position:absolute;
+    z-index: 5;
+    height:300px;
+    width:250px;
+    border: 1px solid rgb(151, 171, 190);
+    border-radius:10px;
+    background-color: white;
+    right:40px;
+    top:60px;
+}
+
+.header .profile_container img{
+    height:50%;
+    width:525;
+    margin: 10% 20%;
+    border-radius: 50%;
+    border:5px solid rgb(151, 171, 190);
+}
+
+.header .profile_container hr{
+    width:100%;
+    height:1px;
+    background-color: rgb(151, 171, 190);
+}
+
+.header .profile_container .actions{
+    display: flex;
+    height:30%;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-evenly;
+}
+
+.header .profile_container .actions button{
+    outline:none;
+    border:none;
+    background:none;outline:none;
+    border:none;
+    cursor:pointer;
+}
+
+
 

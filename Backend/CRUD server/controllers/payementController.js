@@ -2,6 +2,7 @@ const crypto=require("crypto");
 const {razorpay_instance} = require("../config/razorpay-config");
 const paymentModel=require("../models/paymentModel");
 const OrderDetailsModel=require("../models/paymentOrderDetailsModel");
+const StudModel=require("../models/studentDetailModel");
 require('dotenv').config({path:"D:/GitHub/TeachHubl/.env"});
 const { UpdateTutorScheule,CreateClass }=require("../utils/creatingNewClass");
 // const {v4:uuidv4}=require("uuid");
@@ -64,6 +65,7 @@ const verifySignature=async (req,res) =>{
         try{ 
             await paymentModel.insertOne(paymentDetails);
             const classId=await UpdateTutorScheule(order.tutorId,order.schedule,order.courseName);
+            const studName=(await StudModel.findOne({uid:order.studId})).name;
             await CreateClass({
                 studId:order.studId,
                 tutorId:order.tutorId,
@@ -76,7 +78,9 @@ const verifySignature=async (req,res) =>{
                 templateId:order.templateId,
                 subject:order.subject,
                 classId,
-                chaptersRequested:order.chaptersRequested
+                chaptersRequested:order.chaptersRequested,
+                tutorName:order.tutorName,
+                studName
             });
         } catch(err) {
             console.log(err);

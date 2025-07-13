@@ -34,6 +34,11 @@ const paymentSchema = new mongoose.Schema({
     paymentDate:{
         type:Date,
         required:[true,"Payment Date is required"]
+    },
+    classId:{
+        type:String,
+        required:true,
+        unique:true
     }
 });
 

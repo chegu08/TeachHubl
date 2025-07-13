@@ -1,4 +1,4 @@
-const { name } = require('agenda/dist/agenda/name');
+// const { name } = require('agenda/dist/agenda/name');
 const Tutor = require('../models/tutorDetailModel');
 const TutorTemplateCourseModel = require('../models/tutorTemplateCourseModel');
 const TutorScheduleModel=require("../models/tutorScheduleModel");
@@ -8,7 +8,8 @@ const { v4: uuidv4 } = require('uuid');
 const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const aws_config = require("../config/aws-config");
 const { compressFile } = require('../utils/fileCompression');
-const classRequestModel = require('../models/classRequestsModel');
+const ClassModel=require("../models/classDetailModel");
+const paymentModel=require("../models/paymentModel");
 
 const BASE64PREFIX="data:image/jpeg;base64,"
 
@@ -376,6 +377,41 @@ const getResponseDetails=async (req,res)=>{
     }
 };
 
+const getRevenueDetails=async (req,res)=>{
+    try {
+        const {tutorId}=req.params;
+
+        const payments=await paymentModel.find({tutorId}).lean();
+
+        let totalRevenue=0;
+
+        const revenueDetails=await Promise.all(
+            payments.map(async payment=>{
+                const classDetails=await ClassModel.findOne({classId:payment.classId});
+                const templateImage=(await TutorTemplateCourseModel.findOne({templateCourseId:payment.templateId})).thumbnailForImage;
+                totalRevenue+=(payment.amount/118);
+                return {
+                    classId:classDetails.classId,
+                    studentName:classDetails.studName,
+                    startDate:classDetails.startDate.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}),
+                    subject:classDetails.subject,
+                    coursename:classDetails.className,
+                    image:BASE64PREFIX+templateImage,
+                    amount:payment.amount/118,
+                    paymentDate:payment.paymentDate.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}),
+                    paymentId:payment.paymentId
+                }
+            })
+        );
+
+        res.status(200).json({revenueDetails,totalRevenue});
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
 module.exports = {
     getBestTutors,
     createNewTemplateCourse,
@@ -387,6 +423,7 @@ module.exports = {
     getSlots,
     uploadResponse,
     getResponsesForStudent,
-    getResponseDetails
+    getResponseDetails,
+    getRevenueDetails
 };
 

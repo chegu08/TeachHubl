@@ -79,6 +79,14 @@ const classSchema = new mongoose.Schema({
     chaptersRequested:{
         type:[String],
         required:[true,"Chapters requested is required"]
+    },
+    tutorName:{
+        type:String,
+        required:true
+    },
+    studName:{
+        type:String,
+        required:true
     }
 });
 
