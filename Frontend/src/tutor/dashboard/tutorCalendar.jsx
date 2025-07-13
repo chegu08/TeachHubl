@@ -82,7 +82,8 @@ function TutorCalendar({ year, month, calenderInfo: calenderInfoForResponsePage,
         setSlotsForTheMonth(styleInfoMatrix);
 
 
-        console.log(styleInfoMatrix);
+        console.log("calender Info for response page",calenderInfoForResponsePage);
+        console.log("style info matrix",styleInfoMatrix);
 
     }, [year, month, calenderInfoForResponsePage]);
 

@@ -1,5 +1,4 @@
 Immediate to-do: Deadline(13-7-25)
-    10. Allow manual creation of one or more sessions for a class by tutor. (Easy)
     11. Create chat page for both students and tutors. (Tough)
 
 Complete Later: Deadline(18-7-25)

@@ -287,7 +287,7 @@ const uploadResponse=async (req,res) =>{
         }
 
         try {
-            await classRequestModel.updateOne({requestId},{
+            await ClassRequestModel.updateOne({requestId},{
                 $set:{
                     requestStatus:"accepted",
                     responseId:response.responseId

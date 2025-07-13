@@ -1,5 +1,5 @@
 import "./tutorResponsePage.css";
-import { useSearchParams, useLocation,useNavigate } from "react-router-dom";
+import { useSearchParams, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
@@ -33,7 +33,7 @@ const monthMapping = {
 
 function TutorResponsePage() {
     const location = useLocation();
-    const navigation=useNavigate();
+    const navigation = useNavigate();
     // console.log(JSON.stringify(location.state));
     const [urlSearchParams, setUrlSeachParams] = useSearchParams();
     const requestId = urlSearchParams.get("requestId");
@@ -57,11 +57,13 @@ function TutorResponsePage() {
     const [selectedMonth, setSelectedMonth] = useState(monthList[currentMonth]);
     const [existingTutorSlots, setExistingTutorSlots] = useState([]);
     const [tutorSlots, setTutorSlots] = useState([]);
-    const [startDate, setStartDate] = useState();
-    const [endDate, setEndDate] = useState();
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     const [calenderInfoForSlots, setCalenderInfoForSlots] = useState([]);
     const [hoverOverDay, setHoverOverDay] = useState(null);
-    const [showSlotsForConfirmation,setShowSlotsForConfirmation]=useState(false);
+    const [showSlotsForConfirmation, setShowSlotsForConfirmation] = useState(false);
+    const [forceFullyEnteredNumberOfSlots, setForceFullyEnteredNumberOfSlots] = useState(0);
+    const [forceFullyEnteredSlots, setForceFullyEnteredSlots] = useState([]);
 
     useEffect(() => {
         async function fetchMaxClassesAndPrice() {
@@ -90,8 +92,8 @@ function TutorResponsePage() {
                     slots: sch.eventDetail.map(event => ({ startTime: event.startTime, endTime: event.endTime }))
                 }));
                 // console.log("Existing tutor slots: ",existingSlots);
-                
-                setExistingTutorSlots(pre=>(existingSlots?existingSlots:pre));
+
+                setExistingTutorSlots(pre => (existingSlots ? existingSlots : pre));
                 // console.log("existing ",existingSlots)
             } catch (err) {
                 console.log(err);
@@ -101,6 +103,16 @@ function TutorResponsePage() {
         fetchMaxClassesAndPrice();
         fetchTutorScheduleAndSlot();
     }, []);
+
+    useEffect(() => {
+        const new_slots = [];
+        for (let i = 0; i < forceFullyEnteredNumberOfSlots; i++) {
+            new_slots.push(
+                { startTime: "", endTime: "" }
+            )
+        }
+        setForceFullyEnteredSlots(new_slots);
+    }, [forceFullyEnteredNumberOfSlots]);
 
     const handleEndDate = () => {
         if (new Date(endDate) < new Date(startDate)) {
@@ -157,14 +169,16 @@ function TutorResponsePage() {
             else {
                 calenderInfo.push({
                     date: cur_date.toISOString(),
-                    status: "not_filled"
+                    status: "not_filled",
+                    forcefully_add_slot: false
                 })
             }
 
         }
 
         setCalenderInfoForSlots(calenderInfo);
-        console.log(calenderInfo);
+        setSlotsFilled(0);
+        // console.log(calenderInfo);
 
     }
 
@@ -182,6 +196,7 @@ function TutorResponsePage() {
                     if (sl.slot_status == 'free') {
                         slots_auto_filled++;
                         slots_filled_today++;
+                        console.log("came here")
                         return { ...sl, slot_status: "occupied" }
                     }
                     return sl;
@@ -189,46 +204,52 @@ function TutorResponsePage() {
                 const status_after_filling = (cur_day_slots.filter(slot => slot.slot_status == "free").length == 0) ? "filled" : "slots_left";
                 return { ...dslot, slots: cur_day_slots, status: status_after_filling }
             });
+            setSlotsFilled(pre => pre + slots_auto_filled);
             return daywiseSlotInfo;
         });
-        setSlotsFilled(pre => pre + slots_auto_filled);
+        // console.log(`${actualClasses} ${slotsFilled} ${slots_auto_filled}`);
+        // console.log("remaining slots to fill ", actualClasses - slotsFilled - slots_auto_filled)
+
     };
 
-    const handleManualFillSlot=(date_string,slot_ind)=> {
-        if(slotsFilled==actualClasses) {
+    const handleManualFillSlot = (date_string, slot_ind) => {
+        if (slotsFilled == actualClasses) {
             alert("You have already filled all the needed slots... to fill this delete some slots");
-            return ;
+            return;
         }
         setCalenderInfoForSlots(pre => {
             const daywiseSlotInfo = pre.map((dslot) => {
                 if (dslot.status != "slots_left") return dslot;
-                if(date_string.split('T')[0]!=dslot.date.split('T')[0]) return dslot;
-                const cur_day_slots = dslot.slots.map((sl,ind) => {
-                    if(ind==slot_ind) return { ...sl, slot_status: "occupied" }
+                if (date_string.split('T')[0] != dslot.date.split('T')[0]) return dslot;
+                const cur_day_slots = dslot.slots.map((sl, ind) => {
+                    if (ind == slot_ind) return { ...sl, slot_status: "occupied" }
                     return sl;
                 })
                 const status_after_filling = (cur_day_slots.filter(slot => slot.slot_status == "free").length == 0) ? "filled" : "slots_left";
                 return { ...dslot, slots: cur_day_slots, status: status_after_filling }
             });
+            setSlotsFilled(pre => pre + 1);
             return daywiseSlotInfo;
         });
-        setSlotsFilled(pre => pre + 1);
+        // console.log(`${actualClasses} ${slotsFilled} `);
+        // console.log("after filling ", slotsFilled);
+        // console.log('clicked');
     };
 
-    const handleAcceptRequest =async () =>{
-        const scheduleForResponse=calenderInfoForSlots.filter(slot=>slot.status=="slots_left"||slot.status=="filled")
-        .filter(slot=>(slot.slots?.some(s=>s.slot_status=="occupied")||false))
-        .map(slot=>({
-            date:slot.date.split('T')[0],
-            slots:slot.slots.filter(s=>s.slot_status=="occupied").map(s=>({startTime:s.startTime,endTime:s.endTime}))
-        }));
+    const handleAcceptRequest = async () => {
+        const scheduleForResponse = calenderInfoForSlots.filter(slot => slot.status == "slots_left" || slot.status == "filled")
+            .filter(slot => (slot.slots?.some(s => s.slot_status == "occupied") || false))
+            .map(slot => ({
+                date: slot.date.split('T')[0],
+                slots: slot.slots.filter(s => s.slot_status == "occupied").map(s => ({ startTime: s.startTime, endTime: s.endTime }))
+            }));
 
         try {
-            const response=await axios.post(`http://localhost:4000/tutor/response?requestId=${requestId}&templateId=${templateId}`,
+            const response = await axios.post(`http://localhost:4000/tutor/response?requestId=${requestId}&templateId=${templateId}`,
                 {
-                    price:actualPrice,
-                    classes:actualClasses,
-                    schedule:scheduleForResponse,
+                    price: actualPrice,
+                    classes: actualClasses,
+                    schedule: scheduleForResponse,
                     startDate,
                     endDate
                 }
@@ -243,6 +264,50 @@ function TutorResponsePage() {
         }
     };
 
+    const handleForceFullyAddingSlots = (unfilled_date) => {
+        const target_date = (new Date(unfilled_date)).toISOString().split('T')[0];
+        setCalenderInfoForSlots(pre => (
+            pre.map(dslot => {
+                const cur_date = (new Date(dslot.date)).toISOString().split('T')[0];
+                if (cur_date != target_date) return dslot;
+                return {
+                    ...dslot,
+                    forcefully_add_slot: !dslot.forcefully_add_slot
+                }
+            })
+        ));
+    };
+
+    const insertForceFullyEnteredSlots = (target) =>{
+        const target_date=(new Date(target)).toISOString().split('T')[0];
+        setCalenderInfoForSlots(pre=>{
+            const newcalenderslots=pre.map((dslot)=>{
+                const cur_date=(new Date(dslot.date)).toISOString().split('T')[0];
+                if(cur_date!=target_date) return dslot;
+                const newSlotsForToday=forceFullyEnteredSlots.filter(fslot=>fslot.startTime!=""&&fslot.endTime!="")
+                                        .map(fslot=>({
+                                            startTime:fslot.startTime,
+                                            endTime:fslot.endTime,
+                                            slot_status:"occupied"
+                                        }));
+
+                // update the slotsFilled
+                setSlotsFilled(pre=>pre+newSlotsForToday.length);
+                
+                return {
+                    ...dslot,
+                    status:"filled",
+                    slots:newSlotsForToday
+                }
+            });
+            // clean up before calender slots so that 
+            // some other dates can accept slots
+            setForceFullyEnteredNumberOfSlots(0); 
+
+            return newcalenderslots;
+        });
+    };
+
     useEffect(() => {
 
         // debouncing the end date input
@@ -254,55 +319,55 @@ function TutorResponsePage() {
 
     }, [endDate]);
 
-    useEffect(()=>{
-        if(maxClasses==0||actualClasses=="") return ;
+    useEffect(() => {
+        if (maxClasses == 0 || actualClasses == "") return;
 
-        const timeout=setTimeout(() => {
-            if(actualClasses>maxClasses) {
+        const timeout = setTimeout(() => {
+            if (actualClasses > maxClasses) {
                 alert(`The number of classes can't be more than ${maxClasses}`);
             }
-            if(actualClasses<=0) {
+            if (actualClasses <= 0) {
                 alert("You have to take atleast 1 class");
             }
-        },500);
+        }, 500);
 
-        return ()=>{
+        return () => {
             clearTimeout(timeout);
         }
 
-    },[actualClasses,maxClasses]);
+    }, [actualClasses, maxClasses]);
 
-    useEffect(()=>{
-        if(maxPrice==0||actualPrice=="") return ;
+    useEffect(() => {
+        if (maxPrice == 0 || actualPrice == "") return;
 
-        const timeout=setTimeout(()=>{
-            if(actualPrice>maxPrice) {
+        const timeout = setTimeout(() => {
+            if (actualPrice > maxPrice) {
                 alert(`Price can't be more than what than ${maxPrice}`);
             }
-            if(actualPrice<0) {
+            if (actualPrice < 0) {
                 alert("Price has to be greater than 0");
             }
-        },500);
+        }, 500);
 
-        return () =>clearTimeout(timeout);
-    },[actualPrice,maxPrice]);
+        return () => clearTimeout(timeout);
+    }, [actualPrice, maxPrice]);
 
-    useEffect(()=>{
-        if(startDate==undefined||startDate==null) return ;
+    useEffect(() => {
+        if (startDate == undefined || startDate == null) return;
 
-        const timeout=setTimeout(()=>{
-            const inputDate=new Date(startDate);
-            inputDate.setHours(0,0,0,0);
-            const cur_date_ignoring_time=new Date(currentDate);
-            cur_date_ignoring_time.setHours(0,0,0,0);
+        const timeout = setTimeout(() => {
+            const inputDate = new Date(startDate);
+            inputDate.setHours(0, 0, 0, 0);
+            const cur_date_ignoring_time = new Date(currentDate);
+            cur_date_ignoring_time.setHours(0, 0, 0, 0);
 
-            if(inputDate<=cur_date_ignoring_time) {
+            if (inputDate <= cur_date_ignoring_time) {
                 alert("Start date is today or already passed");
             }
-        },1000);
+        }, 1000);
 
-        return ()=>clearTimeout(timeout);
-    },[startDate]);
+        return () => clearTimeout(timeout);
+    }, [startDate]);
 
     return (
         <div className="tutor-response-page">
@@ -358,6 +423,7 @@ function TutorResponsePage() {
                             <p>
                                 <span>Slots to fill : {actualClasses - slotsFilled}</span>
                                 <button onClick={() => handleAutoFillSlots()}>Auto fill slots</button>
+                                <button onClick={() => console.log(slotsFilled)}>console</button>
                             </p>
                             <span style={{ fontSize: "x-small", padding: "0px 2px" }}>Auto fill slots does not fill all the slots ...there might be some slots left after auto fill and it might not be a favourable slot selection all the time .
                                 Please verify the slots before giving your response</span>
@@ -369,7 +435,7 @@ function TutorResponsePage() {
                             <li type="none"><span style={{ backgroundcolor: "white" }}></span><em>Not Filled</em></li>
                         </div>
                     </div>
-                    {actualClasses!=0&&slotsFilled==actualClasses&&<button className="send_response" onClick={()=>setShowSlotsForConfirmation(true)}>Send Response</button>}
+                    {actualClasses != 0 && slotsFilled == actualClasses && <button className="send_response" onClick={() => setShowSlotsForConfirmation(true)}>Send Response</button>}
                 </div>
                 <div className="student-information-container">
                     <img src={null} alt='No Profile Picture' height={"300px"} width={"90%"} />
@@ -393,7 +459,7 @@ function TutorResponsePage() {
                                             <li key={ind}>
                                                 <div>
                                                     <div style={{ display: "inline" }} >{slot.startTime} - {slot.endTime} </div >
-                                                    {slot.slot_status == "free" && <button onClick={()=>handleManualFillSlot(new Date(selectedYear, monthMapping[selectedMonth], hoverOverDay.date).toISOString(),ind)}>Fill</button>}
+                                                    {slot.slot_status == "free" && <button onClick={() => handleManualFillSlot(new Date(selectedYear, monthMapping[selectedMonth], hoverOverDay.date).toISOString(), ind)}>Fill</button>}
                                                     {slot.slot_status == "occupied" && <strong>Slot filled!</strong>}
                                                 </div>
                                             </li>
@@ -401,22 +467,68 @@ function TutorResponsePage() {
                                 }
                                 {
                                     calenderInfoForSlots
-                                        .filter(slot =>  (new Date(selectedYear, monthMapping[selectedMonth], hoverOverDay.date)).toISOString().split('T')[0] == slot.date.split('T')[0] )
+                                        .filter(slot => (new Date(selectedYear, monthMapping[selectedMonth], hoverOverDay.date)).toISOString().split('T')[0] == slot.date.split('T')[0])
                                         .filter(slot => slot.status == "unavailable")[0] &&
                                     <h2>You dont have a free slot on this day according to your schedule</h2>
                                 }
                                 {
                                     calenderInfoForSlots
-                                        .filter(slot =>  (new Date(selectedYear, monthMapping[selectedMonth], hoverOverDay.date)).toISOString().split('T')[0] == slot.date.split('T')[0] )
+                                        .filter(slot => (new Date(selectedYear, monthMapping[selectedMonth], hoverOverDay.date)).toISOString().split('T')[0] == slot.date.split('T')[0])
                                         .filter(slot => slot.status == "not_filled")[0] &&
-                                        <><span>Add slots </span></>
+                                    <>
+                                        <button
+                                            onClick={() => handleForceFullyAddingSlots(new Date(selectedYear, monthMapping[selectedMonth], hoverOverDay.date))}
+                                        >Add slots
+                                        </button>
+                                        {
+                                            calenderInfoForSlots
+                                                .filter(slot => (new Date(selectedYear, monthMapping[selectedMonth], hoverOverDay.date)).toISOString().split('T')[0] == slot.date.split('T')[0])
+                                                .filter(slot => slot.status == "not_filled")[0].forcefully_add_slot &&
+                                            <>
+                                                <label htmlFor="numOfSlots">Enter the number of slots</label>
+                                                <input type="number" id="numOfSlots" value={forceFullyEnteredNumberOfSlots}
+                                                    onChange={(e) => setForceFullyEnteredNumberOfSlots(e.target.value)}
+                                                />
+                                                <ul type="none">
+                                                    {
+                                                        forceFullyEnteredSlots.map((slot,ind1) => (
+                                                            <li key={ind1}>
+                                                                <input type="time" value={slot.startTime} 
+                                                                    onChange={(e)=>{
+                                                                        setForceFullyEnteredSlots(pre=>(
+                                                                            pre.map((fslot,i)=>(i!=ind1)?fslot:{...fslot,startTime:e.target.value})
+                                                                        ))
+                                                                    }}
+                                                                /> &nbsp;
+                                                                : &nbsp;
+                                                                <input type="time" value={slot.endTime} 
+                                                                    onChange={(e)=>{
+                                                                        setForceFullyEnteredSlots(pre=>(
+                                                                            pre.map((fslot,i)=>(i!=ind1)?fslot:{...fslot,endTime:e.target.value})
+                                                                        ))
+                                                                    }} 
+                                                                />
+                                                            </li>
+                                                    ))
+                                                    }
+                                                </ul>
+                                                    {
+                                                        forceFullyEnteredNumberOfSlots>0&&
+                                                        <>
+                                                            <button onClick={()=>{insertForceFullyEnteredSlots(new Date(selectedYear, monthMapping[selectedMonth], hoverOverDay.date))}}>confirm</button>
+                                                            <button onClick={()=>setForceFullyEnteredNumberOfSlots(0)}>cancel</button>
+                                                        </>
+                                                    }
+                                            </>
+                                        }
+                                    </>
                                 }
                             </ul>
                         </div>
                     </div>
                 }
                 {
-                    showSlotsForConfirmation&&(
+                    showSlotsForConfirmation && (
                         <div className="confirmation_container">
                             <span>
                                 {"Confirm Slots!"}
@@ -425,25 +537,25 @@ function TutorResponsePage() {
                             <ul type="none">
                                 {
                                     calenderInfoForSlots
-                                        .filter((slot)=>slot.status=="slots_left"||slot.status=="filled")
+                                        .filter((slot) => slot.status == "slots_left" || slot.status == "filled")
                                         .filter(slot => {
-                                            let anySlotOccupied=false;
-                                            const slot_len=slot.slots?.length||0;
-                                            for(let i=0;i<slot_len;i++) {
-                                                if(slot.slots[i].slot_status=="occupied") {
-                                                    anySlotOccupied=true;
+                                            let anySlotOccupied = false;
+                                            const slot_len = slot.slots?.length || 0;
+                                            for (let i = 0; i < slot_len; i++) {
+                                                if (slot.slots[i].slot_status == "occupied") {
+                                                    anySlotOccupied = true;
                                                     break;
                                                 }
                                             }
                                             return anySlotOccupied;
                                         })
-                                        .map((dayWiseSlot,i)=>(
+                                        .map((dayWiseSlot, i) => (
                                             <ul key={i} type="none">
                                                 Date: {dayWiseSlot.date.split('T')[0]}
                                                 {
                                                     dayWiseSlot.slots
-                                                        .filter(dslot=>dslot.slot_status=="occupied")
-                                                        .map((dslot,ind) =>(
+                                                        .filter(dslot => dslot.slot_status == "occupied")
+                                                        .map((dslot, ind) => (
                                                             <li key={ind}>{dslot.startTime} - {dslot.endTime}</li>
                                                         ))
                                                 }
@@ -451,7 +563,7 @@ function TutorResponsePage() {
                                         ))
                                 }
                             </ul>
-                            <button className="confirm" onClick={()=>handleAcceptRequest()}>Confirm</button>
+                            <button className="confirm" onClick={() => handleAcceptRequest()}>Confirm</button>
                         </div>
                     )
                 }

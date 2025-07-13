@@ -36,7 +36,7 @@ function RevenueDashBoardPage() {
                 <div className="revenue_info">
                     {
                         revenueDetails.map((course, ind) => (
-                            <div className='list' key={ind} >
+                            <div className='revenue-list' key={ind} >
                                 <img src={course.image} />
                                 <div className="details">
                                     <div className="date_and_subject">
