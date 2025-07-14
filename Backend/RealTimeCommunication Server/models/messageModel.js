@@ -19,10 +19,10 @@ const messageSchema=new mongoose.Schema({
         required:true
     },
     sentAt:{
-        type:String,
+        type:Date,
         required:true
     },
-    readAt:String
+    readAt:Date
 });
 
 const messageModel=mongoose.model("message",messageSchema);

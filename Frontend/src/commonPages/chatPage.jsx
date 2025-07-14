@@ -18,7 +18,7 @@ function ChatPage() {
     const socketRef = useRef();
 
     useEffect(() => {
-        socketRef.current = io(`http://localhost:4002/chat?userId=${userId}&name=cheguevera`,{
+        socketRef.current = io(`http://localhost:4002/chat`,{
             transports:['websocket']
         });
 
@@ -29,11 +29,28 @@ function ChatPage() {
         }
     }, []);
 
+    const handleIncomingMessageList=(data)=>{
+        console.log(data);
+        alert("data is received");
+    };
+
     useEffect(() => {
+
         if (!socketRef.current) return;
-        socketRef.current.on('recv-message-list', (data) => {
-            alert(data);
+
+        socketRef.current.on('provide-user-details', () => {
+            socketRef.current.emit('user-details',{
+                userId:userId,
+                selectedChat:""
+            });
         });
+
+        socketRef.current.on('message-list',handleIncomingMessageList);
+
+        return ()=>{
+            socketRef.current.off('message-list',handleIncomingMessageList)
+        }
+
     }, []);
 
 
