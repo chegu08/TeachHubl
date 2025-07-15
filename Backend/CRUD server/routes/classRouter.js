@@ -7,7 +7,8 @@ const {
     getClassDetailsForAboutPage_Student,
     getClassResources,
     getResourceContent,
-    getNotesContent
+    getNotesContent,
+    getConnectedChatUsers
 }=require('../controllers/classController');
 
 
@@ -19,5 +20,6 @@ Router.get('/student/aboutPage/:classId',getClassDetailsForAboutPage_Student);
 Router.get('/class-resources/:classId',getClassResources);
 Router.get('/resource-content',getResourceContent);
 Router.get('/notes-content/:classId',getNotesContent);
+Router.get('/connectedChatUsers/:userId',getConnectedChatUsers);
 
 module.exports=Router;

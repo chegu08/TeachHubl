@@ -6,7 +6,11 @@ const { Server } = require("socket.io");
 const NotebookModel = require("./models/noteBookModel");
 const mongoose = require("mongoose");
 
-const { handleIncomingUser } = require("./chat-utils");
+const { 
+    handleIncomingUser,
+    updateChangeOfRoom,
+    updateAllMessagesToRead
+ } = require("./chat-utils");
 
 app.use(cors({ origin: "*" }));
 app.use(express.urlencoded({ extended: true }));
@@ -29,6 +33,7 @@ const server = app.listen(port, async () => {
 });
 
 const io = new Server(server, { cors: { origin: "*", methods: ["GET", "POST", "PUT", "DELETE"], } });
+
 
 app.get('/:classId', async (req, res) => {
     try {
@@ -103,6 +108,10 @@ io.of('/chat').on('connection', (socket) => {
     socket.emit('provide-user-details');
 
     socket.on('user-details', (data)=>handleIncomingUser(data,socket));
+
+    socket.on('update-selected-chat',(data)=>updateChangeOfRoom(data,socket));
+
+    socket.on('read-all-messages-from-this-sender',updateAllMessagesToRead);
 
 });
 

@@ -219,6 +219,27 @@ const getNotesContent = async (req, res) => {
     }
 };
 
+const getConnectedChatUsers=async (req,res)=>{
+    try {
+        const userId=req.params.userId;
+
+        const allusers=await Class.find({
+            $or:[
+                {tutorId:userId},
+                {studId:userId}
+            ]
+        },"studId tutorId -_id");
+        
+        const connectedUserIds=allusers.map(({studId,tutorId})=>(studId==userId?tutorId:studId));
+
+        res.status(200).json([...new Set(connectedUserIds)]);
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
 module.exports = {
     getClassDetailsForStudent,
     getAllCourseInformation,
@@ -227,5 +248,6 @@ module.exports = {
     getClassDetailsForAboutPage_Student,
     getClassResources,
     getResourceContent,
-    getNotesContent
+    getNotesContent,
+    getConnectedChatUsers
 }
