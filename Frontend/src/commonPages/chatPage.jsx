@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { io } from 'socket.io-client'
+import {v4 as uuid} from "uuid";
 
 import TeachHublLogo from '/WhatsApp Image 2025-02-19 at 20.32.04_9336c379.jpg';
 import newChatIcon from "../assets/new-chat-icon.svg";
@@ -38,8 +39,6 @@ function ChatPage() {
     }, []);
 
     const handleIncomingMessageList = (data) => {
-        // console.log(data);
-        // alert("data is received");
         console.log(data);
         setUserChatList(data);
     };
@@ -49,7 +48,7 @@ function ChatPage() {
         if(success) {
             setMessagesOfSelectedChat(allmessages);
             console.log("result ",allmessages);
-            alert("Success");
+            // alert("Success");
         }
         else alert(Error);
 
@@ -66,6 +65,7 @@ function ChatPage() {
         setTypingMessage(e.target.value);
     };
 
+
     useEffect(() => {
 
         if (!socketRef.current) return;
@@ -78,9 +78,16 @@ function ChatPage() {
         });
 
         socketRef.current.on('message-list', handleIncomingMessageList);
+        socketRef.current.on('incoming-message',(data)=>{
+            setMessagesOfSelectedChat(pre=>[data,...pre]);
+        });
 
         return () => {
             socketRef.current.off('message-list', handleIncomingMessageList);
+            socketRef.current.off('incoming-message',(data)=>{
+                setMessagesOfSelectedChat(pre=>[data,...pre]);
+            })
+            // socketRef.emit('disconnect',userId);
         }
 
     }, []);
@@ -100,6 +107,27 @@ function ChatPage() {
     //     console.log(userChatList);
     // },[userChatList]);
 
+    const handleSendMessage=()=>{
+
+        if(typingMessage=="") return ;
+        const sentTime=new Date();
+        const messageDetails={
+            messageId:uuid(),
+            sentAt:sentTime,
+            from:userId,
+            to:selectedChatId,
+            content:typingMessage
+        }
+
+        
+
+        setMessagesOfSelectedChat(pre=>[messageDetails,...pre]);
+        
+        socketRef.current.emit('send-message',{userId,selectedChatId,content:typingMessage,sentAt:sentTime,messageId:messageDetails.messageId});
+        setTypingMessage("");
+
+    };
+
 
     useEffect(()=>{
 
@@ -116,6 +144,8 @@ function ChatPage() {
         }
 
     },[selectedChatId]);
+
+
 
 
     return (
@@ -198,7 +228,10 @@ function ChatPage() {
                             {
                                 messagesOfSelectedChat.map((msg,ind)=>(
                                     <div className="msg_container" style={{flexDirection:(msg.from==userId)?"row-reverse":"row"}} key={ind}>
-                                            {msg.content}
+                                            <div className="msg_box">
+                                                <p>{msg.content}</p>
+                                                <p><span>{new Date(msg.sentAt).toISOString().split('T')[1].substring(0,5)}</span></p>
+                                            </div>
                                     </div>
                                 ))
                             }
@@ -207,7 +240,7 @@ function ChatPage() {
                             <img src={emojiIcon} />
                             <textarea  placeholder={"Type your message here..."} value={typingMessage}
                             onChange={handleTypingMessage}></textarea>
-                            <img src={sendIcon} />
+                            <img src={sendIcon} onClick={handleSendMessage}/>
                         </div>
                     </div>
                 }

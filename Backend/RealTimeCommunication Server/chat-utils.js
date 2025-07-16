@@ -50,7 +50,7 @@ const handleIncomingUser=async (data,socket)=> {
     // it is not necessary to create any room for the user
 
     // now fetch the users message 
-    const messages=await messageModel.find({to:userId}).sort({sentAt:"desc"});
+    const messages=await messageModel.find({to:userId}).sort({sentAt:"asc"});
     
     const ordered_messages={};
     messages.forEach(msg=>{
@@ -85,7 +85,7 @@ const updateChangeOfRoom= async (data,socket)=>{
             const newsocketIds=roomDetailsForChat.get(`${userId}&${userStateDetail[userId].selectedChat}`).filter(socketId=>socketId!=socket.id);
             if(newsocketIds.length=0)
                 roomDetailsForChat.set(`${userId}&${userStateDetail[userId].selectedChat}`,newsocketIds);
-            else roomDetailsForChat.delete(`${userId}&${userStateDetail[userId].selectedChat}`)
+            else roomDetailsForChat.delete(`${userId}&${userStateDetail[userId].selectedChat}`);
 
         }
         else {
@@ -103,12 +103,19 @@ const updateChangeOfRoom= async (data,socket)=>{
     if(roomDetailsForChat.has(`${userId}&${selectedChat}`)) {
         const oldsocketid=roomDetailsForChat.get(`${userId}&${selectedChat}`);
         roomDetailsForChat.set(`${userId}&${selectedChat}`,[...oldsocketid,socket.id]);
+        socket.join(`${userId}&${selectedChat}`);
     }
     else if(roomDetailsForChat.has(`${selectedChat}&${userId}`)){
         const oldsocketid=roomDetailsForChat.get(`${selectedChat}&${userId}`)
         roomDetailsForChat.set(`${selectedChat}&${userId}`,[...oldsocketid,socket.id]);
+        socket.join(`${selectedChat}&${userId}`);
     }
-    else roomDetailsForChat.set(`${userId}&${selectedChat}`,[socket.id]);
+    else {
+        roomDetailsForChat.set(`${userId}&${selectedChat}`,[socket.id]);
+        socket.join(`${userId}&${selectedChat}`);
+    } 
+
+    
 
     // fetching all the messages that was sent by selectedChat
     try {
@@ -150,8 +157,61 @@ const updateAllMessagesToRead=async (data)=>{
 
 };
 
+const handleMessage=async (data,socket)=>{
+    const {userId,selectedChatId:selectedChat,content,sentAt,messageId}=data;
+
+    /**
+     * if there is any socket connection active for selectedChat 
+     * then the message is marked read immediately while inserting into database
+     * 
+     * Otherwise it is pushed to the database as just sentAt
+     */
+
+    let activeSocketConnectionForReceiver=false;
+
+    roomDetailsForChat[`${userId}&${selectedChat}`]?.forEach(socketId=>{
+        if(userStateDetail[selectedChat]?.totalConnections.find(socketId)) {
+            activeSocketConnectionForReceiver=true;
+        }
+    });
+
+    if(activeSocketConnectionForReceiver) {
+        roomDetailsForChat[`${selectedChat}&${userId}`]?.forEach(socketId=>{
+            activeSocketConnectionForReceiver|=userStateDetail[selectedChat]?.totalConnections.find(socketId);
+        });
+    }
+     
+    const roomId=roomDetailsForChat.has(`${userId}&${selectedChat}`)?`${userId}&${selectedChat}`:`${selectedChat}&${userId}`;
+
+    // const sentTime=new Date();
+
+    socket.broadcast.to(roomId).emit('incoming-message',{
+        content,
+        from:userId,
+        to:selectedChat,
+        sentAt
+    });
+
+    try{
+        const messageDetails={
+            messageId,
+            content,
+            from:userId,
+            to:selectedChat,
+            sentAt
+        };
+        if(activeSocketConnectionForReceiver) messageDetails.readAt=sentAt;
+        const message=await messageModel.insertOne(messageDetails);
+        console.log("message inserted into database");
+        console.log(message);
+    } catch(err) {
+        console.log(err);
+    }
+};
+
 module.exports={
     handleIncomingUser,
     updateChangeOfRoom,
-    updateAllMessagesToRead
+    updateAllMessagesToRead,
+    handleMessage
 }

@@ -9,7 +9,8 @@ const mongoose = require("mongoose");
 const { 
     handleIncomingUser,
     updateChangeOfRoom,
-    updateAllMessagesToRead
+    updateAllMessagesToRead,
+    handleMessage
  } = require("./chat-utils");
 
 app.use(cors({ origin: "*" }));
@@ -113,6 +114,7 @@ io.of('/chat').on('connection', (socket) => {
 
     socket.on('read-all-messages-from-this-sender',updateAllMessagesToRead);
 
+    socket.on('send-message',(data)=>handleMessage(data,socket));
 });
 
 
