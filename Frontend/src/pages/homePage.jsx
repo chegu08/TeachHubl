@@ -81,6 +81,7 @@ function HomePage() {
                                         <br />
                                         <span style={{ fontSize: "small", color: "rgb(151, 171, 190)" }}>{tutor.location}</span>
                                     </div>
+                                    <span>Ratings : {tutor.averageRating==0?"No ratings yet!":tutor.averageRating} {tutor.averageRating!=0?"/ 5.0":""}</span>
                                     <a href={"/"} style={{ color: "rgb(13, 110, 253)" }}>view more</a>
                                     {/* the anchor tag points to the home screen for now but it should actually point to a detailed page that shows
                                         the whole information of the tutor 

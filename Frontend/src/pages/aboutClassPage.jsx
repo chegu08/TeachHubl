@@ -2,8 +2,30 @@ import './aboutClassPage.css';
 import { useSearchParams } from 'react-router-dom';
 import { useState,useEffect } from "react";
 import axios from "axios";
+import {Toaster,toast} from "sonner"
 
+import {StarIcon,StarIconFill} from "../components/fileIcon"
 import Header from "../header/header";
+
+function Stars({number,setStars}) {
+    const comp=new Array(5).fill("starIcon").map((_,ind)=>((ind<=number-1&&number!=0)?"starIconFill":"starIcon"));
+    return (
+        <>
+        {
+            comp.map((val,ind)=>(
+                <button style={{background:"none",paddingLeft:"10px",paddingRight:"10px"}} key={ind} onClick={()=>setStars(ind+1)}>
+                    {
+                        val=="starIcon"&&<StarIcon />
+                    }
+                    {
+                        val!="starIcon"&&<StarIconFill />
+                    }
+                </button>
+            ))
+        }
+        </>
+    )
+}
 
 function AboutClassPage() {
     // this is just for now... implement the logic later
@@ -15,6 +37,8 @@ function AboutClassPage() {
     const [course, setCourse] = useState({});
     const [tutor, setTutor] = useState({});
     const [contentDisplayed, setContentDisplayed] = useState('description');
+    const [stars,setStars]=useState(0);
+    const [review,setReview]=useState("");
 
     useEffect(() => {
 
@@ -33,9 +57,29 @@ function AboutClassPage() {
 
     }, []);
 
+    const handlePostReview=async (e)=>{
+
+        try{
+            await axios.post(`http://localhost:4000/tutor/review`,{
+                review,
+                tutorId:tutor.tutorId,
+                studId,
+                stars
+            });
+            toast.success("Review posted!");
+        } catch(err) {
+            console.log(err);
+            toast.error("Erroo posting this review ...try again later");
+        }
+
+        setStars(0);
+        setReview("");
+    };
+
     return (
         <div className="about-page">
             <Header />
+            <Toaster richColors />
             <div className="body">
                 <div className="course-information-container">
                     <h1>{course.name}</h1>
@@ -81,7 +125,14 @@ function AboutClassPage() {
                 <div className="tutor-information-container">
                     <img src={tutor.image} alt='No Profile Picture' height={"300px"} width={"90%"} />
                     <h3 style={{ marginTop: "20px" }}>{tutor.yearsOfExperience} of Experience</h3>
+                    <h2>Ratings: {tutor.averageRating==0?"No ratings yet!":tutor.averageRating} {tutor.averageRating!=0?"/ 5.0":""}</h2>
                     <h2 style={{ textAlign: "center", marginTop: "20px" }}>{tutor.name}</h2>
+                    <p>
+                        Ratings : 
+                        <Stars number={stars} setStars={setStars}/>
+                    </p>
+                    <textarea type="text" placeholder='Give your review here...' value={review} onChange={(e)=>setReview(e.target.value)}/>
+                    <button onClick={handlePostReview}>Submit Review</button>
                 </div>
             </div>
         </div>

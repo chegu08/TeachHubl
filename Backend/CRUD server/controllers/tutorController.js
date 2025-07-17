@@ -10,6 +10,7 @@ const aws_config = require("../config/aws-config");
 const { compressFile } = require('../utils/fileCompression');
 const ClassModel=require("../models/classDetailModel");
 const paymentModel=require("../models/paymentModel");
+const reviewModel=require("../models/tutorReviewModel");
 
 const BASE64PREFIX="data:image/jpeg;base64,"
 
@@ -22,7 +23,8 @@ const getBestTutors = async (req, res) => {
                 {
                     tutorName: allTutors[i].name,
                     location: allTutors[i].address,
-                    photo: allTutors[i].photo
+                    photo: allTutors[i].photo,
+                    averageRating:allTutors[i].averageRating?allTutors[i].averageRating:0
                 }
             )
         }
@@ -158,7 +160,9 @@ const getTemplateDetails = async (req, res) => {
         const tutor = {
             name: tutorDetails.name,
             yearsOfExperience: tutorDetails.yearsofExperience,
-            image: tutorDetails?.photo
+            image: tutorDetails?.photo,
+            averageRating:tutorDetails.averageRating?tutorDetails.averageRating:0,
+            tutorId:tutorDetails.uid
         }
 
         const course = {
@@ -412,6 +416,40 @@ const getRevenueDetails=async (req,res)=>{
     }
 };
 
+const uploadReview=async (req,res)=>{
+    try {
+        const {review,studId,stars,tutorId}=req.body;
+
+        const reviewDetails={
+            reviewId:uuidv4(),
+            studId,
+            tutorId,
+            stars,
+            postedAt:new Date(),
+            review
+        };
+
+        await reviewModel.insertOne(reviewDetails);
+
+        const tutorDetails=await Tutor.findOne({uid:tutorId});
+
+        const totalreviews=tutorDetails.reviewsObtained?tutorDetails.reviewsObtained:0;
+        const cur_rating=tutorDetails.averageRating?tutorDetails.averageRating:0;
+
+        await Tutor.updateOne({uid:tutorId},{
+            $set:{
+                reviewsObtained:totalreviews+1,
+                averageRating:((cur_rating*totalreviews)+stars)/(totalreviews+1)
+            }
+        });
+
+        return res.status(200).json({Message:"successfully posted review"});
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({Error:"err"})
+    }
+};
+
 module.exports = {
     getBestTutors,
     createNewTemplateCourse,
@@ -424,6 +462,7 @@ module.exports = {
     uploadResponse,
     getResponsesForStudent,
     getResponseDetails,
-    getRevenueDetails
+    getRevenueDetails,
+    uploadReview
 };
 

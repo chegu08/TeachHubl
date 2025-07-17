@@ -13,7 +13,8 @@ const {
     uploadResponse,
     getResponsesForStudent,
     getResponseDetails,
-    getRevenueDetails
+    getRevenueDetails,
+    uploadReview
 }=require("../controllers/tutorController");
 
 Router.get('/best',getBestTutors);
@@ -28,5 +29,6 @@ Router.get('/response-details/:responseId',getResponseDetails);
 Router.get('/revenue/:tutorId',getRevenueDetails);
 Router.post('/template',upload.array('resources'),createNewTemplateCourse);
 Router.post('/response',uploadResponse);
+Router.post('/review',uploadReview);
 
 module.exports=Router;

@@ -1,6 +1,6 @@
 import './resources.css';
 import leftArrow from '../assets/arrow-left.svg';
-import FileIcon from '../components/fileIcon';
+import {FileIcon} from '../components/fileIcon';
 import { useEffect, useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 import axios from 'axios';

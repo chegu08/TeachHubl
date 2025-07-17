@@ -1,6 +1,6 @@
 import "./tutorResources.css";
 import leftArrow from "../../assets/arrow-left.svg";
-import FileIcon from "../../components/fileIcon";
+import {FileIcon} from "../../components/fileIcon";
 import {useState,useEffect} from 'react';
 import axios from "axios";
 

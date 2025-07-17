@@ -87,6 +87,7 @@ function ResponsePage() {
                 <div className="tutor-information-container">
                     <img src={tutor.image} alt='No Profile Picture' height={"300px"} width={"90%"} />
                     <h3 style={{ marginTop: "20px" }}>{tutor.yearsOfExperience} of Experience</h3>
+                    <h2>Ratings: {tutor.averageRating==0?"No ratings yet!":tutor.averageRating} {tutor.averageRating!=0?"/ 5.0":""}</h2>
                     <h2 style={{ textAlign: "center", marginTop: "20px" }}>{tutor.name}</h2>
                     <button className="request-course" onClick={() => setShowSchedule(pre => !pre)}>Schedule</button>
                     {

@@ -105,6 +105,14 @@ const tutorSchema = new mongoose.Schema({
     tutorSlots:{
         type:[slotSchema],
         default:[]
+    },
+    reviewsObtained:{
+        type:Number,
+        required:true
+    },
+    averageRating:{
+        type:Number,
+        required:true
     }
 
 })

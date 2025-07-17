@@ -1,8 +1,6 @@
 Immediate to-do: Deadline(18-7-25)
-    12. Create reviews for the class and tutor. (Tough)
     13. Creating a custom test. (Easy)
     14. Update the progress bar in dashboard section of both students and tutors. (Easy)
-    15. Complete the feature for tutor to fill a slot even in a day he has no slot in response page. (Mid)
 
 Complete Later: Deadline(18-7-25)
     16. Create statistics about the attendance and the test performance related to the class in about class page for student. (Mid)
@@ -20,4 +18,5 @@ Complete Later: Deadline(18-7-25)
     29. Enable web push notification and toast notification as it needs auth. (Tough)
     30. Add features or statistics to earnings dashboard (optional).
     31. Add features to chat page and fix bugs.
+    32. Create reviews section for tutors .
     
