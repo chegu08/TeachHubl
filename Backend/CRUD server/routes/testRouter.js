@@ -1,4 +1,6 @@
 const Router=require("express").Router();
+const multer=require("multer");
+const upload=multer();
 
 const { 
     createTest, 
@@ -21,7 +23,7 @@ Router.get('/all/tutor/:tutorId',getAllTutorTests);
 Router.get('/tutor/:tutorId',getUncorrectedTestDetails);
 Router.get('/:id/upcoming',getUpcomingtestdetails);
 Router.get('/:id',getTestDetails);
-Router.post('/', createTest);
+Router.post('/',upload.single('questionForCustomTest'), createTest);
 Router.put('/result', uploadresult);
 Router.put('/feedback', uploadfeedback);
 Router.put('/response', uploadresponse);

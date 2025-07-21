@@ -3,7 +3,8 @@ const ClassModel = require('../models/classDetailModel');
 const axios = require("axios");
 const Agenda = require("agenda");
 const { v4: uuidv4 } = require("uuid");
-
+const {S3Client,PutObjectCommand,GetObjectCommand}=require("@aws-sdk/client-s3");
+const aws_config=require("../config/aws-config");
 
 
 const createTest = async (req, res) => {
@@ -24,11 +25,26 @@ const createTest = async (req, res) => {
             maxScore: testDetails.maxScore
         }
         if (testDetails.testType.toLowerCase() === 'custom') {
-            if (!testDetails.questionForCustomTest) {
+            if (!req.file) {
                 console.log("Questions for this test is not available")
-                return res.status(400).json({ Error: "Questions for this test is not available" })
+                return res.status(400).json({ Error: "Questions for this test is not available" });
             }
-            newtestDetails.questionForCustomTest = testDetails.questionForCustomTest;
+            const client=new S3Client({
+                region:aws_config.region,
+                credentials:aws_config.S3credentials
+            });
+
+            const objectKey=`questionForCustomTest/${newtestDetails.testId}`
+
+            const command = new PutObjectCommand({
+                Bucket:aws_config.s3BucketName,
+                Key:objectKey,
+                Body:req.file.buffer,
+                ContentType:req.file.mimetype
+            })
+
+            await client.send(command);
+            newtestDetails.questionForCustomTest=objectKey;
         }
         else if (testDetails.testType.toLowerCase() === 'standard') {
             if (!testDetails.questionForStandardTest) {
@@ -339,8 +355,8 @@ const getTestDetails = async (req, res) => {
                 marks: que.marks,
                 options: que.options
             }))
-        };
-        //console.log(modifiedTestDetials);
+        }
+    
         res.status(200).json({ testDetails });
     }
     catch (err) {

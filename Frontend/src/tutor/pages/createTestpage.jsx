@@ -18,6 +18,7 @@ function CreateTestPage() {
     const [testDate, setTestDate] = useState();
     const [testTime, setTestTime] = useState();
     const [totalQuestions, setTotalQuestions] = useState(1);
+    const [questionForCustomTest, setQuestionForCustomTest] = useState("");
     const [questions, setQuestions] = useState([{
         question: "",
         answerType: "",
@@ -55,83 +56,103 @@ function CreateTestPage() {
     const handleUploadTest = async (e) => {
 
         e.preventDefault();
+        if (testType == "Standard") {
+            let totalmarks = 0
 
-        let totalmarks=0
-        
-        // checking whether the all the questions are correct
-        for(let i=0;i<totalQuestions;i++) {
-            if(questions[i].question.trim()=="") {
-                alert(`You have given no question for question ${i+1}`);
-                document.getElementById(`que_${i}`).scrollIntoView({behaviour:"smooth"});
-                return ;
-            }
-
-            if(questions[i].answerType=="") {
-                alert(`You have not selected for question ${i+1}`);
-                document.getElementById(`que_${i}`).scrollIntoView({behaviour:"smooth"});
-                return ;
-            }
-
-            if(questions[i].marks=="") {
-                alert(`You have given not provided marks for question ${i+1}`);
-                document.getElementById(`que_${i}`).scrollIntoView({behaviour:"smooth"});
-                return ;
-            }
-
-            const ans=questions[i].answer.split(',').map(ans_ind=>ans_ind.trim());
-            for(let j=0;j<ans.length;j++) {
-                if(isNaN(parseInt(ans[j]))) {
-                    alert(`Answer must only contain numbers , spaces and ","`);
-                    document.getElementById(`que_${i}`).scrollIntoView({behaviour:"smooth"});
-                    return ;
+            // checking whether the all the questions are correct
+            for (let i = 0; i < totalQuestions; i++) {
+                if (questions[i].question.trim() == "") {
+                    alert(`You have given no question for question ${i + 1}`);
+                    document.getElementById(`que_${i}`).scrollIntoView({ behaviour: "smooth" });
+                    return;
                 }
 
-                if(Number(ans[j])<=0||Number(ans[j])>4) {
-                    alert("Answer must contain number 1 , 2, 3, 4 ");
-                    document.getElementById(`que_${i}`).scrollIntoView({behaviour:"smooth"});
-                    return ;
+                if (questions[i].answerType == "") {
+                    alert(`You have not selected for question ${i + 1}`);
+                    document.getElementById(`que_${i}`).scrollIntoView({ behaviour: "smooth" });
+                    return;
                 }
+
+                if (questions[i].marks == "") {
+                    alert(`You have given not provided marks for question ${i + 1}`);
+                    document.getElementById(`que_${i}`).scrollIntoView({ behaviour: "smooth" });
+                    return;
+                }
+
+                const ans = questions[i].answer.split(',').map(ans_ind => ans_ind.trim());
+                for (let j = 0; j < ans.length; j++) {
+                    if (isNaN(parseInt(ans[j]))) {
+                        alert(`Answer must only contain numbers , spaces and ","`);
+                        document.getElementById(`que_${i}`).scrollIntoView({ behaviour: "smooth" });
+                        return;
+                    }
+
+                    if (Number(ans[j]) <= 0 || Number(ans[j]) > 4) {
+                        alert("Answer must contain number 1 , 2, 3, 4 ");
+                        document.getElementById(`que_${i}`).scrollIntoView({ behaviour: "smooth" });
+                        return;
+                    }
+                }
+
+                for (let j = 0; j < 4; j++) {
+                    if (questions[i].options[j].trim() == "") {
+                        alert("Options must not be empty");
+                        document.getElementById(`que_${i}`).scrollIntoView({ behaviour: "smooth" });
+                        return;
+                    }
+                }
+                totalmarks += Number(questions[i].marks);
             }
 
-            for(let j=0;j<4;j++) {
-                if(questions[i].options[j].trim()=="") {
-                    alert("Options must not be empty");
-                    document.getElementById(`que_${i}`).scrollIntoView({behaviour:"smooth"});
-                    return ;
-                }
+            if (totalmarks > maxMarks) {
+                alert("The sum of all marks of questions is exceeding the maximum marks");
+                return;
             }
-            totalmarks+=Number(questions[i].marks);
+
+            const questionDetails = questions.map(que => (
+                {
+                    ...que,
+                    answer: [...new Set(que.answer.split(',').map(a => Number(a.trim()) - 1))].sort(),
+                    marks: Number(que.marks)
+                }
+            ));
+            try {
+                const response = await axios.post('http://localhost:4000/test', {
+                    classId,
+                    testType,
+                    startDate: testDate,
+                    startTime: testTime,
+                    duration: duration / 60,
+                    maxScore: maxMarks,
+                    questionForStandardTest: questionDetails
+                });
+                alert(response.data.testId);
+            } catch (err) {
+                console.log(err);
+                alert("err");
+            }
         }
-
-        if(totalmarks>maxMarks) {
-            alert("The sum of all marks of questions is exceeding the maximum marks");
-            return ;
-        }
-
-        const questionDetails=questions.map(que=>(
-            {
-                ...que,
-                answer:[...new Set(que.answer.split(',').map(a=>Number(a.trim())-1))].sort(),
-                marks:Number(que.marks)
+        else {
+            try {
+                const formData=new FormData();
+                formData.append('classId',classId);
+                formData.append('testType',testType);
+                formData.append('startDate',testDate);
+                formData.append('startTime',testTime);
+                formData.append('duration',duration/60);
+                formData.append('maxScore',maxMarks);
+                formData.append('questionForCustomTest',questionForCustomTest);
+                const response = await axios.post('http://localhost:4000/test', formData ,{
+                    headers:{
+                        "Content-Type":"multipart/form-data"
+                    }
+                });
+                alert(response.data.testId);
+            } catch(err) {
+                console.log(err);
+                alert("err");
             }
-        ));
-
-        try {
-            
-            const response=await axios.post('http://localhost:4000/test',{
-                classId,
-                testType,
-                startDate:testDate,
-                startTime:testTime,
-                duration:duration/60,
-                maxScore:maxMarks,
-                questionForStandardTest:questionDetails
-            });
-            alert(response.data.testId);
-        } catch(err) {
-            console.log(err);
-            alert("err");
-        } 
+        }
     };
 
     return (
@@ -171,85 +192,97 @@ function CreateTestPage() {
                     </div>
                     {
                         testType == "Standard" &&
-                        questions.map((que, ind) => (
-                            <div className="questions_container" key={ind} id={`que_${ind}`}>
-                                <textarea name="question" placeholder={"Question "+String(ind+1)}  onInput={(e) => handleQuestionInput(e, ind)} value={que.question}></textarea>
-                                <div className="remainder_section">
-                                    <div className="input_container" >
-                                        <div className="input_container" style={{ width: "50%", justifyContent: "flex-start" }}>
-                                            <input type="radio" name="answer-type" id="singlecorrect" value={"SingleCorrect"} style={{ width: "5%" }} onChange={(e) => {
-                                                setQuestions(pre => (
-                                                    pre.map((questionDetail, i) => (i != ind ? questionDetail : { ...questionDetail, answerType: e.target.value }))
-                                                ))
-                                            }} />
-                                            <label htmlFor='singlecorrect'>SingleCorrect</label>
-                                        </div>
-                                        <div className="input_container" style={{ width: "50%", justifyContent: "flex-start" }}>
-                                            <input type="radio" name="answer-type" id="multicorrect" value={"MultiCorrect"} style={{ width: "5%" }} onChange={(e) => {
-                                                setQuestions(pre => (
-                                                    pre.map((questionDetail, i) => (i != ind ? questionDetail : { ...questionDetail, answerType: e.target.value }))
-                                                ))
-                                            }} />
-                                            <label htmlFor='multicorrect"'>MultiCorrect</label>
-                                        </div>
-                                        <div className="input_container" style={{ width: "50%", justifyContent: "flex-start" }}>
-                                            <input type="radio" name="answer-type" id="Numerical" value={"Numerical"} style={{ width: "5%" }} onChange={(e) => {
-                                                setQuestions(pre => (
-                                                    pre.map((questionDetail, i) => (i != ind ? questionDetail : { ...questionDetail, answerType: e.target.value }))
-                                                ))
-                                            }} />
-                                            <label htmlFor='Numerical'>Numerical</label>
-                                        </div>
-                                    </div>
-                                    {
-                                        que.answerType != "Numerical" &&
-                                        que.options.map((opt,j)=>(
-                                            <div className="input_container" key={j}>
-                                                <label htmlFor='option' >Option {j+1} : </label>
-                                                <input type="text" id="option" required value={opt}
-                                                onChange={(e)=>{
-                                                    setQuestions(pre=>(
-                                                        pre.map((questionDetails,i)=>(
-                                                            i!=ind ? questionDetails : { 
-                                                                ...questionDetails,
-                                                                options:questionDetails.options.map((op,k)=>(k!=j?op:e.target.value))
-                                                            }
+                        <>
+                            {
+                                questions.map((que, ind) => (
+                                    <div className="questions_container" key={ind} id={`que_${ind}`}>
+                                        <textarea name="question" placeholder={"Question " + String(ind + 1)} onInput={(e) => handleQuestionInput(e, ind)} value={que.question}></textarea>
+                                        <div className="remainder_section">
+                                            <div className="input_container" >
+                                                <div className="input_container" style={{ width: "50%", justifyContent: "flex-start" }}>
+                                                    <input type="radio" name="answer-type" id="singlecorrect" value={"SingleCorrect"} style={{ width: "5%" }} onChange={(e) => {
+                                                        setQuestions(pre => (
+                                                            pre.map((questionDetail, i) => (i != ind ? questionDetail : { ...questionDetail, answerType: e.target.value }))
                                                         ))
-                                                    ))
-                                                }}/>
-                                             </div>
-                                        ))
-                                    }
+                                                    }} />
+                                                    <label htmlFor='singlecorrect'>SingleCorrect</label>
+                                                </div>
+                                                <div className="input_container" style={{ width: "50%", justifyContent: "flex-start" }}>
+                                                    <input type="radio" name="answer-type" id="multicorrect" value={"MultiCorrect"} style={{ width: "5%" }} onChange={(e) => {
+                                                        setQuestions(pre => (
+                                                            pre.map((questionDetail, i) => (i != ind ? questionDetail : { ...questionDetail, answerType: e.target.value }))
+                                                        ))
+                                                    }} />
+                                                    <label htmlFor='multicorrect"'>MultiCorrect</label>
+                                                </div>
+                                                <div className="input_container" style={{ width: "50%", justifyContent: "flex-start" }}>
+                                                    <input type="radio" name="answer-type" id="Numerical" value={"Numerical"} style={{ width: "5%" }} onChange={(e) => {
+                                                        setQuestions(pre => (
+                                                            pre.map((questionDetail, i) => (i != ind ? questionDetail : { ...questionDetail, answerType: e.target.value }))
+                                                        ))
+                                                    }} />
+                                                    <label htmlFor='Numerical'>Numerical</label>
+                                                </div>
+                                            </div>
+                                            {
+                                                que.answerType != "Numerical" &&
+                                                que.options.map((opt, j) => (
+                                                    <div className="input_container" key={j}>
+                                                        <label htmlFor='option' >Option {j + 1} : </label>
+                                                        <input type="text" id="option" required value={opt}
+                                                            onChange={(e) => {
+                                                                setQuestions(pre => (
+                                                                    pre.map((questionDetails, i) => (
+                                                                        i != ind ? questionDetails : {
+                                                                            ...questionDetails,
+                                                                            options: questionDetails.options.map((op, k) => (k != j ? op : e.target.value))
+                                                                        }
+                                                                    ))
+                                                                ))
+                                                            }} />
+                                                    </div>
+                                                ))
+                                            }
 
-                                    <div className="input_container">
-                                        <label htmlFor='answer'>Answer : </label>
-                                        <input type="text" id="answer" placeholder='Specify option numbers separated by commas...' required
-                                        value={que.answer}
-                                        onChange={(e)=>{
-                                            setQuestions(pre=>(
-                                                pre.map((questionDetails,i)=>(i!=ind?questionDetails:{...questionDetails,answer:e.target.value}))
-                                            ))
-                                        }}/>
+                                            <div className="input_container">
+                                                <label htmlFor='answer'>Answer : </label>
+                                                <input type="text" id="answer" placeholder='Specify option numbers separated by commas...' required
+                                                    value={que.answer}
+                                                    onChange={(e) => {
+                                                        setQuestions(pre => (
+                                                            pre.map((questionDetails, i) => (i != ind ? questionDetails : { ...questionDetails, answer: e.target.value }))
+                                                        ))
+                                                    }} />
+                                            </div>
+                                            <div className="input_container">
+                                                <label htmlFor='option'>Mark : </label>
+                                                <input type="number" id="option" required
+                                                    value={que.marks}
+                                                    onChange={(e) => {
+                                                        setQuestions(pre => (
+                                                            pre.map((questionDetails, i) => (i != ind ? questionDetails : { ...questionDetails, marks: e.target.value }))
+                                                        ))
+                                                    }} />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="input_container">
-                                        <label htmlFor='option'>Mark : </label>
-                                        <input type="number" id="option" required
-                                        value={que.marks}
-                                        onChange={(e)=>{
-                                            setQuestions(pre=>(
-                                                pre.map((questionDetails,i)=>(i!=ind?questionDetails:{...questionDetails,marks:e.target.value}))
-                                            ))
-                                        }}/>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-
+                                ))
+                            }
+                            {/* the div below is given the same name as the above even though the functionality is different purely 
+                                because for css purposes */}
+                            <button style={{ backgroundColor: "ButtonText" }} onClick={() => setTotalQuestions(pre => pre + 1)} type={"button"}>Add question</button>
+                        </>
                     }
-                    {/* the div below is given the same name as the above even though the functionality is different purely 
-                        because for css purposes */}
-                    <button style={{ backgroundColor: "ButtonText" }} onClick={() => setTotalQuestions(pre => pre + 1)} type={"button"}>Add question</button>
-                    <input type='submit' className="confirm_course" onClick={handleUploadTest}/>
+                    {
+                        testType == "Custom" &&
+                        <div className="input_container">
+                            <label htmlFor='question'>Question PDF: </label>
+                            <input type="file" className="custom-test-question" id="question" onChange={(e) => {
+                                setQuestionForCustomTest(e.target.files[0]);
+                            }} required />
+                        </div>
+                    }
+                    <input type='submit' className="confirm_course" onClick={handleUploadTest} />
                 </form>
             </div>
         </div>
