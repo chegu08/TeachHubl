@@ -148,33 +148,51 @@ const uploadfeedback = async (req, res) => {
 
 
 const uploadresponse = async (req, res) => {
-    const { testId, response } = req.body
+    const { testId} = req.body
     try {
-        if (!testId || !response) {
-            console.log("Some mandatory fields are missing")
-            return res.status(400).json({ Error: "Some mandatory fields are missing" })
-        }
-
-        console.log(response);
 
         const test = await TestModel.findOne({ testId: testId });
 
-        // if (!test) {
-        //     console.log("Invalid testId ...no test found for this test")
-        //     return res.status(404).json({ Error: "Invalid testId ...no test found for this test" })
-        // }
+        if (!test) {
+            console.log("Invalid testId ...no test found for this test")
+            return res.status(404).json({ Error: "Invalid testId ...no test found for this test" })
+        }
 
         if (test.testType.toLowerCase() === 'custom') {
+            const response=req.files;
+
+            const client=new S3Client({
+                region:aws_config.region,
+                credentials:aws_config.S3credentials
+            });
+
+            const keysOfAllresponses=await Promise.all(
+                response.map( async (file,ind) =>{
+                    const objectKey=`answerForCustomTest/${testId}/${ind}`;
+                    const command=new PutObjectCommand({
+                        Bucket:aws_config.s3BucketName,
+                        Key:objectKey,
+                        Body:file.buffer,
+                        ContentType:file.mimetype
+                    });
+                    await client.send(command);
+                    return objectKey;
+                })
+            );
+
             const modifiedTest = await TestModel.updateOne({ testId: testId }, {
                 $set: {
                     completed: true,
-                    response: response
+                    response: keysOfAllresponses
                 }
-            })
-            console.log("Response has been uploaded")
+            });
+
+            console.log("Response has been uploaded");
             return res.status(200).json({ Message: "Reponse has been uploaded", response: modifiedTest.response })
         }
         else {
+
+            const response=req.body.response;
 
             if (test.questionForStandardTest.length !== response.length) {
                 console.log(test.questionForStandardTest.length, " ", response.length)
@@ -463,6 +481,34 @@ const getTestStatistics = async (req, res) => {
     }
 };
 
+const getQuestionPaperForCustomTest=async (req,res) =>{
+    try {
+        const testId=req.params.testId;
+
+        const client = new S3Client({
+            region:aws_config.region,
+            credentials:aws_config.S3credentials
+        });
+
+        const test=await TestModel.findOne({testId});
+
+        const command=new GetObjectCommand({
+            Bucket:aws_config.s3BucketName,
+            Key:test.questionForCustomTest
+        });
+
+        const response=await client.send(command);
+
+        res.setHeader('Content-Type',response.ContentType);
+        res.setHeader('Content-Length',response.ContentLength);
+
+        response.Body.pipe(res);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
 module.exports = {
     createTest,
     uploadresult,
@@ -474,5 +520,6 @@ module.exports = {
     getAllTests,
     getTestStatistics,
     getUncorrectedTestDetails,
-    getAllTutorTests
+    getAllTutorTests,
+    getQuestionPaperForCustomTest
 }

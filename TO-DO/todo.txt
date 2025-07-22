@@ -1,21 +1,18 @@
 Immediate to-do: Deadline(18-7-25)
-    13. Creating a custom test. (Tough)
-    16. Create statistics about the attendance and the test performance related to the class in about class page for student. (Mid)
-    18. Fix bugs in test page for student... they are able to start the test before the startTime. (Easy)
+    16. Create statistics about the attendance . (Mid)
     19. Fix the bugs in websockets and whiteboard. (Tough)
     20. Send invoice to both student and tutor via mail. (Mid)
 
 Complete Later: Deadline(25-7-25)
     21. Send Email to the tutor if a student cancels the class . (Mid)
     22. Add feature to allow resources that are already in s3 for tutor course templates. (Mid)
-    24. Fix the bug in filling slots...(when the tutor has manually filled some slots and then tries to auto fill it doesn't work). (Easy)
     25. Implement Calendar for students and tutors with the same cozy UI as in you click calendar icon in the header in justinmind website.  (Tough)
     26. Add profile section for student and tutors. (Tough)
     27. Login page for student and tutor and get photos from it. (Tough)
     28. Update all the hardcoded studId and tutorId in all files. (Tough)
     29. Enable web push notification and toast notification as it needs auth. (Tough)
     30. Add features or statistics to earnings dashboard (optional).
-    31. Add features to chat page and fix bugs.
-    32. Create reviews section for tutors .
-    33. Update the progress bar in dashboard section of both students and tutors. (Easy)
+    31. Add features to chat page and fix bugs. (Tough)
+    32. Create reviews section for tutors. (Mid)
+    33. Update the progress bar in dashboard section of both students and tutors. (Tough)
     

@@ -180,9 +180,6 @@
 }
 
 .test_analysis .statistics .type_of_chart select:focus{
-    /* outline-color: rgb(13, 110, 253);
-    outline-width: 1px; */
-    /* outline-style: none; */
     outline:none;
 }
 
@@ -192,6 +189,55 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.test_analysis .test_ended{
+    width:40%;
+    height:100%;
+    /* background-color: red; */
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 30%;
+}
+
+.test_analysis .test_ended .dialog{
+    width:100%;
+    height:40%;
+    background-color: rgb(235, 236, 243);
+    border-radius: 10px;
+    box-shadow: 5px 5px 10px rgb(186, 190, 200);
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.test_analysis .test_ended .dialog h2,.testpage .test_ended .dialog h3{
+    margin:10px 0px;
+    width:60%;
+}
+
+.test_analysis .test_ended .dialog .close{
+    
+    background-color: #dc3545;
+    border:none;
+    color:white;
+    height:50px;
+    width:100px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap:5px 10px;
+    font-size: large;
+}
+
+.test_analysis .test_ended .dialog .close:hover{
+    cursor: pointer;
+    background-color: #bb2d3b;
+    border: 1px solid #b02a37;
 }
 
 

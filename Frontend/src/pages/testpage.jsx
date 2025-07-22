@@ -48,7 +48,17 @@ function Timer({ curtime }) {
             </div>
         </div>
     );
-};
+}
+
+function PreviewAnswer({documents}){
+    // if(!documents) return ;
+    const documentArray=new Array(documents.length).fill("").map((_,ind)=>({...documents[ind],url:URL.createObjectURL(documents[ind])}));
+    console.log(documentArray);
+    console.log("d ",documents )
+    return documentArray.map((doc,ind)=>(
+        <embed key={ind} src={doc.url} type={doc.type} height={"100%"} width={"100%"}/>        
+    ))
+}
 
 function TestPage() {
     const [questionNumber, setQuestionNumber] = useState(1);
@@ -61,6 +71,10 @@ function TestPage() {
     const currentLocation = useLocation().pathname.substring(7);
     const [questions, setQuestions] = useState([{}]);
     const [testType, setTestType] = useState("");
+    const [answerSheet,setAnswerSheet]=useState(null);
+    const [showPreview,setShowPreview]=useState(false);
+    const [allowedToTakeTest,setAllowedToTakeTest]=useState(true);
+    const [testStarted,setTestStarted]=useState(false);
 
     useEffect(() => {
         async function fetch() {
@@ -74,11 +88,16 @@ function TestPage() {
                     }
                 )));
             }
-            timer.current = fetchtestdetails.duration * 3600;
+            timer.current = fetchtestdetails.duration*3600 ;
             setTestType(fetchtestdetails.testType);
+            const cur_time=new Date();
+            const start_time=new Date(fetchtestdetails.startDate);
+            start_time.setHours(Number(fetchtestdetails.startTime.split(':')[0]),Number(fetchtestdetails.startTime.split(':')[1]),0,0);
+            setTestStarted(cur_time>=start_time);
+            setAllowedToTakeTest(!fetchtestdetails.completed&&(cur_time.getTime()<=fetchtestdetails.duration*3600*1000+start_time.getTime()));
+            console.log(fetchtestdetails);
         }
         fetch();
-        console.log(currentLocation);
     }, [])
 
     useEffect(() => {
@@ -254,53 +273,124 @@ function TestPage() {
     };
 
     const handleFinishTest = async () => {
+
+        if(testCompleted||timer.current==0) return ;
+
         // this should clear the timer and the interval so that it should automatically call test ended page
         timer.current = 0;
+        setTestCompleted(true);
 
-        const userresponse = marked.map((mark, ind) => (
-            !mark ? []
-                : answers[ind].map((set, _) => (questions[ind].type == 'Numerical' ? Number(set) : (set == '1' ? 1 : 0)))
-        ));
+        // console.log("Test ended called");
 
-        console.log(userresponse);
+        if(testType=="Standard") {
+            const userresponse = marked.map((mark, ind) => (
+                !mark ? []
+                    : answers[ind].map((set, _) => (questions[ind].type == 'Numerical' ? Number(set) : (set == '1' ? 1 : 0)))
+            ));
+            console.log(userresponse);
 
-        await axios.put(`http://localhost:4000/test/response`, { testId: currentLocation, response: userresponse });
+            await axios.put(`http://localhost:4000/test/response`, { testId: currentLocation, response: userresponse });
+
+        } else {
+            const formdata=new FormData();
+            const numofsheets=answerSheet?.length||0;
+            // console.log(numofsheets);
+            for(let i=0;i<numofsheets;i++) {
+                formdata.append("answersheet",answerSheet[i]);
+            }
+            formdata.append("testId",currentLocation);
+            // console.log(formdata.getAll("answersheet"));
+            await axios.put(`http://localhost:4000/test/response`,formdata,{
+                headers:{
+                    "Content-Type":"multipart/form-data"
+                }
+            });
+        }
     };
 
+    useEffect(()=>{
+        if(timer.current==0) handleFinishTest();
+    },[timer.current])
 
 
     return (
 
         <div className="testpage">
-            {!testCompleted && <>
-                <div className="details">
-                    <div className="testdetails">
-                        <strong className='testname' style={{ fontSize: "larger" }}>{currentLocation}</strong>
-                        <div className="fullprogressbar">
-                            <div className="completedprogressbar" style={{ width: completedprogressbarwidth }}>
+            {
+                <div className='test_ended'>
+                    <div className="dialog">
+                        <h2>Test has not started yet.</h2>
+                        <h3>Prepare well !</h3>
+                    </div>
+                </div>
+            }
+            {testStarted&&!allowedToTakeTest &&
+                <div className='test_ended'>
+                    <div className="dialog">
+                        <h2>Test window missed!</h2>
+                        <h3>You can't take this test anymore.</h3>
+                    </div>
+                </div>
+            }
+            {testStarted&&allowedToTakeTest&&!testCompleted && <>
+                {
+                    <>
+                        {
+                            testType == "Standard" &&
+                            <>
+                                <div className="details">
+                                    <div className="testdetails">
+                                        <strong className='testname' style={{ fontSize: "larger" }}>{currentLocation}</strong>
+                                        <div className="fullprogressbar">
+                                            <div className="completedprogressbar" style={{ width: completedprogressbarwidth }}>
 
-                            </div>
-                        </div>
-                        <button className="save_and_mark" onClick={handleReviewAndNext}>Save and review</button>
-                        <button className="mark_and_next" onClick={handleReviewAndNext}>Review and next</button>
-                        <button className="unmark" onClick={handleunmarkQuestion}>Unmark</button>
-                    </div>
-                    {Object.keys(questions[0]).length !== 0 && <Timer curtime={timer.current} />}
-                </div>
-                <div className="question_and_status_board">
-                    <div className="questions">
-                        <Question num={questionNumber} />
-                    </div>
-                    <QuestionStatusBoard />
-                </div>
-                <div className="navigation_and_finish">
-                    <button className="previous" onClick={() => (setQuestionNumber((pre) => (pre > 1 ? pre - 1 : pre)))} ><img src={arrowleft} width={"150%"} height={"150%"} /><div>Previous</div></button>
-                    <button className="next" onClick={() => (setQuestionNumber((pre) => (pre < questions.length ? pre + 1 : pre)))} ><div>Next</div><img src={arrowright} width={"150%"} height={"150%"} /></button>
-                    <button className="finish" onClick={handleFinishTest} style={{ backgroundColor: "#dc3545", color: "white" }}>Finish</button>
-                </div>
+                                            </div>
+                                        </div>
+                                        <button className="save_and_mark" onClick={handleReviewAndNext}>Save and review</button>
+                                        <button className="mark_and_next" onClick={handleReviewAndNext}>Review and next</button>
+                                        <button className="unmark" onClick={handleunmarkQuestion}>Unmark</button>
+                                    </div>
+                                    {Object.keys(questions[0]).length !== 0 && <Timer curtime={timer.current} />}
+                                </div>
+                                <div className="question_and_status_board">
+                                    <div className="questions">
+                                        <Question num={questionNumber} />
+                                    </div>
+                                    <QuestionStatusBoard />
+                                </div>
+                                <div className="navigation_and_finish">
+                                    <button className="previous" onClick={() => (setQuestionNumber((pre) => (pre > 1 ? pre - 1 : pre)))} ><img src={arrowleft} width={"150%"} height={"150%"} /><div>Previous</div></button>
+                                    <button className="next" onClick={() => (setQuestionNumber((pre) => (pre < questions.length ? pre + 1 : pre)))} ><div>Next</div><img src={arrowright} width={"150%"} height={"150%"} /></button>
+                                    <button className="finish" onClick={handleFinishTest} style={{ backgroundColor: "#dc3545", color: "white" }}>Finish</button>
+                                </div>
+                            </>
+                        }
+                        {
+                            testType == "Custom" &&
+                            <>
+                                <div className="details">
+                                    <div className="testdetails">
+                                        <strong className='testname' style={{ fontSize: "larger" }}>{currentLocation}</strong>
+                                    </div>
+                                    <Timer curtime={timer.current} />
+                                </div>
+                                <embed src={`http://localhost:4000/test/custom-test-question-paper/${currentLocation}`} type='application/pdf' height={"100%"} width={"100%"}></embed>
+                                <div className="navigation_and_finish">
+                                    <span>Uploading answer in parts as multiple documents is highly recommended</span>
+                                    <label htmlFor="answer">Add document</label>
+                                    <input type="file" id='answer' multiple onChange={(e)=>setAnswerSheet(e.target.files)}/>
+                                    <button onClick={()=>setShowPreview(pre=>!pre)} disabled={answerSheet==null}>Preview Answer</button>
+                                    <button className="finish" onClick={handleFinishTest} style={{ backgroundColor: "#dc3545", color: "white" }}>Finish</button>
+                                </div>
+                            </>
+                        }
+                    </>
+                }
+
             </>
             }
-            {testCompleted &&
+            {testStarted&&allowedToTakeTest&&showPreview&&<PreviewAnswer documents={answerSheet}/>}
+            {testStarted&&allowedToTakeTest&&testCompleted &&
                 <div className='test_ended'>
                     <div className="dialog">
                         <h2>Test has ended!</h2>

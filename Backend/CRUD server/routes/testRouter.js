@@ -13,7 +13,8 @@ const {
     getAllTests,
     getTestStatistics,
     getUncorrectedTestDetails,
-    getAllTutorTests
+    getAllTutorTests,
+    getQuestionPaperForCustomTest
 } = require('../controllers/testController')
 
 
@@ -23,10 +24,11 @@ Router.get('/all/tutor/:tutorId',getAllTutorTests);
 Router.get('/tutor/:tutorId',getUncorrectedTestDetails);
 Router.get('/:id/upcoming',getUpcomingtestdetails);
 Router.get('/:id',getTestDetails);
+Router.get('/custom-test-question-paper/:testId',getQuestionPaperForCustomTest);
 Router.post('/',upload.single('questionForCustomTest'), createTest);
 Router.put('/result', uploadresult);
 Router.put('/feedback', uploadfeedback);
-Router.put('/response', uploadresponse);
+Router.put('/response',upload.array("answersheet"), uploadresponse);
 Router.delete('/', deleteTest);
 
 module.exports = Router
