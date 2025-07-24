@@ -20,8 +20,8 @@ async function generateInvoiceBuffer({ studName, className, tutorName, startDate
         
         const text="TeachHubl";
         const textSize=48;
-        const textWidth=customFont.widthOfTextAtSize(text,textSize);
-        const textHeight=customFont.heightAtSize(textSize);
+        // const textWidth=customFont.widthOfTextAtSize(text,textSize);
+        // const textHeight=customFont.heightAtSize(textSize);
         const {width,height}=page.getSize();
 
         page.drawText(text,{

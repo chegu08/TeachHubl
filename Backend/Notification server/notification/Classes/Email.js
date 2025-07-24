@@ -1,8 +1,8 @@
 const { SendEmailCommand, SendRawEmailCommand } = require('@aws-sdk/client-ses');
 const { sesclient } = require('../../config/config');
 const { generateInvoiceBuffer } = require("../../utils/createInvoice");
-const fs=require("fs");
-const path=require("path");
+// const fs=require("fs");
+// const path=require("path");
 
 
 const sendEmailForNewClass = async ({ studName, className, tutorName, startDate, endDate, amount, subject, tutorEmail, studEmail }) => {
@@ -172,8 +172,8 @@ const sendEmailForNewClass = async ({ studName, className, tutorName, startDate,
     const Response = await sesclient.send(email);
     console.log("Email successfully setup ", Response);
 
-    fs.writeFileSync(path.join(__dirname,'..','..','test_doc','invoice.eml'),rawEmail);
-    fs.writeFileSync(path.join(__dirname,'..','..','test_doc','invoice.pdf'),result.pdf_bytes);
+    // fs.writeFileSync(path.join(__dirname,'..','..','test_doc','invoice.eml'),rawEmail);
+    // fs.writeFileSync(path.join(__dirname,'..','..','test_doc','invoice.pdf'),result.pdf_bytes);
 
     return 200;
   } catch (err) {
