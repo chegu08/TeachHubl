@@ -1,8 +1,14 @@
-const { SendEmailCommand } = require('@aws-sdk/client-ses');
+const { SendEmailCommand, SendRawEmailCommand } = require('@aws-sdk/client-ses');
 const { sesclient } = require('../../config/config');
+const { generateInvoiceBuffer } = require("../../utils/createInvoice");
+const fs=require("fs");
+const path=require("path");
 
-const sendEmailForNewClass=async ({studName, className, tutorName, startDate, endDate, amount, subject, tutorEmail}) =>{
-    const htmlBody = `
+
+const sendEmailForNewClass = async ({ studName, className, tutorName, startDate, endDate, amount, subject, tutorEmail, studEmail }) => {
+  console.log("cmae here");
+  const textContent = "Invoice for the newly created class";
+  const htmlBody = `
 <!DOCTYPE html>
 <html>
   <head>
@@ -85,44 +91,104 @@ const sendEmailForNewClass=async ({studName, className, tutorName, startDate, en
 </html>
 `;
 
-    // change the source to the official mail later
-    const emailOptions = {
-        Source: "cheguevera597@gmail.com",
-        Destination: {
-            ToAddresses: [tutorEmail]
-        },
-        ReplyToAddresses: [],
-        Message: {
-            Body: {
-                Html: {
-                    Charset: "UTF-8",
-                    Data: htmlBody
-                }
-            },
-            Subject: {
-                Charset: "UTF-8",
-                Data: "New Class is created"
-            }
-        }
+  // change the source to the official mail later
+  // const emailOptions = {
+  //     Source: "cheguevera597@gmail.com",
+  //     Destination: {
+  //         ToAddresses: [tutorEmail]
+  //     },
+  //     ReplyToAddresses: [],
+  //     Message: {
+  //         Body: {
+  //             Html: {
+  //                 Charset: "UTF-8",
+  //                 Data: htmlBody
+  //             }
+  //         },
+  //         Subject: {
+  //             Charset: "UTF-8",
+  //             Data: "New Class is created"
+  //         },
+  //     }
+  // }
+  const boundary = "NextPartBoundary";
+
+  // Create MIME body with alternative and mixed content
+  let body = [
+    `From: cheguevera597@gmail.com`,
+    `To: ${tutorEmail},${studEmail}`,
+    `Subject: ${subject}`,
+    `MIME-Version: 1.0`,
+    `Content-Type: multipart/mixed; boundary="${boundary}"`,
+    ``,
+    `--${boundary}`,
+    `Content-Type: multipart/alternative; boundary="altBoundary"`,
+    ``,
+    `--altBoundary`,
+    `Content-Type: text/plain; charset="UTF-8"`,
+    ``,
+    textContent || "Your email client does not support HTML.",
+    ``,
+    `--altBoundary`,
+    `Content-Type: text/html; charset="UTF-8"`,
+    ``,
+    htmlBody,
+    ``,
+    `--altBoundary--`
+  ];
+
+
+
+  try {
+    const result = await generateInvoiceBuffer({ studName, className, tutorName, startDate, endDate, amount, subject, tutorEmail, studEmail }); // your generated buffer
+
+    if(!result.success) {
+      throw new Error("Error generating invoice");
     }
-    try {
-        const email = new SendEmailCommand(emailOptions)
-        const Response = await sesclient.send(email)
-        console.log("Email successfully setup ", Response)
-        return 200;
-    } catch(err) {
-        console.log(err);
-        return 500;
-    }
+
+    const fileName = 'invoice.pdf';
+    const encodedFile = result.buffer.toString("base64").match(/.{1,76}/g).join('\r\n');
+
+    body.push(
+      `--${boundary}`,
+      `Content-Type: application/pdf; name="${fileName}"`,
+      `Content-Description: ${fileName}`,
+      `Content-Disposition: attachment; filename="${fileName}";`,
+      `Content-Transfer-Encoding: base64`,
+      ``,
+      encodedFile,
+      ``,
+      `--${boundary}--`
+    );
+
+
+    const rawEmail = Buffer.from(body.join("\r\n"));
+    const email = new SendRawEmailCommand({
+      RawMessage:{
+        Data:rawEmail
+      },
+      Source:"cheguevera597@gmail.com"
+    });
+    const Response = await sesclient.send(email);
+    console.log("Email successfully setup ", Response);
+
+    fs.writeFileSync(path.join(__dirname,'..','..','test_doc','invoice.eml'),rawEmail);
+    fs.writeFileSync(path.join(__dirname,'..','..','test_doc','invoice.pdf'),result.pdf_bytes);
+
+    return 200;
+  } catch (err) {
+    console.log(err);
+    return 500;
+  }
 };
 
-const sendEmailForCancelledClass=async ({
-    
-}) =>{
+const sendEmailForCancelledClass = async ({
+
+}) => {
 
 };
 
-module.exports={
-    sendEmailForCancelledClass,
-    sendEmailForNewClass
+module.exports = {
+  sendEmailForCancelledClass,
+  sendEmailForNewClass
 }

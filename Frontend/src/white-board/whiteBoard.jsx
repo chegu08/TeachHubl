@@ -118,7 +118,7 @@ const WhiteBoard = ({ tool, socket, color, whiteboardId ,user,roomId}) => {
         try {
             const contentsOfCanvas = elements
             //console.log(contentsOfCanvas)
-            const response = await axios.post(`${database}/class2/${whiteboardId}`,
+            const response = await axios.post(`${database}/${classId}/${whiteboardId}`,
                 {
                     page: contentsOfCanvas
 

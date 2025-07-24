@@ -90,7 +90,7 @@ function Room({socket, roomId, userId, role} ){
   }, []);
 
   const getTotalPages = async (classId) => {
-        const pages = (await axios.get(`https://wbksc495-5000.inc1.devtunnels.ms/${classId}`)).data.totalPages
+        const pages = (await axios.get(`http://localhost:4002/${classId}`)).data.totalPages
         // console.log("pages: " +pages)
         setTotalPages(pages);
     }
