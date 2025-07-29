@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export const crudInstance = axios.create({
     baseURL: "http://localhost:4000"
@@ -24,7 +24,7 @@ crudInstance.interceptors.response.use((response) => {
     console.log(err);
     if (err.response) {
         console.log(err.response.status);
-        if (err.response.status == 401) return <Navigate to="/signUp" />
+        if (err.response.status == 401) useNavigate('/signUp');
     }
-    return Promise.reject(err);
+    return Promise.reject({err:{...err,status:err.response.status}});
 })

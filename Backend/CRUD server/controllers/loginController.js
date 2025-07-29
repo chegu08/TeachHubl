@@ -1,13 +1,101 @@
 const bcrypt = require('bcrypt')
-const mongoose = require('mongoose')
 const { getAuth } = require('firebase/auth')
 
 const { adminApp: student_admin, app: student_app } = require('../config/student_config')
 const { adminApp: tutor_admin, app: tutor_app } = require('../config/tutor_config')
-const student = require('../models/studentDetailModel')
-const tutor = require('../models/tutorDetailModel')
+const student = require('../models/studentDetailModel');
+const tutor = require('../models/tutorDetailModel');
+const authSessionModel=require("../models/authSessionModel");
+const jwt=require("jsonwebtoken");
+const dotenv=require('dotenv');
+dotenv.config({path:"D:/GitHub/TeachHubl/.env"});
+const {v4:uuid}=require("uuid");
+
+const saltRound = 12;
+const auth_secret=process.env.AUTH_SECRET;
 
 // console.log(student_admin.credential.cert())
+const studentLoginWithEmailAndPassword=async (req,res)=>{
+    try {
+        const {email,password,sessionType}=req.body;
+
+        const studentDetail=await student.findOne({email});
+        if(!studentDetail) {
+            return res.status(401).json({Error:"User not found...signup required"});
+        }
+        // const hashedPassword=await bcrypt.hash(password,saltRound);
+        const passwordinDB=studentDetail.password;
+        if(!passwordinDB) {
+            return res.status(403).json({Error:"Incorrect password"});
+        }
+        const isMatchingPassword=await bcrypt.compare(password,studentDetail.password);
+
+        if(!isMatchingPassword) {
+            return res.status(403).json({Error:"Incorrect password"});
+        }
+
+        const sessionDetails={
+            sessionId:uuid(),
+            userId:studentDetail.uid,
+            expiresAt:Date.now() + (sessionType=="long")?1000*60*60*24:1000*60*60*24*30,
+            role:"Student",
+            sessionType:"long"
+        }
+        await authSessionModel.create(sessionDetails);
+        const auth_token=jwt.sign({
+            sessionId:sessionDetails.sessionId,
+            userId:sessionDetails.userId,
+            role:"Student",
+            expiresAt:sessionDetails.expiresAt
+        },auth_secret);
+        res.status(200).json({Message:"Login successful",auth_token});
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
+const tutorLoginWithEmailAndPassword=async (req,res) =>{
+    try {
+        const {email,password,sessionType}=req.body;
+
+        const tutorDetail=await tutor.findOne({email});
+        if(!tutorDetail) {
+            return res.status(401).json({Error:"User not found...signup required"});
+        }
+        // const hashedPassword=await bcrypt.hash(password,saltRound);
+        const passwordinDB=tutorDetail.password;
+        if(!passwordinDB) {
+            return res.status(403).json({Error:"Incorrect password"});
+        }
+        const isMatchingPassword=await bcrypt.compare(password,tutorDetail.password);
+
+        if(!isMatchingPassword) {
+            return res.status(403).json({Error:"Incorrect password"});
+        }
+
+        const sessionDetails={
+            sessionId:uuid(),
+            userId:studentDetail.uid,
+            expiresAt:Date.now() + (sessionType=="long")?1000*60*60*24:1000*60*60*24*30,
+            role:"Tutor",
+            sessionType:"long"
+        }
+        await authSessionModel.create(sessionDetails);
+        const auth_token=jwt.sign({
+            sessionId:sessionDetails.sessionId,
+            userId:sessionDetails.userId,
+            role:"Tutor",
+            expiresAt:sessionDetails.expiresAt
+        },auth_secret);
+        res.status(200).json({Message:"Login successful",auth_token});
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
 
 const studentLogin = async (req, res) => {
     const studentDetails = req.body
@@ -56,5 +144,7 @@ const tutorLogin = async (req, res) => {
 
 module.exports = {
     studentLogin,
-    tutorLogin
+    tutorLogin,
+    studentLoginWithEmailAndPassword,
+    tutorLoginWithEmailAndPassword
 }

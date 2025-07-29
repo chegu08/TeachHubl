@@ -38,7 +38,10 @@ function Header(){
                     <hr />
                     <div className="actions">
                         <button>Edit Profile</button>
-                        <button>Log Out</button>
+                        <button onClick={()=>{
+                            localStorage.removeItem("jwt");
+                            navigate('/signIn');
+                        }}>Log Out</button>
                     </div>
                 </div>
             }

@@ -150,7 +150,7 @@ function SignUpPage() {
                         <button style={{ backgroundColor: 'white', color: "black", height: "50px" }} type='button'><img src={google_logo} /> Sign in with Google </button>
                         <div className="sign_up" style={{ display: "flex", justifyContent: "center" }}>
                             <span>Already have an account?</span> &nbsp;
-                            <a href="/">Sign in</a>
+                            <a href="/signIn">Sign in</a>
                         </div>
                     </div>
                 </form>
