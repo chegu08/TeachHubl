@@ -1,25 +1,31 @@
 import './tutorCourses.css';
 import TutorCourseList from './tutorCourseList';
 import { useState,useEffect } from 'react';
-import axios from 'axios';
+import { Navigate } from 'react-router-dom';
+import {crudInstance as axios} from "../../components/customAxios";
+import { jwtDecode } from 'jwt-decode';
+const jwt=localStorage.getItem("jwt");
 
 
 function TutorCourses({setMainSection}) {
+    if (!jwt) return <Navigate to="/signIn" />;
+
+    const decode=jwtDecode(jwt);
     const [selectedButton, setSelectedButton] = useState("all");
     const [courseInformation, setCourseInformation] = useState(null);
-    const tutorId = "ljsdglkansdogitn";
     const [todayStudentSchedule, setTodayStudentSchedule] = useState([]);
     const [popupClassLink, setppopupClassLink] = useState(null);
-    // this is just temporary
+
+    const tutorId = decode.userId;
 
 
     useEffect(() => {
         async function fetchCourseInformation(tutorId) {
-            const response = await axios.get(`http://localhost:4000/class/tutor/getInfo/${tutorId}`);
+            const response = await axios.get(`/class/tutor/getInfo/${tutorId}`);
             setCourseInformation(response.data.allCourses);
         }
         async function fetchTodayStudentSchedule(tutorId) {
-            const response = await axios.get(`http://localhost:4000/schedule/class/tutor/${tutorId}`);
+            const response = await axios.get(`/schedule/class/tutor/${tutorId}`);
             setTodayStudentSchedule(response.data.todaysSlots);
         }
         fetchCourseInformation(tutorId);

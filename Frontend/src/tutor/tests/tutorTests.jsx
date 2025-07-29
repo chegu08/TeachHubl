@@ -1,15 +1,20 @@
 import './tutorTests.css';
 import {useState,useEffect} from 'react';
-import {useNavigate} from 'react-router-dom';
-import axios from 'axios';
+import {useNavigate,Navigate} from 'react-router-dom';
+import {crudInstance as axios} from "../../components/customAxios";
+import { jwtDecode } from 'jwt-decode';
+const jwt=localStorage.getItem("jwt");
 
 function TutorTests () {
-    const tutorId="ljsdglkansdogitn";
+    if (!jwt) return <Navigate to="/signIn" />;
+
+    const decode=jwtDecode(jwt);
+    const tutorId=decode.userId;
     const [alltests,setAllTests]=useState();
     const navigation=useNavigate();
     useEffect(()=>{
         async function fetchalltests(tutorId){
-            const allTests=(await axios.get(`http://localhost:4000/test/all/tutor/${tutorId}`)).data.allTests;
+            const allTests=(await axios.get(`/test/all/tutor/${tutorId}`)).data.allTests;
             setAllTests(allTests);
         }
         fetchalltests(tutorId);

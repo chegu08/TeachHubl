@@ -1,11 +1,16 @@
 import './response.css';
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from 'react-router-dom';
-import axios from "axios";
+import { useNavigate,Navigate } from 'react-router-dom';
+import {crudInstance as axios} from "../components/customAxios";
+import { jwtDecode } from 'jwt-decode';
+const jwt=localStorage.getItem("jwt");
 
 function Response() {
-    // this is just for now... implement the whole logic later
-    const studId = "lkajnsglknaoi";
+
+    if (!jwt) return <Navigate to="/signIn" />;
+    
+    const decode=jwtDecode(jwt);
+    const studId = decode.userId;
 
     const navigation=useNavigate();
     const [responses, setResponses] = useState([]);
@@ -13,7 +18,7 @@ function Response() {
     useEffect(() => {
         async function fetchResponses() {
             try {   
-                const response=await axios.get(`http://localhost:4000/tutor/response/student/${studId}`);
+                const response=await axios.get(`/tutor/response/student/${studId}`);
                 setResponses(response.data);
                 console.log(response.data);
             } catch(err) {

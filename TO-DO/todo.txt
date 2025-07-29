@@ -1,6 +1,6 @@
 Immediate to-do: Deadline(28-7-25)
-    28. Update all the hardcoded studId and tutorId in all files. (Tough)
     29. Enable web push notification and toast notification as it needs auth. (Tough)
+    30. push all jwtdecode inside functions and fix all the bugs (Mid)
 
 
 Complete Later: Deadline(30-7-25)
@@ -11,5 +11,6 @@ Complete Later: Deadline(30-7-25)
     34. Create statistics about the attendance . (Mid)
     35. Fix the bugs in websockets and whiteboard. (Tough)
     36. Create google auth for students and tutors.
+    37. Fix minor bugs related to auth in common pages such as home Page (Easy).
     26. Add profile section for student and tutors. (Mid) (Since this is not core logic)
     

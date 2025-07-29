@@ -1,13 +1,19 @@
 import './createTestPage.css';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import {crudInstance as axios} from "../../components/customAxios";
+import { jwtDecode } from 'jwt-decode';
+import { Navigate } from 'react-router-dom';
+const jwt=localStorage.getItem("jwt");
 
 import TutorHeader from '../TutorHeader/tutorHeader'
 
 function CreateTestPage() {
+    if (!jwt) return <Navigate to="/signIn" />;
 
-    const tutorId = "ljsdglkansdogitn";
+    
+    const decode=jwtDecode(jwt);
+    const tutorId = decode.userId;
 
     const classId = useParams().classId;
 
@@ -117,7 +123,7 @@ function CreateTestPage() {
                 }
             ));
             try {
-                const response = await axios.post('http://localhost:4000/test', {
+                const response = await axios.post('/test', {
                     classId,
                     testType,
                     startDate: testDate,
@@ -142,7 +148,7 @@ function CreateTestPage() {
                 formData.append('duration',duration/60);
                 formData.append('maxScore',maxMarks);
                 formData.append('questionForCustomTest',questionForCustomTest);
-                const response = await axios.post('http://localhost:4000/test', formData ,{
+                const response = await axios.post('/test', formData ,{
                     headers:{
                         "Content-Type":"multipart/form-data"
                     }

@@ -1,11 +1,16 @@
 import "./tutorClassRequests.css";
 import { useState,useEffect,useRef } from "react";
-import { useNavigate } from 'react-router-dom';
-import axios from "axios";
+import { useNavigate,Navigate } from 'react-router-dom';
+import {crudInstance as axios} from "../../components/customAxios";
+import { jwtDecode } from 'jwt-decode';
+const jwt=localStorage.getItem("jwt");
 
 function TutorClassRequest() {
-    // this is just for now... implement the whole logic later
-        const tutorId = "ljsdglkansdogitn";
+    if (!jwt) return <Navigate to="/signIn" />;
+
+    
+        const decode=jwtDecode(jwt);
+        const tutorId = decode.userId;
         const navigation=useNavigate();
     
         const [requestStatusToShow, setRequestStatusToShow] = useState("pending");
@@ -16,7 +21,7 @@ function TutorClassRequest() {
     
         const getRequests = async () => {
     
-            const response = await axios.get(`http://localhost:4000/request/class/tutor/${tutorId}/${requestStatusToShow}`);
+            const response = await axios.get(`/request/class/tutor/${tutorId}/${requestStatusToShow}`);
             return response.data;
         };
     
@@ -38,7 +43,7 @@ function TutorClassRequest() {
 
         const handleRejectRequest=async (requestId)=>{
             try{
-                const response=await axios.put("http://localhost:4000/request/class/reject",{requestId});
+                const response=await axios.put("/request/class/reject",{requestId});
                 alert(response.status);
                 location.reload();
             } catch(err) {

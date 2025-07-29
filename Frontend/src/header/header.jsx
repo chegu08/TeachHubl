@@ -4,14 +4,19 @@ import messagingIcon from '../assets/chat-dots.svg'
 import notificationIcon from '../assets/bell.svg'
 import profileIcon from '../assets/image.svg' //this is just for testing purposes
 
-import {useNavigate} from 'react-router-dom';
+import {useNavigate,Navigate} from 'react-router-dom';
 import { useState } from 'react'
+
+import {jwtDecode} from 'jwt-decode';
+const jwt=localStorage.getItem("jwt");
 
 
 function Header(){
-    
-    // this is temporary
-    const studId="lkajnsglknaoi"
+
+    if (!jwt) return <Navigate to="/signIn" />;
+    const decode=jwtDecode(jwt);
+
+    const studId=decode.userId;
     const navigate=useNavigate();
 
     const [showProfile,setShowProfile]=useState(false);

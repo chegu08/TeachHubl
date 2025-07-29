@@ -4,13 +4,16 @@ import messagingIcon from '../../assets/chat-dots.svg'
 import notificationIcon from '../../assets/bell.svg'
 import profileIcon from '../../assets/image.svg' //this is just for testing purposes
 
-import {useNavigate} from 'react-router-dom';
+import {useNavigate,Navigate} from 'react-router-dom';
 import { useState } from "react";
+import { jwtDecode } from 'jwt-decode';
+const jwt=localStorage.getItem("jwt");
 
 function TutorHeader() {
+    if (!jwt) return <Navigate to="/signIn" />;
 
-    // this is temporary
-    const tutorId='ljsdglkansdogitn';
+    const decode=jwtDecode(jwt);
+    const tutorId=decode.userId;
 
     const navigate=useNavigate();
 
@@ -39,7 +42,10 @@ function TutorHeader() {
                         <div className="actions">
                             <button>Edit Profile</button>
                             <button onClick={()=>navigate(`/tutor/revenue/${tutorId}`)}>Revenue Dashboard</button>
-                            <button>Log Out</button>
+                            <button onClick={()=>{
+                                localStorage.removeItem("jwt");
+                                useNavigate('/signIn');
+                            }}>Log Out</button>
                         </div>
                     </div>
                 }

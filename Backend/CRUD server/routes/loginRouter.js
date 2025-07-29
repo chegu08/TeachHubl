@@ -3,11 +3,13 @@ const {
     studentLogin,
     tutorLogin,
     studentLoginWithEmailAndPassword,
-    tutorLoginWithEmailAndPassword
+    tutorLoginWithEmailAndPassword,
+    getUserName
 } = require('../controllers/loginController')
 
-router.post('/student', studentLogin)
-router.post('/tutor', tutorLogin)
+router.get('/userName',getUserName);
+router.post('/student', studentLogin);
+router.post('/tutor', tutorLogin);
 router.post('/student/emailandpassword',studentLoginWithEmailAndPassword);
 router.post('/tutor/emailandpassword',tutorLoginWithEmailAndPassword);
 

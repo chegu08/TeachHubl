@@ -1,7 +1,7 @@
 import './testAnalysis.css'
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react'
-import axios from 'axios'
+import {crudInstance as axios} from '../components/customAxios';
 import { Bar, Pie } from 'react-chartjs-2'
 import { Chart, LinearScale, CategoryScale, BarElement, Legend, Tooltip, plugins, ArcElement } from 'chart.js'
 
@@ -90,7 +90,7 @@ function TestAnalysis() {
     useEffect(() => {
 
         async function fetchTestStatistics() {
-            const response = await axios.get(`http://localhost:4000/test/statistics/${testId}`);
+            const response = await axios.get(`/test/statistics/${testId}`);
             setTestStatistics(response.data.statistics);
             if (response.data.statistics == "Standard") {
                 setTestType("Standard");

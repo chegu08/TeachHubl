@@ -1,8 +1,9 @@
 import "./revenueDashboardPage.css";
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from "react";
-import axios from "axios";
 import {Toaster,toast} from "sonner";
+import {crudInstance as axios} from "../../components/customAxios";
+
 
 import TutorHeader from "../TutorHeader/tutorHeader";
 
@@ -15,7 +16,7 @@ function RevenueDashBoardPage() {
     useEffect(()=>{
         async function fetchRevenueDetails() {
             try {
-                const response=await axios.get(`http://localhost:4000/tutor/revenue/${tutorId}`);
+                const response=await axios.get(`/tutor/revenue/${tutorId}`);
                 setRevenueDetails(response.data.revenueDetails);
                 setTotalRevenue(response.data.totalRevenue);
             } catch(err) {

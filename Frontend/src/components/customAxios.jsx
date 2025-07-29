@@ -25,6 +25,7 @@ crudInstance.interceptors.response.use((response) => {
     if (err.response) {
         console.log(err.response.status);
         if (err.response.status == 401) useNavigate('/signUp');
+        else useNavigate('/signIn');
     }
     return Promise.reject({err:{...err,status:err.response.status}});
 })

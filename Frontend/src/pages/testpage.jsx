@@ -5,7 +5,7 @@ import arrowright from '../assets/arrow-right-circle.svg'
 import { useState, useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 // import { debounce } from 'lodash'
-import axios from 'axios'
+import {crudInstance as axios} from "../components/customAxios"
 
 
 function Timer({ curtime }) {
@@ -78,7 +78,7 @@ function TestPage() {
 
     useEffect(() => {
         async function fetch() {
-            const fetchtestdetails = (await axios.get(`http://localhost:4000/test/${currentLocation}`)).data?.testDetails;
+            const fetchtestdetails = (await axios.get(`/test/${currentLocation}`)).data?.testDetails;
             if (fetchtestdetails.testType == 'Standard') {
                 setQuestions(() => fetchtestdetails.questionForStandardTest.map((que, _) => (
                     {
@@ -289,7 +289,7 @@ function TestPage() {
             ));
             console.log(userresponse);
 
-            await axios.put(`http://localhost:4000/test/response`, { testId: currentLocation, response: userresponse });
+            await axios.put(`/test/response`, { testId: currentLocation, response: userresponse });
 
         } else {
             const formdata=new FormData();
@@ -300,7 +300,7 @@ function TestPage() {
             }
             formdata.append("testId",currentLocation);
             // console.log(formdata.getAll("answersheet"));
-            await axios.put(`http://localhost:4000/test/response`,formdata,{
+            await axios.put(`/test/response`,formdata,{
                 headers:{
                     "Content-Type":"multipart/form-data"
                 }

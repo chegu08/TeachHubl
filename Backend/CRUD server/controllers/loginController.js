@@ -77,7 +77,7 @@ const tutorLoginWithEmailAndPassword=async (req,res) =>{
 
         const sessionDetails={
             sessionId:uuid(),
-            userId:studentDetail.uid,
+            userId:tutorDetail.uid,
             expiresAt:Date.now() + (sessionType=="long")?1000*60*60*24:1000*60*60*24*30,
             role:"Tutor",
             sessionType:"long"
@@ -140,11 +140,43 @@ const tutorLogin = async (req, res) => {
         console.log(err)
         return res.status(500).json({ Error: err })
     }
-}
+};
+
+const getUserName=async (req,res)=>{
+    try {
+        const {userId,role}=req.query;
+        console.log(req.query);
+
+        if(role!="Student"&&role!="Tutor") {
+            console.log("Ambiguos role mentioned");
+            return res.status(400).json({Error:"Ambiguos role mentioned"});
+        }
+
+        if(role=="Student") {
+            const user=await student.findOne({uid:userId});
+            if(!user) {
+                return res.status(400).json({Error:"No user found"});
+            }
+            return res.status(200).json(user.name);
+        }
+
+        const user=await tutor.findOne({uid:userId});
+        if(!user) {
+                return res.status(400).json({Error:"No user found"});
+            }
+        return res.status(200).json(user.name);
+
+
+    } catch(err) {
+        console.log(err);
+        return res.status(500).json({Error:err});
+    }
+};
 
 module.exports = {
     studentLogin,
     tutorLogin,
     studentLoginWithEmailAndPassword,
-    tutorLoginWithEmailAndPassword
+    tutorLoginWithEmailAndPassword,
+    getUserName
 }

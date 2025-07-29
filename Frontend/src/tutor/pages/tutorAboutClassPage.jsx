@@ -1,13 +1,17 @@
 import "./tutorAboutClassPage.css";
-import { useSearchParams,useLocation,useNavigate } from 'react-router-dom';
+import { useSearchParams,useLocation,useNavigate,Navigate } from 'react-router-dom';
 import { useState,useEffect } from "react";
-import axios from "axios";
+import {crudInstance as axios} from "../../components/customAxios";
+import { jwtDecode } from 'jwt-decode';
+const jwt=localStorage.getItem("jwt");
 
 import TutorHeader from "../TutorHeader/tutorHeader";
 
 function TutorAboutClassPage() {
-    // this is just for now... implement the logic later
-    const tutorId="ljsdglkansdogitn";
+    if (!jwt) return <Navigate to="/signIn" />;
+
+    const decode=jwtDecode(jwt);
+    const tutorId=decode.userId;
 
     const [searchParams,_]=useSearchParams();
     const classId=searchParams.get("classId");
@@ -22,12 +26,12 @@ function TutorAboutClassPage() {
     useEffect(() => {
 
         async function fetchCourseDetails() {
-            const response1 = await axios.get(`http://localhost:4000/tutor/template-information/${templateId}`);
+            const response1 = await axios.get(`/tutor/template-information/${templateId}`);
             setCourse(response1.data.course);
             setTutor(response1.data.tutor);
             console.log("Course: ", response1.data.course);
             console.log("Tutor: ", response1.data.tutor);
-            const response2=await axios.get(`http://localhost:4000/class/student/aboutPage/${classId}`);
+            const response2=await axios.get(`/class/student/aboutPage/${classId}`);
             setCourse(pre=>({...pre,...response2.data}));
             console.log(response2.data);
         }

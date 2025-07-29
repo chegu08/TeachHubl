@@ -1,12 +1,17 @@
 import "./classRequests.css";
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import { Navigate } from "react-router-dom";
+import {crudInstance as axios} from "../components/customAxios";
+import { jwtDecode } from 'jwt-decode';
+const jwt=localStorage.getItem("jwt");
 
 
 function ClassRequests() {
 
-    // this is just for now... implement the whole logic later
-    const studId = "lkajnsglknaoi";
+    if (!jwt) return <Navigate to="/signIn" />;
+
+    const decode=jwtDecode(jwt);
+    const studId = decode.userId;
 
     const [requestStatusToShow, setRequestStatusToShow] = useState("pending");
     const [requests, setRequests] = useState([]);
@@ -16,7 +21,7 @@ function ClassRequests() {
 
     const getRequests = async () => {
 
-        const response = await axios.get(`http://localhost:4000/request/class/student/${studId}/${requestStatusToShow}`);
+        const response = await axios.get(`/request/class/student/${studId}/${requestStatusToShow}`);
         return response.data;
     };
 
@@ -42,7 +47,7 @@ function ClassRequests() {
 
     const handleCancelRequest=async (requestId)=>{
         try{
-            const response=await axios.delete("http://localhost:4000/request/class",{data:{requestId}});
+            const response=await axios.delete("/request/class",{data:{requestId}});
             alert(response.status);
             location.reload();
 

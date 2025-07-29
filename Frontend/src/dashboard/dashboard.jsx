@@ -6,10 +6,18 @@ import CourseContent from './coursecontent';
 import Calendar from './calendar';
 import TestInformation from './testinformation';
 import { crudInstance as axios } from '../components/customAxios';
+import {jwtDecode } from "jwt-decode";
+import { Navigate } from 'react-router-dom';
+
+const jwt=localStorage.getItem("jwt");
 
 
 
 function Dashboard({ setMainSection }) {
+
+
+    if (!jwt) return <Navigate to="/signIn" />;
+    const decode=jwtDecode(jwt);
 
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
@@ -19,8 +27,8 @@ function Dashboard({ setMainSection }) {
         yearList[i] = currentYear - i;
     }
     const monthList = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    const studId = "lkajnsglknaoi";
-    // this is just temporary
+    const studId = decode.userId;
+
 
     const [userName, setUserName] = useState("");
     const [courseDetails, setCourseDetails] = useState([]);
@@ -41,6 +49,10 @@ function Dashboard({ setMainSection }) {
     useEffect(() => {
 
 
+        const fetchStudentName=async (studId)=>{
+            const response=await axios.get(`/login/UserName?userId=${studId}&role=Student`);
+            setUserName(response.data);
+        }
         const fetchupcomingtestdetails = async (studId) => {
             const details = await axios.get(`/test/${studId}/upcoming`);
             setUpcomingTests(details.data.detailofUpcomingTests);
@@ -49,6 +61,7 @@ function Dashboard({ setMainSection }) {
         // console.log(testdetails.data.detailofUpcomingTests);
         //setUpcomingTests(testdetails.data.detailofUpcomingTests);
         fetchupcomingtestdetails(studId);
+        fetchStudentName(studId);
     }, []);
 
     useEffect(() => {
@@ -70,7 +83,7 @@ function Dashboard({ setMainSection }) {
                 <div className="bluebackground" ></div>
             </div>
             <div className="personal_detail">
-                <h2>Welcome back, Cheguevera!</h2>
+                <h2>Welcome back, {userName}!</h2>
                 <div className="completed_courses" >
                     <img src={bookIcon} className='icon' style={{ height: "50%", width: "50%" }} />
                     <div className="course_stat">

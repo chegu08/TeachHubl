@@ -2,12 +2,17 @@ import "./tutorResources.css";
 import leftArrow from "../../assets/arrow-left.svg";
 import {FileIcon} from "../../components/fileIcon";
 import {useState,useEffect} from 'react';
-import axios from "axios";
+import { Navigate } from "react-router-dom";
+import {crudInstance as axios} from "../../components/customAxios";
+import { jwtDecode } from 'jwt-decode';
+const jwt=localStorage.getItem("jwt");
 
 function TutorResources() {
+    if (!jwt) return <Navigate to="/signIn" />;
 
-    // this is just temporary
-        const tutorId = "ljsdglkansdogitn";
+    
+        const decode=jwtDecode(jwt);
+        const tutorId = decode.userId;
     
         // const navigation=useNavigate();
     
@@ -18,7 +23,7 @@ function TutorResources() {
     
         useEffect(() => {
             async function fetchCourseInformation(tutorId) {
-                const response = await axios.get(`http://localhost:4000/class/tutor/getInfo/${tutorId}`);
+                const response = await axios.get(`/class/tutor/getInfo/${tutorId}`);
                 setCourseInformation(response.data.allCourses);
                 console.log(response.data.allCourses);
             }
@@ -29,7 +34,7 @@ function TutorResources() {
             
             if(selectedClass!="") {
                 async function fetchResources() {
-                    const response=await axios.get(`http://localhost:4000/class/class-resources/${selectedClass}`);
+                    const response=await axios.get(`/class/class-resources/${selectedClass}`);
                     console.log(response.data);
                     setResources(response.data);
                 };

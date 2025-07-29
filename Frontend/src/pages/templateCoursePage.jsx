@@ -2,12 +2,18 @@ import { useParams } from 'react-router-dom';
 import './templateCoursePage.css';
 import Header from '../header/header';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import {crudInstance as axios} from '../components/customAxios';
 import deleteIcon from '../assets/trash.svg'
+import { jwtDecode } from 'jwt-decode';
+import { Navigate } from 'react-router-dom';
+const jwt=localStorage.getItem("jwt");
 
 function TemplateCoursePage() {
-    // this is just for now... implement the logic later
-    const studId="lkajnsglknaoi";
+    
+    if (!jwt) return <Navigate to="/signIn" />;
+    
+    const decode=jwtDecode(jwt);
+    const studId=decode.userId;
 
     const courseId = useParams().courseId;
     const [course, setCourse] = useState({});

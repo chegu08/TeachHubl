@@ -1,14 +1,20 @@
 import "./tutorDashboard.css";
 import { useEffect, useState } from 'react';
+import { Navigate } from "react-router-dom";
 import bookIcon from '../../assets/book.svg';
 import TutorProgressChart from "./tutorProgressChart";
 import TutorCourseContent from "./tutorCourseContent";
 import TutorCalendar from "./tutorCalendar";
 import TutorTestInformation from "./tutorTestInformarion";
-import { crudInstance as axios } from '../../components/customAxios'
+import {crudInstance as axios} from "../../components/customAxios";
+import { jwtDecode } from 'jwt-decode';
+const jwt=localStorage.getItem("jwt");
 
-function TutorDashboard ({setMainSection}){
+function TutorDashboard ({setMainSection}) {
+    if (!jwt) return <Navigate to="/signIn" />;
 
+    
+    const decode=jwtDecode(jwt);
     const currentDate=new Date();
     const currentYear=currentDate.getFullYear();
     const currentMonth=currentDate.getMonth();
@@ -17,10 +23,9 @@ function TutorDashboard ({setMainSection}){
         yearList[i]=currentYear-i;
     }
     const monthList=["January","Febuary","March","April","May","June","July","August","September","October","November","December"];
-    const tutorId="ljsdglkansdogitn";
-    // this is just temporary
+    const tutorId=decode.userId;
 
-        const [userName, setUserName] = useState("");
+    const [userName, setUserName] = useState("");
     const [courseDetails,setCourseDetails]=useState([]);
     const [currentCourseCount, setCurrentCourseCount] = useState(0);
     const [currentCourseIndex,setCurrentCourseIndex]=useState(0);
@@ -37,21 +42,27 @@ function TutorDashboard ({setMainSection}){
 
     
     useEffect(()=>{
+        const fetchTutorname=async (tutorId)=>{
+            const response=await axios.get(`/login/userName?userId=${tutorId}&role=Tutor`);
+            setUserName(response.data);
+        };
         const fetchuncorrectedtestdetails=async (tutorId)=>{
-            const details= await axios.get(`http://localhost:4000/test/tutor/${tutorId}`);
+            const details= await axios.get(`/test/tutor/${tutorId}`);
             setUncorrectedTests(details.data.detailofUncorrectedTests);
         };
         // const testdetails=await fetchupcomingtestdetails("cheguevera"); //this is just for testing purposes
         // console.log(testdetails.data.detailofUpcomingTests);
         //setUpcomingTests(testdetails.data.detailofUpcomingTests);
         fetchuncorrectedtestdetails(tutorId);
+        fetchTutorname(tutorId);
     },[]);
 
     useEffect(()=>{
         async function fetchCourseDetails(tutorId){
             // the backend logic is not set yet 
             // set it up you bastard
-            const response= await axios.get(`http://localhost:4000/class/tutor/${tutorId}`);
+            const response= await axios.get(`/class/tutor/${tutorId}`);
+            console.log(response.data);
             
             setCurrentCourseCount(response.data.classDetails.length);
             setCourseDetails(response.data.classDetails);
@@ -67,7 +78,7 @@ function TutorDashboard ({setMainSection}){
                 <div className="bluebackground" ></div>
             </div>
             <div className="personal_detail">
-                <h2>Welcome back, Jeyaraj!</h2>
+                <h2>Welcome back, {userName}!</h2>
                 <div className="completed_courses" >
                     <img src={bookIcon} className='icon' style={{ height: "50%", width: "50%" }} />
                     <div className="course_stat">

@@ -1,7 +1,9 @@
 import "./tutorResponsePage.css";
-import { useSearchParams, useLocation, useNavigate } from "react-router-dom";
+import { useSearchParams, useLocation, useNavigate,Navigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import {crudInstance as axios} from "../../components/customAxios";
+import { jwtDecode } from 'jwt-decode';
+const jwt=localStorage.getItem("jwt");
 
 import TutorHeader from "../TutorHeader/tutorHeader";
 import TutorCalendar from "../dashboard/tutorCalendar";
@@ -32,6 +34,9 @@ const monthMapping = {
 };
 
 function TutorResponsePage() {
+    if (!jwt) return <Navigate to="/signIn" />;
+
+    const decode=jwtDecode(jwt);
     const location = useLocation();
     const navigation = useNavigate();
     // console.log(JSON.stringify(location.state));
@@ -45,8 +50,8 @@ function TutorResponsePage() {
     for (let i = 0; i < 15; i++) {
         yearList[i] = currentYear - i;
     }
-    // this is just temporary
-    const tutorId = 'ljsdglkansdogitn';
+
+    const tutorId = decode.userId;
 
     const [maxPrice, setMaxPrice] = useState(0);
     const [maxClasses, setmaxClasses] = useState(0);
@@ -68,7 +73,7 @@ function TutorResponsePage() {
     useEffect(() => {
         async function fetchMaxClassesAndPrice() {
             try {
-                const response = await axios.get(`http://localhost:4000/request/class/template-information/max-classes-and-price/${templateId}`);
+                const response = await axios.get(`/request/class/template-information/max-classes-and-price/${templateId}`);
                 setMaxPrice(response.data.maxPrice);
                 setmaxClasses(response.data.maxClasses);
             } catch (err) {
@@ -79,8 +84,8 @@ function TutorResponsePage() {
 
         async function fetchTutorScheduleAndSlot() {
             try {
-                const response = await axios.get(`http://localhost:4000/tutor/schedule/${tutorId}?startDate=2025-06-20&endDate=2025-08-20`);
-                const response1 = await axios.get(`http://localhost:4000/tutor/slots/${tutorId}`);
+                const response = await axios.get(`/tutor/schedule/${tutorId}?startDate=2025-06-20&endDate=2025-08-20`);
+                const response1 = await axios.get(`/tutor/slots/${tutorId}`);
                 // console.log("R ",response.data);
                 setTutorSlots(response1.data.tutorSlots);
                 // console.log("tutor slots",response1.data.tutorSlots)
@@ -245,7 +250,7 @@ function TutorResponsePage() {
             }));
 
         try {
-            const response = await axios.post(`http://localhost:4000/tutor/response?requestId=${requestId}&templateId=${templateId}`,
+            const response = await axios.post(`/tutor/response?requestId=${requestId}&templateId=${templateId}`,
                 {
                     price: actualPrice,
                     classes: actualClasses,

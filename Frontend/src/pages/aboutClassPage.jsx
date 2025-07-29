@@ -1,11 +1,14 @@
 import './aboutClassPage.css';
 import { useSearchParams } from 'react-router-dom';
 import { useState,useEffect } from "react";
-import axios from "axios";
+import {crudInstance as axios} from "../components/customAxios";
 import {Toaster,toast} from "sonner"
 
 import {StarIcon,StarIconFill} from "../components/fileIcon"
 import Header from "../header/header";
+import { jwtDecode } from 'jwt-decode';
+import { Navigate } from 'react-router-dom';
+const jwt=localStorage.getItem("jwt");
 
 function Stars({number,setStars}) {
     const comp=new Array(5).fill("starIcon").map((_,ind)=>((ind<=number-1&&number!=0)?"starIconFill":"starIcon"));
@@ -28,8 +31,11 @@ function Stars({number,setStars}) {
 }
 
 function AboutClassPage() {
-    // this is just for now... implement the logic later
-    const studId="lkajnsglknaoi";
+
+    if (!jwt) return <Navigate to="/signIn" />;
+    
+    const decode=jwtDecode(jwt);
+    const studId=decode.studId;
 
     const [searchParams,_]=useSearchParams();
     const classId=searchParams.get("classId");

@@ -1,11 +1,17 @@
 import './tutorCreateCourse.css';
 import leftarrow from '../../assets/arrow-left.svg';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { Navigate } from 'react-router-dom';
+import {crudInstance as axios} from "../../components/customAxios";
+import { jwtDecode } from 'jwt-decode';
+const jwt=localStorage.getItem("jwt");
 
 function TutorCreateCourse({ setMainSection }) {
+    if (!jwt) return <Navigate to="/signIn" />;
 
-    const tutorId = "ljsdglkansdogitn";
+    const decode=jwtDecode(jwt);
+
+    const tutorId = decode.userId;
 
     const [courseName, setCourseName] = useState("");
     const [courseSubject, setCourseSubject] = useState("");
@@ -22,7 +28,7 @@ function TutorCreateCourse({ setMainSection }) {
 
     useEffect(() => {
         async function fetchPreviousTemplates() {
-            const response = await axios.get(`http://localhost:4000/tutor/template/${tutorId}`);
+            const response = await axios.get(`/tutor/template/${tutorId}`);
             setPreviousTemplates(response.data.map(
                 (temp) => ({
                     ...temp,
@@ -99,7 +105,7 @@ function TutorCreateCourse({ setMainSection }) {
                 formdata.append('chapters', chapter);
             }
         });
-        const response = await axios.post('http://localhost:4000/tutor/template', formdata, {
+        const response = await axios.post('/tutor/template', formdata, {
             headers: {
                 "Content-Type": 'multipart/form-data'
             }

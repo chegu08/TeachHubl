@@ -1,10 +1,11 @@
 import "./tutorTestFeedbackPage.css";
 import { useParams,useNavigate } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
 import { Bar,Pie } from 'react-chartjs-2';
 import { Chart, LinearScale, CategoryScale, BarElement, Legend, Tooltip, plugins,ArcElement } from 'chart.js';
 import React from 'react';
+import {crudInstance as axios} from "../../components/customAxios";
+
 
 
 Chart.register(LinearScale, CategoryScale, BarElement, Legend, Tooltip,ArcElement);
