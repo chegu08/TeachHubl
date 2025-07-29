@@ -5,7 +5,7 @@ import ProgressChart from './progressChart';
 import CourseContent from './coursecontent';
 import Calendar from './calendar';
 import TestInformation from './testinformation';
-import axios from 'axios'
+import { crudInstance as axios } from '../components/customAxios';
 
 
 
@@ -42,7 +42,7 @@ function Dashboard({ setMainSection }) {
 
 
         const fetchupcomingtestdetails = async (studId) => {
-            const details = await axios.get(`http://localhost:4000/test/${studId}/upcoming`);
+            const details = await axios.get(`/test/${studId}/upcoming`);
             setUpcomingTests(details.data.detailofUpcomingTests);
         };
         // const testdetails=await fetchupcomingtestdetails("cheguevera"); //this is just for testing purposes
@@ -55,7 +55,7 @@ function Dashboard({ setMainSection }) {
         async function fetchCourseDetails(studId) {
             // the backend logic is not set yet 
             // set it up you bastard
-            const response = await axios.get(`http://localhost:4000/class/student/${studId}`);
+            const response = await axios.get(`/class/student/${studId}`);
 
             setCurrentCourseCount(response.data.classDetails.length);
             setCourseDetails(response.data.classDetails);

@@ -4,7 +4,6 @@ const slotSchema=new mongoose.Schema({
     day:{
         type:String,
         required:true,
-        unique:true
     },
     numOfSlots:{
         type:Number,

@@ -1,16 +1,15 @@
-Immediate to-do: Deadline(18-7-25)
-    22. Add feature to allow resources that are already in s3 for tutor course templates. (Mid)
-    25. Implement Calendar for students and tutors with the same cozy UI as in you click calendar icon in the header in justinmind website.  (Tough)
-
-Complete Later: Deadline(25-7-25)
-    26. Add profile section for student and tutors. (Tough)
-    27. Login page for student and tutor and get photos from it. (Tough)
+Immediate to-do: Deadline(28-7-25)
     28. Update all the hardcoded studId and tutorId in all files. (Tough)
     29. Enable web push notification and toast notification as it needs auth. (Tough)
-    30. Add features or statistics to earnings dashboard (optional).
+
+
+Complete Later: Deadline(30-7-25)
+    30. Add features or statistics to earnings dashboard (Mid).
     31. Add features to chat page and fix bugs. (Tough)
     32. Create reviews section for tutors. (Mid)
     33. Update the progress bar in dashboard section of both students and tutors. (Tough)
     34. Create statistics about the attendance . (Mid)
     35. Fix the bugs in websockets and whiteboard. (Tough)
+    36. Create google auth for students and tutors.
+    26. Add profile section for student and tutors. (Mid) (Since this is not core logic)
     

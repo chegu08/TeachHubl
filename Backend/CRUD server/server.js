@@ -11,7 +11,7 @@ console.log(mongourl)
 
 const corsOptions = {
     orgin: '*',
-    //allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
     methods: ["GET", "PUT", "POST", "DELETE"]
 }
 
@@ -19,8 +19,8 @@ const corsOptions = {
 app.set('view engine','ejs');
 
 //middleware
+app.use(cors(corsOptions));
 app.use(express.static("public"));
-app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -30,6 +30,8 @@ const signupRouter = require('./routes/signupRouter');
 app.use('/signup', signupRouter)
 const loginRouter = require('./routes/loginRouter');
 app.use('/login', loginRouter)
+const auth=require('./middleware/auth');
+app.use(auth);
 const testRouter=require('./routes/testRouter');
 app.use('/test',testRouter)
 const classRouter=require('./routes/classRouter');

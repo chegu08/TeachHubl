@@ -5,7 +5,7 @@ import TutorProgressChart from "./tutorProgressChart";
 import TutorCourseContent from "./tutorCourseContent";
 import TutorCalendar from "./tutorCalendar";
 import TutorTestInformation from "./tutorTestInformarion";
-import axios from 'axios';
+import { crudInstance as axios } from '../../components/customAxios'
 
 function TutorDashboard ({setMainSection}){
 

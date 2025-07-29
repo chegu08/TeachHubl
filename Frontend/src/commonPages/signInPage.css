@@ -1,0 +1,103 @@
+.signin_page{
+    height:100vh;
+    width:100vw;
+    border:0px;
+    margin:0px;
+    background-color: aliceblue;
+    overflow-y: auto;
+}
+
+.signin_page header{
+    height:10%;
+    width:100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding:10px 10%;
+    gap: 2%;
+}
+
+.signin_page header img {
+    height:40%;
+}
+
+.signin_page header strong{
+    font-size: 28px;
+}
+
+.signin_page .body{
+    min-height:90%;
+    height:auto;
+    width:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.signin_page .body .section_box{
+    height: 85%;
+    width:32%;
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid gray;
+    display: flex;
+    flex-direction: column;
+}
+
+.guidance_section{
+    height:20%;
+    width:100%;
+    padding:30px 50px;
+}
+
+.guidance_section p{
+    color:gray;
+}
+
+.input_section{
+    height:40%;
+    width:100%;
+    display: flex;
+    flex-direction: column;
+    padding:20px 50px;
+    gap:10px;
+}
+
+.input_section .forgot_section{
+    width:100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.button_section{
+    height:40%;
+    width:100%;
+    display:flex;
+    flex-direction: column;
+    padding:20px 50px;
+    gap:10px;
+}
+
+.button_section img{
+    height:90%;
+}
+
+.signin_page button, .signin_page select ,.signin_page input {
+    height:60px;
+    outline:none;
+    border:1px solid rgb(13, 110, 253);
+    padding:10px 20px;
+    border-radius: 6px;
+}
+
+.signin_page .button_section button{
+    color:white;
+    font-size: medium;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap:20px;
+    cursor:pointer;
+}
+
