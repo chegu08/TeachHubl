@@ -1,9 +1,10 @@
 import './chatPage.css';
 import { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from "react-router-dom";
-import axios from "axios";
+import { Navigate, useSearchParams } from "react-router-dom";
+import {crudInstance as axios} from '../components/customAxios'
 import { io } from 'socket.io-client'
 import {v4 as uuid} from "uuid";
+// import { jwtDecode } from 'jwt-decode';
 
 import TeachHublLogo from '/WhatsApp Image 2025-02-19 at 20.32.04_9336c379.jpg';
 import newChatIcon from "../assets/new-chat-icon.svg";
@@ -11,9 +12,13 @@ import searchlogo from '../assets/search.svg';
 import profileIcon from '../assets/image.svg';
 import sendIcon from '../assets/send.svg';
 import emojiIcon from '../assets/emoji.svg';
+import { toast, Toaster } from 'sonner';
 
+const jwt=localStorage.getItem("jwt");
 
 function ChatPage() {
+
+    if(!jwt) return <Navigate to="/signIn" />;
 
     const [urlsearchparams, _] = useSearchParams();
     const userId = urlsearchparams.get('user');
@@ -95,11 +100,12 @@ function ChatPage() {
     const handleNewChat = async () => {
         setWantsNewChat(true);
         try {
-            const response = await axios.get(`http://localhost:4000/class/connectedChatUsers/${userId}`);
+            const response = await axios.get(`/class/connectedChatUsers/${userId}`);
             setUsersConnectedWith(response.data);
         } catch (err) {
             console.log(err);
-            alert("Error fetching userIDs");
+            // alert("Error fetching userIDs");
+            toast.error("Error fetching userIDs");
         }
     };
 
@@ -150,6 +156,7 @@ function ChatPage() {
 
     return (
         <div className="chat_page">
+            <Toaster richColors/>
             <div className="message_list_container">
                 <header>
                     <strong>Chats</strong>

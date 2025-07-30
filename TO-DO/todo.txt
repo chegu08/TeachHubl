@@ -1,16 +1,16 @@
-Immediate to-do: Deadline(28-7-25)
-    29. Enable web push notification and toast notification as it needs auth. (Tough)
-    30. push all jwtdecode inside functions and fix all the bugs (Mid)
-
-
-Complete Later: Deadline(30-7-25)
+Immediate to-do: Deadline(30-7-25)
     30. Add features or statistics to earnings dashboard (Mid).
     31. Add features to chat page and fix bugs. (Tough)
     32. Create reviews section for tutors. (Mid)
+
+Complete Later: Deadline(2-8-25)
     33. Update the progress bar in dashboard section of both students and tutors. (Tough)
     34. Create statistics about the attendance . (Mid)
     35. Fix the bugs in websockets and whiteboard. (Tough)
     36. Create google auth for students and tutors.
     37. Fix minor bugs related to auth in common pages such as home Page (Easy).
-    26. Add profile section for student and tutors. (Mid) (Since this is not core logic)
+    38. Add profile section for student and tutors. (Mid) (Since this is not core logic).
+    39. Fix bugs related to custom test. 
+
+
     

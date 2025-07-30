@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate,Navigate } from 'react-router-dom';
 import {crudInstance as axios} from "../components/customAxios";
 import { jwtDecode } from 'jwt-decode';
+import {Toaster,toast} from "sonner";
 const jwt=localStorage.getItem("jwt");
 
 function Response() {
@@ -23,7 +24,8 @@ function Response() {
                 console.log(response.data);
             } catch(err) {
                 console.log(err);
-                alert(err);
+                // alert(err);
+                toast.error(err);
             }
         }
 
@@ -46,6 +48,7 @@ function Response() {
 
     return (
         <div className="requests_container">
+            <Toaster richColors />
             <div className="request_list_container">
                 {
                     responses

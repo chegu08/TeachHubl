@@ -3,7 +3,7 @@ import Header from '../header/header';
 import TopbackgroundImage from '../assets/background images/backgroundimage.png'
 import { useState, useEffect } from 'react';
 import courseimg from '../assets/istockphoto-1919863292-2048x2048.jpg'
-import axios from 'axios';
+import {crudInstance as axios} from "../components/customAxios";
 
 function HomePage() {
     const [bestCourses, setBestCourses] = useState([]);
@@ -14,12 +14,12 @@ function HomePage() {
         // pagination concept is just implemented in backend
         // implement it in frontend
         async function fetchBestCourses() {
-            const bestCourses= await axios.get(`http://localhost:4000/tutor/alltemplate?limit=10&offset=${0}`);
+            const bestCourses= await axios.get(`/tutor/alltemplate?limit=10&offset=${0}`);
             setBestCourses(bestCourses.data);
         }
 
         async function fetchBestTutors() {
-            const bestTutors = (await axios.get('http://localhost:4000/tutor/best')).data;
+            const bestTutors = (await axios.get('/tutor/best')).data;
 
             setBestTutors(bestTutors);
         }

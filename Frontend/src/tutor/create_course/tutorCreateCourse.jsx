@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import {crudInstance as axios} from "../../components/customAxios";
 import { jwtDecode } from 'jwt-decode';
+import { Toaster,toast } from 'sonner';
 const jwt=localStorage.getItem("jwt");
 
 function TutorCreateCourse({ setMainSection }) {
@@ -112,7 +113,8 @@ function TutorCreateCourse({ setMainSection }) {
         });
 
         if (response.status == 200) {
-            alert('A new template has been successfully created successfully');
+            // alert('A new template created.');
+            toast.success('A new template created.');
             location.reload();
         }
         else {
@@ -124,6 +126,7 @@ function TutorCreateCourse({ setMainSection }) {
 
     return (
         <div className="tutor_create_courses_container">
+            <Toaster richColors />
             <nav onClick={() => setMainSection("my_courses")}><img src={leftarrow} width={"20px"} height={"20px"} /> &ensp;Back to courses</nav>
             <div className="courses_container">
                 <form className="new_course_container" onSubmit={handleUploadTemplateCourse}>

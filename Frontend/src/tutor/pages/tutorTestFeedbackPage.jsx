@@ -5,6 +5,7 @@ import { Bar,Pie } from 'react-chartjs-2';
 import { Chart, LinearScale, CategoryScale, BarElement, Legend, Tooltip, plugins,ArcElement } from 'chart.js';
 import React from 'react';
 import {crudInstance as axios} from "../../components/customAxios";
+import {Toaster,toast} from "sonner";
 
 
 
@@ -201,7 +202,7 @@ function TutorTestFeedbackPage () {
     useEffect(() => {
 
         async function fetchTestStatistics() {
-            const response = await axios.get(`http://localhost:4000/test/statistics/${testId}`);
+            const response = await axios.get(`/test/statistics/${testId}`);
             setTestStatistics(response.data.statistics);
             setFeedback(new Array(response.data.statistics.questionForStandardTest.length).fill(""));
             setQuestions(response.data.statistics.questionForStandardTest.map((que, ind) => (
@@ -226,11 +227,12 @@ function TutorTestFeedbackPage () {
 
     const handleSendFeedback = async ()=>{
         console.log("clicked");
-        const response=await axios.put(`http://localhost:4000/test/feedback`,{
+        const response=await axios.put(`/test/feedback`,{
             testId,feedback
         });
         if(response.status==200) {
-            alert('success');
+            // alert('success');
+            toast.success("Feedback sent!");
             navigation(-1);
         }
         else {
@@ -241,6 +243,7 @@ function TutorTestFeedbackPage () {
     return (
         <>
         <div className='tutor_test_analysis'>
+            <Toaster richColors />
             <div className="question_navigation">
                 <strong style={{ fontSize: "large" }}>{testId}</strong>
                 <div className="instructions">

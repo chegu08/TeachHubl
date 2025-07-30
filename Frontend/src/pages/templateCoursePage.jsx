@@ -49,6 +49,7 @@ function TemplateCoursePage() {
             chapters:chaptersToSend
         });
         if(response.status==200) {
+            // toast.message("Request to the tutor is sent");
             alert("Request to the tutor is sent");
             setShowRequestWindow(false);
         } 

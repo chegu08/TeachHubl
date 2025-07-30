@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import {crudInstance as axios} from "../../components/customAxios";
 import { jwtDecode } from 'jwt-decode';
 import { Navigate } from 'react-router-dom';
+import {Toaster,toast} from "sonner";
 const jwt=localStorage.getItem("jwt");
 
 import TutorHeader from '../TutorHeader/tutorHeader'
@@ -132,10 +133,12 @@ function CreateTestPage() {
                     maxScore: maxMarks,
                     questionForStandardTest: questionDetails
                 });
-                alert(response.data.testId);
+                // alert(response.data.testId);
+                toast.success("New Test Created!");
             } catch (err) {
                 console.log(err);
-                alert("err");
+                // alert("err");
+                toast.error(err);
             }
         }
         else {
@@ -153,16 +156,19 @@ function CreateTestPage() {
                         "Content-Type":"multipart/form-data"
                     }
                 });
-                alert(response.data.testId);
+                // alert(response.data.testId);
+                toast.success("New Test created!");
             } catch(err) {
                 console.log(err);
-                alert("err");
+                toast.error(err);
+                // alert("err");
             }
         }
     };
 
     return (
         <div className="create-test-page">
+            <Toaster richColors />
             <TutorHeader />
             <div className="courses_container">
                 <form className="new_course_container" onSubmit={handleUploadTest}>

@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import {crudInstance as axios} from "../components/customAxios";
 import { jwtDecode } from 'jwt-decode';
+import {Toaster,toast} from "sonner"
 const jwt=localStorage.getItem("jwt");
 
 
@@ -48,11 +49,10 @@ function ClassRequests() {
     const handleCancelRequest=async (requestId)=>{
         try{
             const response=await axios.delete("/request/class",{data:{requestId}});
-            alert(response.status);
             location.reload();
 
         } catch(err) {
-            alert(err);
+            toast.error(err);
         }
         
     };
@@ -67,6 +67,7 @@ function ClassRequests() {
 
     return (
         <div className="requests_container">
+            <Toaster richColors />
             <h2 className="heading">My reqeusts</h2>
             <div className="button_container">
                 <Button />

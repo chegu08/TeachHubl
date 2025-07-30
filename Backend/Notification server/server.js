@@ -1,12 +1,16 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-require('dotenv').config({ path: 'D:/Github/TeachHubl/.env' })
+require('dotenv').config({ path: 'D:/Github/TeachHubl/.env' });
 const { jobs: testJobs } = require('./notification/Tests/schedule');
 const { jobs: classJobs } = require("./notification/Classes/schedule");
 const { listentoChangeStream: testListenToChangeStream } = require('./notification/Tests/changestream');
 const { listentoChangeStream: classListenToChangeStream } = require('./notification/Classes/changestream');
 const { agenda } = require('./config/config');
+const authSessionModel = require("./models/authSessionModel");
+const pushSubscriptionModel = require("./models/pushSubscriptionModel");
+const jwt = require("jsonwebtoken");
+
 
 const mongoose = require('mongoose')
 
@@ -17,9 +21,38 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 app.use(express.static("public"));
-app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
 
+app.post('/save-subscription', async (req, res) => {
+    try {
+        const { subscription, userId, auth_token } = req.body;
+
+        const decoded = await new Promise((resolve, reject) => {
+            jwt.verify(auth_token, process.env.AUTH_SECRET, async (err, decoded) => {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                }
+                else resolve(decoded);
+            });
+        });
+        const { sessionId } = decoded;
+        const session = await authSessionModel.findOne({ sessionId });
+
+        if (!session) {
+            return res.status(403).json({ Error: "Session expired...signin required" });
+        }
+
+        await pushSubscriptionModel.create({ userId, subscription });
+
+        res.status(200).json({ message: "Success" });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ Error: err });
+    }
+});
 
 async function termination() {
     await agenda.stop()

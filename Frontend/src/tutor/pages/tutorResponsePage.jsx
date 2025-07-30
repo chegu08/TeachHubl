@@ -78,7 +78,8 @@ function TutorResponsePage() {
                 setmaxClasses(response.data.maxClasses);
             } catch (err) {
                 console.log(err);
-                alert("Error fetching max classes and prices");
+                toast.error("Error fetching max classes and prices");
+                // alert("Error fetching max classes and prices");
             }
         }
 
@@ -102,7 +103,8 @@ function TutorResponsePage() {
                 // console.log("existing ",existingSlots)
             } catch (err) {
                 console.log(err);
-                alert("Error fetching tutor schedule and slots ");
+                toast.error("Error fetching tutor schedule and slots ");
+                // alert("Error fetching tutor schedule and slots ");
             }
         }
         fetchMaxClassesAndPrice();
@@ -265,7 +267,8 @@ function TutorResponsePage() {
 
         } catch (err) {
             console.log(err);
-            alert(err);
+            toast.error(err);
+            // alert(err);
         }
     };
 
@@ -329,10 +332,12 @@ function TutorResponsePage() {
 
         const timeout = setTimeout(() => {
             if (actualClasses > maxClasses) {
-                alert(`The number of classes can't be more than ${maxClasses}`);
+                toast.error(`The number of classes can't be more than ${maxClasses}`)
+                // alert(`The number of classes can't be more than ${maxClasses}`);
             }
             if (actualClasses <= 0) {
-                alert("You have to take atleast 1 class");
+                toast.error("You have to take atleast 1 class")
+                // alert("You have to take atleast 1 class");
             }
         }, 500);
 
@@ -347,10 +352,12 @@ function TutorResponsePage() {
 
         const timeout = setTimeout(() => {
             if (actualPrice > maxPrice) {
-                alert(`Price can't be more than what than ${maxPrice}`);
+                toast.error(`Price can't be more than what than ${maxPrice}`);
+                // alert(`Price can't be more than what than ${maxPrice}`);
             }
             if (actualPrice < 0) {
-                alert("Price has to be greater than 0");
+                toast.error("Price has to be greater than 0");
+                // alert("Price has to be greater than 0");
             }
         }, 500);
 
@@ -367,7 +374,8 @@ function TutorResponsePage() {
             cur_date_ignoring_time.setHours(0, 0, 0, 0);
 
             if (inputDate <= cur_date_ignoring_time) {
-                alert("Start date is today or already passed");
+                toast.error("Start date is today or already passed");
+                // alert("Start date is today or already passed");
             }
         }, 1000);
 

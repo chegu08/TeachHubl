@@ -35,7 +35,7 @@ function AboutClassPage() {
     if (!jwt) return <Navigate to="/signIn" />;
     
     const decode=jwtDecode(jwt);
-    const studId=decode.studId;
+    const studId=decode.userId;
 
     const [searchParams,_]=useSearchParams();
     const classId=searchParams.get("classId");
@@ -49,12 +49,12 @@ function AboutClassPage() {
     useEffect(() => {
 
         async function fetchCourseDetails() {
-            const response1 = await axios.get(`http://localhost:4000/tutor/template-information/${templateId}`);
+            const response1 = await axios.get(`/tutor/template-information/${templateId}`);
             setCourse(response1.data.course);
             setTutor(response1.data.tutor);
             console.log("Course: ", response1.data.course);
             console.log("Tutor: ", response1.data.tutor);
-            const response2=await axios.get(`http://localhost:4000/class/student/aboutPage/${classId}`);
+            const response2=await axios.get(`/class/student/aboutPage/${classId}`);
             setCourse(pre=>({...pre,...response2.data}));
             console.log(response2.data);
         }

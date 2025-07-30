@@ -1,6 +1,6 @@
 import './paymentPage.css';
 import logo from '/WhatsApp Image 2025-02-19 at 20.32.04_9336c379.jpg'
-import {crudInstance as axios} from "../components/customAxios"
+import {crudInstance as axios} from "../components/customAxios";
 import { useLocation } from 'react-router-dom';
 
 function loadScript(src) {

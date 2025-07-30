@@ -3,6 +3,7 @@ import { useState,useEffect,useRef } from "react";
 import { useNavigate,Navigate } from 'react-router-dom';
 import {crudInstance as axios} from "../../components/customAxios";
 import { jwtDecode } from 'jwt-decode';
+import { Toaster,toast } from "sonner";
 const jwt=localStorage.getItem("jwt");
 
 function TutorClassRequest() {
@@ -44,10 +45,13 @@ function TutorClassRequest() {
         const handleRejectRequest=async (requestId)=>{
             try{
                 const response=await axios.put("/request/class/reject",{requestId});
-                alert(response.status);
-                location.reload();
+                toast.success("request rejected");
+                setTimeout(()=>{
+                    location.reload();
+                },1000);
             } catch(err) {
-                alert(err);
+                // alert(err);
+                toast.error(err);
             }
         };
 
@@ -69,6 +73,7 @@ function TutorClassRequest() {
     
         return (
             <div className="tutor_requests_container">
+                <Toaster richColors />
                 <h2 className="heading">My reqeusts</h2>
                 <div className="button_container">
                     <Button />
