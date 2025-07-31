@@ -38,6 +38,14 @@ const ScheduleSchema = new mongoose.Schema({
             classLink: {
                 type: String,
                 required: true
+            },
+            tutorAttended:{
+                type:Boolean,
+                default:false
+            },
+            studAttended:{
+                type:Boolean,
+                default:false
             }
         }],
         required: true

@@ -1,12 +1,13 @@
 import './Room.css';
 import { useState,useEffect,useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Peer from 'peerjs'
 import shareScreenIcon from '../assets/screen-share.png';
 import stopScreenShareIcon from '../assets/stop-screen-share.png';
 import startRecordingIcon from '../assets/start-recording.png';
 import stopRecordingIcon from '../assets/stop-recording.png'
 import ToggleInput from '../components/toggleInput';
-import axios from "axios";
+import { crudInstance as axios } from '../components/customAxios';
 import WhiteBoard from '../white-board/whiteBoard';
 
 const GetPage = ({ ind ,tool,socket,color,user,roomId}) => {
@@ -15,6 +16,12 @@ const GetPage = ({ ind ,tool,socket,color,user,roomId}) => {
 }
 
 function Room({socket, roomId, userId, role} ){
+  
+  const studId=searchParms.get("student");
+  const tutorId=searchParms.get("tutor");
+
+  const [searchParms]=useSearchParams();
+  const [classId,setClassId]=useState('');
   const [peerId, setPeerId] = useState('');
   const remoteVideoRef = useRef(null);
   const currentUserVideoRef = useRef(null);
@@ -28,9 +35,10 @@ function Room({socket, roomId, userId, role} ){
   const [showControls, setShowControls] = useState(true);
   const [enlargedVideo, setEnlargedVideo] = useState("myvideo");
 
+  
 
   const user='student'
-  const classId="cb7dbc84-534c-468c-af49-b0acfd47b51e";
+  // const classId="cb7dbc84-534c-468c-af49-b0acfd47b51e";
   // this is hardcoded currently
   // implement the logic to get the class id
 
@@ -40,6 +48,19 @@ function Room({socket, roomId, userId, role} ){
   const [showwhiteboard,setShowWhiteBoard]=useState(false);
   const [whiteboard, setWhiteboard] = useState(-1);
   const [totalPages, setTotalPages] = useState(0);
+
+  useEffect(()=>{
+    async function getClassIdAndMarkPresent() {
+      const response=axios.put('/schedule/class/attendance',{
+        role,
+        studId,
+        tutorId
+      });
+      setClassId(response.data);
+    }
+    getClassIdAndMarkPresent();
+  },[]);
+
 
   useEffect(() => {
 

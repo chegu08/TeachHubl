@@ -4,9 +4,10 @@ import { Chart, LinearScale, CategoryScale, BarElement, Legend, Tooltip, plugins
 
 Chart.register(LinearScale, CategoryScale, BarElement, Legend, Tooltip);
 
-function TutorProgressChart() {
+function TutorProgressChart({attendanceReport}) {
+        const percentageArray=(attendanceReport.length==7)?attendanceReport.map(rep=>rep.percentage):new Array(7).fill(0);
         const DataSet = {
-            data: [40, 55, 20, 30, 40, 50, 60],
+            data: percentageArray,
             backgroundColor: "orange",
             borderWidth: 0.5,
             borderRadius: 25,

@@ -4,11 +4,10 @@ import { useState, useEffect} from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Room from './Room';
 
-const socket = io('http://localhost:4002');
 
 // const Room = ({socket, roomId, userId, role }) => {
-//   const [peerId, setPeerId] = useState('');
-//   const remoteVideoRef = useRef(null);
+  //   const [peerId, setPeerId] = useState('');
+  //   const remoteVideoRef = useRef(null);
 //   const currentUserVideoRef = useRef(null);
 //   const peerInstance = useRef(null);
 //   const [shareScreen, setShareScreen] = useState(false);
@@ -20,7 +19,7 @@ const socket = io('http://localhost:4002');
 
 //   const style = {
 //     enlargedContainerStyle: {
-//       position: "relative",
+  //       position: "relative",
 //       zIndex: "1",
 //       top: "0%",
 //       left: "0%",
@@ -92,8 +91,8 @@ const socket = io('http://localhost:4002');
 
 //   const call = async (remotePeerIds) => {
 
-//     if (!shareScreen) {
-//       navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((mediaStream) => {
+  //     if (!shareScreen) {
+    //       navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((mediaStream) => {
 //         currentUserVideoRef.current.srcObject = mediaStream;
 //         remotePeerIds.forEach(remotePeerId => {
 //           const call = peerInstance.current.call(remotePeerId, mediaStream)
@@ -104,21 +103,21 @@ const socket = io('http://localhost:4002');
 //           });
 //         });
 //       }).catch((err) => {
-//         console.log(err);
-//       })
-//     }
-//     else {
-//       const mediaStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-//       currentUserVideoRef.current.srcObject = mediaStream;
-//       remotePeerIds.forEach(remotePeerId => {
-//         const call = peerInstance.current.call(remotePeerId, mediaStream)
-//         call.on('stream', (remoteStream) => {
-//           remoteVideoRef.current.srcObject = remoteStream
-//           activeCalls.current.push(call);
-//         });
-//       });
-//     }
-//   }
+  //         console.log(err);
+  //       })
+  //     }
+  //     else {
+    //       const mediaStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+    //       currentUserVideoRef.current.srcObject = mediaStream;
+    //       remotePeerIds.forEach(remotePeerId => {
+      //         const call = peerInstance.current.call(remotePeerId, mediaStream)
+      //         call.on('stream', (remoteStream) => {
+        //           remoteVideoRef.current.srcObject = remoteStream
+        //           activeCalls.current.push(call);
+        //         });
+        //       });
+        //     }
+        //   }
 
 //   useEffect(() => {
 
@@ -129,10 +128,10 @@ const socket = io('http://localhost:4002');
 //     socket.on('user-joined-room', userJoinedHandler);
 
 //     return () => {
-//       socket.off('user-joined-room', userJoinedHandler);
-//     };
-
-//   }, [socket, userId]);
+  //       socket.off('user-joined-room', userJoinedHandler);
+  //     };
+  
+  //   }, [socket, userId]);
 
 //   const closeAllCalls = () => {
 //     activeCalls.current.forEach(call => call.close());
@@ -144,9 +143,9 @@ const socket = io('http://localhost:4002');
 //   }
 
 //   useEffect(() => {
-
-//     closeAllCalls();
-//     socket.emit('get-people-in-room', roomId);
+  
+  //     closeAllCalls();
+  //     socket.emit('get-people-in-room', roomId);
 
 //     socket.on('people-in-room', peopleInRoomHandler);
 
@@ -161,16 +160,16 @@ const socket = io('http://localhost:4002');
 
 
 //   const startRecordingMediaHandler = () => {
-//     const userMediaStream = currentUserVideoRef.current?.srcObject;
-//     if (userMediaStream) {
-//       media_recorder.current = new MediaRecorder(userMediaStream, { mimeType: 'video/webm' });
-//       media_recorder.current.addEventListener('dataavailable', (e) => {
-//         recorded_video.push(e.data);
-//       });
-//       media_recorder.current.addEventListener('stop', (e) => {
-//         const video_local = URL.createObjectURL(new Blob(recorded_video, { type: 'video/webm' }));
-//         setRecordingPlayer(video_local);
-//       });
+  //     const userMediaStream = currentUserVideoRef.current?.srcObject;
+  //     if (userMediaStream) {
+    //       media_recorder.current = new MediaRecorder(userMediaStream, { mimeType: 'video/webm' });
+    //       media_recorder.current.addEventListener('dataavailable', (e) => {
+      //         recorded_video.push(e.data);
+      //       });
+      //       media_recorder.current.addEventListener('stop', (e) => {
+        //         const video_local = URL.createObjectURL(new Blob(recorded_video, { type: 'video/webm' }));
+        //         setRecordingPlayer(video_local);
+        //       });
 //       media_recorder.current.start();
 //     }
 //     else {
@@ -180,10 +179,10 @@ const socket = io('http://localhost:4002');
 
 //   const stopRecordingMediaHandler = () => {
 //     if (media_recorder.current) {
-//       media_recorder.current.stop();
-//     }
-//   }
-
+  //       media_recorder.current.stop();
+  //     }
+  //   }
+  
 //   // this is the best day in my life
 //   return (
 //     <div className="classRoom_setup">
@@ -201,25 +200,25 @@ const socket = io('http://localhost:4002');
 //             onClick={() => setEnlargedVideo("myvideo")}
 //           />
 //         ) : (
-//           <video
-//             ref={remoteVideoRef}
-//             autoPlay
-//             className='my_video'
-//             onClick={() =>{ setEnlargedVideo("remotevideo")}}
-//           />
-//         )}
-//         <div className='remote_video_container' >
-//           {enlargedVideo === "myvideo" ? (
-//             <video
-//               ref={remoteVideoRef}
-//               autoPlay
-//               className='remote_video'
-//               onClick={() =>{ setEnlargedVideo("remotevideo");console.log("toggled from remote video");}}
-//             />
-//           ) : (
-//             <video
-//               ref={currentUserVideoRef}
-//               muted
+  //           <video
+  //             ref={remoteVideoRef}
+  //             autoPlay
+  //             className='my_video'
+  //             onClick={() =>{ setEnlargedVideo("remotevideo")}}
+  //           />
+  //         )}
+  //         <div className='remote_video_container' >
+  //           {enlargedVideo === "myvideo" ? (
+    //             <video
+    //               ref={remoteVideoRef}
+    //               autoPlay
+    //               className='remote_video'
+    //               onClick={() =>{ setEnlargedVideo("remotevideo");console.log("toggled from remote video");}}
+    //             />
+    //           ) : (
+      //             <video
+      //               ref={currentUserVideoRef}
+      //               muted
 //               autoPlay
 //               className='remote_video'
 //               onClick={() =>{ setEnlargedVideo("myvideo");console.log("toggled from main video");}}
@@ -227,17 +226,17 @@ const socket = io('http://localhost:4002');
 //           )}
 //         </div>
 //         {
-//           showControls &&
-//           <div className="controls">
-//             <button onClick={() => setShareScreen(true)}><img src={shareScreenIcon}></img></button>
-//             <button onClick={() => setShareScreen(false)}><img src={stopScreenShareIcon}></img></button>
-//             <button onClick={startRecordingMediaHandler}><img src={startRecordingIcon} /></button>
-//             <button onClick={stopRecordingMediaHandler}><img src={stopRecordingIcon} /></button>
-//           </div>}
-//       </div>
-
-//       {/* <input type="text" value={remotePeerIdValue} onChange={e => setRemotePeerIdValue(e.target.value)} />
-//       <button onClick={() => call(remotePeerIdValue)}>Call</button> */}
+  //           showControls &&
+  //           <div className="controls">
+  //             <button onClick={() => setShareScreen(true)}><img src={shareScreenIcon}></img></button>
+  //             <button onClick={() => setShareScreen(false)}><img src={stopScreenShareIcon}></img></button>
+  //             <button onClick={startRecordingMediaHandler}><img src={startRecordingIcon} /></button>
+  //             <button onClick={stopRecordingMediaHandler}><img src={stopRecordingIcon} /></button>
+  //           </div>}
+  //       </div>
+  
+  //       {/* <input type="text" value={remotePeerIdValue} onChange={e => setRemotePeerIdValue(e.target.value)} />
+  //       <button onClick={() => call(remotePeerIdValue)}>Call</button> */}
 
 //       {recordingPlayer && <video src={recordingPlayer} autoPlay controls></video>}
 //     </div>
@@ -245,6 +244,7 @@ const socket = io('http://localhost:4002');
 // }
 
 
+const socket = io('http://localhost:4002');
 function VideoCallPage() {
   const [userSocketId, setUserSocketId] = useState("");
   const [searchParms] = useSearchParams();

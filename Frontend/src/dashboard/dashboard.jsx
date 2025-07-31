@@ -36,14 +36,9 @@ function Dashboard({ setMainSection }) {
     const [currentCourseIndex, setCurrentCourseIndex] = useState(0);
     const [selectedYear, setSelectedYear] = useState(currentYear);
     const [selectedMonth, setSelectedMonth] = useState(monthList[currentMonth]);
-
-    // useEffect(() => {
-    //     const LocalStorage = localStorage.getItem("current_storage");
-    //     const LocalStorageUserName = JSON.parse(LocalStorage)['username'];
-    //     setUserName(LocalStorageUserName);
-    //     console.log(LocalStorageUserName);
-    // }, []);
     const [upcomingtests, setUpcomingTests] = useState([]);
+    const [attendanceReport,setAttendanceReport]=useState([]);
+    const [weekSelectedInProgressChart,setWeekSelectedInProgressChart]=useState("This week");
 
 
     useEffect(() => {
@@ -57,17 +52,12 @@ function Dashboard({ setMainSection }) {
             const details = await axios.get(`/test/${studId}/upcoming`);
             setUpcomingTests(details.data.detailofUpcomingTests);
         };
-        // const testdetails=await fetchupcomingtestdetails("cheguevera"); //this is just for testing purposes
-        // console.log(testdetails.data.detailofUpcomingTests);
-        //setUpcomingTests(testdetails.data.detailofUpcomingTests);
         fetchupcomingtestdetails(studId);
         fetchStudentName(studId);
     }, []);
 
     useEffect(() => {
         async function fetchCourseDetails(studId) {
-            // the backend logic is not set yet 
-            // set it up you bastard
             const response = await axios.get(`/class/student/${studId}`);
 
             setCurrentCourseCount(response.data.classDetails.length);
@@ -76,6 +66,14 @@ function Dashboard({ setMainSection }) {
         }
         fetchCourseDetails(studId);
     }, []);
+
+    useEffect(()=>{
+        async function fetchAttendanceReport() {
+            const response=await axios.get(`/schedule/class/attendance?student=true&userId=${studId}&week=${weekSelectedInProgressChart}`);
+            setAttendanceReport(response.data);
+        }
+        fetchAttendanceReport();
+    },[weekSelectedInProgressChart]);
 
     return (
         <div className='dashboard'>
@@ -96,13 +94,12 @@ function Dashboard({ setMainSection }) {
                 <div className="progress_container">
                     <div className="title_and_dropdown_container">
                         <h3 style={{ opacity: '0.9' }} >Progress</h3>
-                        <select name="timeline" >
+                        <select name="timeline" onChange={(e)=>setWeekSelectedInProgressChart(e.target.value)} value={weekSelectedInProgressChart}>
                             <option value="This week">This week</option>
                             <option value="Last week">Last week</option>
-                            <option value="This month">This month</option>
                         </select>
                     </div>
-                    <ProgressChart />
+                    <ProgressChart attendanceReport={attendanceReport}/>
                 </div>
                 <div className="courses_container">
                     <div className="heading_and_view_all_container">

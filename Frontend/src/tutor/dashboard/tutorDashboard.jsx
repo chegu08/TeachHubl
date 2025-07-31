@@ -29,16 +29,11 @@ function TutorDashboard ({setMainSection}) {
     const [courseDetails,setCourseDetails]=useState([]);
     const [currentCourseCount, setCurrentCourseCount] = useState(0);
     const [currentCourseIndex,setCurrentCourseIndex]=useState(0);
-
-    // useEffect(() => {
-    //     const LocalStorage = localStorage.getItem("current_storage");
-    //     const LocalStorageUserName = JSON.parse(LocalStorage)['username'];
-    //     setUserName(LocalStorageUserName);
-    //     console.log(LocalStorageUserName);
-    // }, []);
     const [uncorrectedtests,setUncorrectedTests]=useState([]);
     const [selectedYear,setSelectedYear]=useState(currentYear);
     const [selectedMonth,setSelectedMonth]=useState(monthList[currentMonth]);
+    const [attendanceReport,setAttendanceReport]=useState([]);
+    const [weekSelectedInProgressChart,setWeekSelectedInProgressChart]=useState("This week");
 
     
     useEffect(()=>{
@@ -50,17 +45,12 @@ function TutorDashboard ({setMainSection}) {
             const details= await axios.get(`/test/tutor/${tutorId}`);
             setUncorrectedTests(details.data.detailofUncorrectedTests);
         };
-        // const testdetails=await fetchupcomingtestdetails("cheguevera"); //this is just for testing purposes
-        // console.log(testdetails.data.detailofUpcomingTests);
-        //setUpcomingTests(testdetails.data.detailofUpcomingTests);
         fetchuncorrectedtestdetails(tutorId);
         fetchTutorname(tutorId);
     },[]);
 
     useEffect(()=>{
         async function fetchCourseDetails(tutorId){
-            // the backend logic is not set yet 
-            // set it up you bastard
             const response= await axios.get(`/class/tutor/${tutorId}`);
             console.log(response.data);
             
@@ -70,6 +60,14 @@ function TutorDashboard ({setMainSection}) {
         }
         fetchCourseDetails(tutorId);
     },[]);
+
+    useEffect(()=>{
+        async function fetchAttendanceReport() {
+            const response=await axios.get(`/schedule/class/attendance?student=false&userId=${tutorId}&week=${weekSelectedInProgressChart}`);
+            setAttendanceReport(response.data);
+        }
+        fetchAttendanceReport();
+    },[weekSelectedInProgressChart]);
 
 
     return (
@@ -91,13 +89,12 @@ function TutorDashboard ({setMainSection}) {
                 <div className="progress_container">
                     <div className="title_and_dropdown_container">
                         <h3 style={{ opacity: '0.9' }} >Progress</h3>
-                        <select name="timeline" >
+                        <select name="timeline" value={weekSelectedInProgressChart} onChange={(e)=>setWeekSelectedInProgressChart(e.target.value)}>
                             <option value="This week">This week</option>
                             <option value="Last week">Last week</option>
-                            <option value="This month">This month</option>
                         </select>
                     </div>
-                    <TutorProgressChart />
+                    <TutorProgressChart attendanceReport={attendanceReport}/>
                 </div>
                 <div className="courses_container">
                     <div className="heading_and_view_all_container">

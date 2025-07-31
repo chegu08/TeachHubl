@@ -1,7 +1,8 @@
-const student=require('../models/studentDetailModel');
-const tutor=require('../models/tutorDetailModel');
+const studentModel=require('../models/studentDetailModel');
+const tutorModel=require('../models/tutorDetailModel');
 const classSchedule=require('../models/classScheduleModel');
-const Class=require('../models/classDetailModel')
+const Class=require('../models/classDetailModel');
+
 
 
 const getTodayScheduleForStudent = async (req, res) => {
@@ -118,7 +119,107 @@ const getTodayScheduleForTutor=async (req,res) =>{
     }
 };
 
+const markAttendanceAndGetClassId=async (req,res) =>{
+    try {
+        const {role,studId,tutorId}=req.body;
+
+        const class_=await Class.findOne({studId,tutorId});
+        const classId=class_.classId;
+        res.status(200).json(classId);
+
+        // send the class Id first for smoother UX and then update the attendance
+
+        const schedule=(await classSchedule.findOne({classId})).schedule;
+        const today=new Date();
+        today.setHours(0,0,0,0);
+
+        const modifiedSchedule=schedule.map(sch=>{
+            const curDate=new Date(sch.date);
+            curDate.setHours(0,0,0,0);
+
+            if(curDate.getTime()!=today.getTime()) return sch;
+            const modifiedSlots=sch.slots.map(slot=>{
+                const start=new Date(today);
+                start.setHours(Number(slot.startTime.split(':')[0]),Number(slot.startTime.split(':')[1]),0,0);
+                const end=new Date(today);
+                end.setHours(Number(slot.endTime.split(':')[0]),Number(slot.endTime.split(':')[1]),0,0);
+
+                const now=Date.now();
+
+                if(start.getTime()<=now&&now<=end.getTime()) {
+                    return {...slot,studAttended:(role=='student')?true:slot.studAttended,tutorAttended:(role=="tutor")?true:slot.tutorAttended}
+                }
+                return slot;
+            });
+
+            return {...sch,slots:modifiedSlots};
+        });
+
+        await classSchedule.updateOne({classId},{
+            $set:{
+                schedule:modifiedSchedule
+            }
+        });
+
+    } catch(err) {
+        console.error("Attendance marking error:", err);
+        if (!res.headersSent) {
+            res.status(500).json({ error: "Server error", details: err });
+        }
+    }
+};
+
+const getAttendanceReport=async (req,res) =>{
+    try {
+        const {student,userId,week}=req.query;
+        
+        const searchOption=(student=="true")?{studId:userId}:{tutorId:userId};
+        const classIdsOfUser=await Class.find(searchOption).select("classId -_id");
+        const today=new Date();
+        today.setHours(0,0,0,0);
+        const day=new Date(today).getDay();
+        const report=new Array(7).fill(null).map((_,ind)=>{
+            const diffInDay=ind-day-((week=="This week")?0:7);
+            const curDay=new Date(today);
+            curDay.setDate(curDay.getDate()+diffInDay);
+            return {
+                totalClasses:0,
+                attendedClasses:0,
+                percentage:0,
+                curDay:curDay.toLocaleString()
+            }
+        });
+        const startDayForProgressChart=new Date(report[0].curDay);
+        startDayForProgressChart.setHours(0,0,0,0);
+
+        classIdsOfUser.forEach(async ({classId})=>{
+            const schedule=(await classSchedule.findOne({classId}))?.schedule;
+            schedule?.forEach(sch =>{
+                const curDay=new Date(sch.date);
+                curDay.setHours(0,0,0,0);
+                const diffInDays=(curDay.getTime()-startDayForProgressChart.getTime())/1000*60*60*24;
+                if(diffInDays>=0&&diffInDays<=6) {
+                    sch.slots.forEach(slot=>{
+                        report[diffInDays].totalClasses=report[diffInDays].totalClasses+1;
+                        report[diffInDays].attendedClasses=report[diffInDays].attendedClasses+(
+                            (student=="true"&&slot.studAttended==true)||(student!="true"&&slot.tutorAttended==true)
+                        );
+                        report[diffInDays].percentage=(report[diffInDays].attendedClasses/report[diffInDays].totalClasses)/100
+                    })
+                }
+            });
+
+        })
+        res.status(200).json(report);
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
 module.exports={
     getTodayScheduleForStudent,
-    getTodayScheduleForTutor
+    getTodayScheduleForTutor,
+    markAttendanceAndGetClassId,
+    getAttendanceReport
 }
