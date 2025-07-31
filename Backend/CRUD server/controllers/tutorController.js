@@ -450,6 +450,26 @@ const uploadReview=async (req,res)=>{
     }
 };
 
+const getReviews=async (req,res)=>{
+    try  {
+        const {tutorId}=req.params;
+
+        const reviews=await reviewModel.find({tutorId}).lean();
+
+        let ratingSum=0;
+        reviews.forEach(review=>{
+            ratingSum+=review.stars;
+        });
+        const averageRating=(reviews.length==0)?0:ratingSum/reviews.length;
+
+        res.status(200).json({reviews,averageRating});
+
+    } catch(err) {
+        console.log(err);
+        res.status(500).json({Error:err});
+    }
+};
+
 module.exports = {
     getBestTutors,
     createNewTemplateCourse,
@@ -463,6 +483,7 @@ module.exports = {
     getResponsesForStudent,
     getResponseDetails,
     getRevenueDetails,
-    uploadReview
+    uploadReview,
+    getReviews
 };
 

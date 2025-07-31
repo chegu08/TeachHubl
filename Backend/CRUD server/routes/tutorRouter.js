@@ -14,7 +14,8 @@ const {
     getResponsesForStudent,
     getResponseDetails,
     getRevenueDetails,
-    uploadReview
+    uploadReview,
+    getReviews
 }=require("../controllers/tutorController");
 
 Router.get('/best',getBestTutors);
@@ -27,8 +28,10 @@ Router.get('/slots/:tutorId',getSlots);
 Router.get('/response/student/:studId',getResponsesForStudent);
 Router.get('/response-details/:responseId',getResponseDetails);
 Router.get('/revenue/:tutorId',getRevenueDetails);
+Router.get('/reviews/:tutorId',getReviews);
 Router.post('/template',upload.array('resources'),createNewTemplateCourse);
 Router.post('/response',uploadResponse);
 Router.post('/review',uploadReview);
+
 
 module.exports=Router;

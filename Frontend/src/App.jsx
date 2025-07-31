@@ -22,6 +22,7 @@ import TutorAboutClassPage from "./tutor/pages/tutorAboutClassPage.jsx";
 import CreateTestPage from "./tutor/pages/createTestpage.jsx";
 import RevenueDashBoardPage from "./tutor/pages/revenueDashboardPage.jsx";
 import { TutorPrivateRoutes } from "./components/protectedRoutes.jsx";
+import TutorReviewsPage from "./tutor/pages/tutorReviewsPage.jsx";
 
 // pages common for both
 import ResourceContentPage from "./commonPages/resourceContentpage.jsx";
@@ -68,6 +69,7 @@ function App() {
               <Route path="/tutorAboutClassPage" element={<TutorAboutClassPage />} />
               <Route path="/tutor/create-test/:classId" element={<CreateTestPage />} />
               <Route path="/tutor/revenue/:tutorId" element={<RevenueDashBoardPage />} />
+              <Route path="/tutor/reviews" element={<TutorReviewsPage />} />
             </Route>
 
             {/* route common to both tutor and student */}

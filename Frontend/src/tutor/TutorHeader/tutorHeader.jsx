@@ -42,6 +42,7 @@ function TutorHeader() {
                         <div className="actions">
                             <button>Edit Profile</button>
                             <button onClick={()=>navigate(`/tutor/revenue/${tutorId}`)}>Revenue Dashboard</button>
+                            <button onClick={()=>navigate('/tutor/reviews')}>Reviews</button>
                             <button onClick={()=>{
                                 localStorage.removeItem("jwt");
                                 useNavigate('/signIn');

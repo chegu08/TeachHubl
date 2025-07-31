@@ -1,16 +1,13 @@
-Immediate to-do: Deadline(30-7-25)
-    30. Add features or statistics to earnings dashboard (Mid).
-    31. Add features to chat page and fix bugs. (Tough)
-    32. Create reviews section for tutors. (Mid)
+Immediate to-do: Deadline(31-7-25)
+    33. Update the progress bar in dashboard section of both students and tutors. (Tough)
 
 Complete Later: Deadline(2-8-25)
-    33. Update the progress bar in dashboard section of both students and tutors. (Tough)
     34. Create statistics about the attendance . (Mid)
     35. Fix the bugs in websockets and whiteboard. (Tough)
     36. Create google auth for students and tutors.
-    37. Fix minor bugs related to auth in common pages such as home Page (Easy).
     38. Add profile section for student and tutors. (Mid) (Since this is not core logic).
-    39. Fix bugs related to custom test. 
+    39. Fix bugs related to custom test. (Mid)
+    40. Complete all other left out pages (Such as tutor home page,about page,Teachers page etc...) (Tough).
 
 
     
