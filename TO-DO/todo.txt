@@ -1,13 +1,8 @@
 Immediate to-do: Deadline(31-7-25)
-
-Complete Later: Deadline(2-8-25)
-    34. Create statistics about the attendance . (Mid)
-    35. Fix the bugs in websockets and whiteboard. (Tough)
-    36. Create google auth for students and tutors. (Mid)
     37. Get the tutor schedule in profile Section. (mid) (Very imp)
     38. Add profile section for student and tutors. (Mid) (Since this is not core logic).
+
+Complete Later: Deadline(2-8-25)
     39. Fix bugs related to custom test. (Mid)
     40. Complete all other left out pages (Such as tutor home page,about page,Teachers page etc...) (Tough).
-
-
-    
+    41. Deploy (Tough).

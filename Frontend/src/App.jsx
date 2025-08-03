@@ -52,7 +52,6 @@ function App() {
               <Route path="/" element={<MainPage />} />
               <Route path="/tests/:id" element={<TestPage />} />
               <Route path="/analysis/:id" element={<TestAnalysis />} />
-              <Route path="/liveClass" element={<VideoCallPage />} />
               <Route path="/home" element={<HomePage />} />
               <Route path='/template-course/:courseId' element={<TemplateCoursePage />} />
               <Route path="/course-response/:responseId" element={<ResponsePage />} />
@@ -73,6 +72,7 @@ function App() {
             </Route>
 
             {/* route common to both tutor and student */}
+            <Route path="/liveClass" element={<VideoCallPage />} />
             <Route path="/resource-content" element={<ResourceContentPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/signIn" element={<SignInPage />} />

@@ -11,7 +11,9 @@ export function StudentPrivateRoutes() {
 
         const decoded=jwtDecode(jwt);
 
-        if(decoded.role!="Student") return <Navigate to="/unauthorized" />
+        console.log("Student private route");
+        console.log(decoded);
+        if(decoded.role.toLowerCase()!="student") return <Navigate to="/unauthorized" />
 
         return <Outlet />
 
@@ -30,8 +32,9 @@ export function TutorPrivateRoutes() {
     try{
 
         const decoded=jwtDecode(jwt);
-
-        if(decoded.role!="Tutor") return <Navigate to="/unauthorized" />
+        console.log("Tutor private route ");
+        console.log(decoded);
+        if(decoded.role.toLowerCase()!="tutor") return <Navigate to="/unauthorized" />
 
         return <Outlet />
 

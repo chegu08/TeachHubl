@@ -1,15 +1,19 @@
 const router = require('express').Router()
 const {
-    studentLogin,
-    tutorLogin,
     studentLoginWithEmailAndPassword,
     tutorLoginWithEmailAndPassword,
-    getUserName
+    getUserName,
+    getAuthUrl,
+    googleTutorLogin,
+    googleStudentLogin,
+    fetchAuthTokenFromCache
 } = require('../controllers/loginController')
 
 router.get('/userName',getUserName);
-router.post('/student', studentLogin);
-router.post('/tutor', tutorLogin);
+router.get('/authUrl',getAuthUrl);
+router.get('/student/google',googleStudentLogin);
+router.get('/tutor/google',googleTutorLogin);
+router.post("/authToken",fetchAuthTokenFromCache);
 router.post('/student/emailandpassword',studentLoginWithEmailAndPassword);
 router.post('/tutor/emailandpassword',tutorLoginWithEmailAndPassword);
 

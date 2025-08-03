@@ -3,8 +3,8 @@ const ClassModel = require('../models/classDetailModel');
 const axios = require("axios");
 const Agenda = require("agenda");
 const { v4: uuidv4 } = require("uuid");
-const {S3Client,PutObjectCommand,GetObjectCommand}=require("@aws-sdk/client-s3");
-const aws_config=require("../config/aws-config");
+const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
+const aws_config = require("../config/aws-config");
 
 
 const createTest = async (req, res) => {
@@ -29,22 +29,22 @@ const createTest = async (req, res) => {
                 console.log("Questions for this test is not available")
                 return res.status(400).json({ Error: "Questions for this test is not available" });
             }
-            const client=new S3Client({
-                region:aws_config.region,
-                credentials:aws_config.S3credentials
+            const client = new S3Client({
+                region: aws_config.region,
+                credentials: aws_config.S3credentials
             });
 
-            const objectKey=`questionForCustomTest/${newtestDetails.testId}`
+            const objectKey = `questionForCustomTest/${newtestDetails.testId}`
 
             const command = new PutObjectCommand({
-                Bucket:aws_config.s3BucketName,
-                Key:objectKey,
-                Body:req.file.buffer,
-                ContentType:req.file.mimetype
+                Bucket: aws_config.s3BucketName,
+                Key: objectKey,
+                Body: req.file.buffer,
+                ContentType: req.file.mimetype
             })
 
             await client.send(command);
-            newtestDetails.questionForCustomTest=objectKey;
+            newtestDetails.questionForCustomTest = objectKey;
         }
         else if (testDetails.testType.toLowerCase() === 'standard') {
             if (!testDetails.questionForStandardTest) {
@@ -122,33 +122,33 @@ const uploadresult = async (req, res) => {
 
 const uploadfeedback = async (req, res) => {
     try {
-        const {testId,feedback}=req.body;
-        
-        const test=await TestModel.findOne({testId:testId});
+        const { testId, feedback } = req.body;
+
+        const test = await TestModel.findOne({ testId: testId });
 
         // this has to be implemented after custom testing interface has been implemented
-        if(test.testType.toLowerCase()=='custom') {
+        if (test.testType.toLowerCase() == 'custom') {
 
         }
         else {
-            const modifiedTest=await TestModel.updateOne({testId:testId},{
-                $set :{
-                    feedback:feedback
+            const modifiedTest = await TestModel.updateOne({ testId: testId }, {
+                $set: {
+                    feedback: feedback
                 }
             })
-            console.log("Modified Test: " ,modifiedTest);
-            res.status(200).json({Message:"Feedback uploaded", modifiedTest:modifiedTest});
+            console.log("Modified Test: ", modifiedTest);
+            res.status(200).json({ Message: "Feedback uploaded", modifiedTest: modifiedTest });
         }
 
     } catch (err) {
         console.log(err);
-        res.status(500).json({Error:err});
+        res.status(500).json({ Error: err });
     }
 };
 
 
 const uploadresponse = async (req, res) => {
-    const { testId} = req.body
+    const { testId } = req.body
     try {
 
         const test = await TestModel.findOne({ testId: testId });
@@ -159,21 +159,21 @@ const uploadresponse = async (req, res) => {
         }
 
         if (test.testType.toLowerCase() === 'custom') {
-            const response=req.files;
+            const response = req.files;
 
-            const client=new S3Client({
-                region:aws_config.region,
-                credentials:aws_config.S3credentials
+            const client = new S3Client({
+                region: aws_config.region,
+                credentials: aws_config.S3credentials
             });
 
-            const keysOfAllresponses=await Promise.all(
-                response.map( async (file,ind) =>{
-                    const objectKey=`answerForCustomTest/${testId}/${ind}`;
-                    const command=new PutObjectCommand({
-                        Bucket:aws_config.s3BucketName,
-                        Key:objectKey,
-                        Body:file.buffer,
-                        ContentType:file.mimetype
+            const keysOfAllresponses = await Promise.all(
+                response.map(async (file, ind) => {
+                    const objectKey = `answerForCustomTest/${testId}/${ind}`;
+                    const command = new PutObjectCommand({
+                        Bucket: aws_config.s3BucketName,
+                        Key: objectKey,
+                        Body: file.buffer,
+                        ContentType: file.mimetype
                     });
                     await client.send(command);
                     return objectKey;
@@ -192,7 +192,7 @@ const uploadresponse = async (req, res) => {
         }
         else {
 
-            const response=req.body.response;
+            const response = req.body.response;
 
             if (test.questionForStandardTest.length !== response.length) {
                 console.log(test.questionForStandardTest.length, " ", response.length)
@@ -296,24 +296,28 @@ const deleteTest = async (req, res) => {
 const getUpcomingtestdetails = async (req, res) => {
     try {
         const studentid = req.params.id;
-        // implement the logic to get the class id of the student from database
-
-        console.log("studentId : ", studentid);
 
         const classes = await ClassModel.find({ studId: studentid }).select('classId');
         const classids = classes.map(cls => cls.classId);
 
         // logic to get all upcoming tests for the student
+        const today=new Date();
+        today.setHours(0,0,0,0);
 
-        const upcomingtests = await Promise.all(classids.map(async classid => await TestModel.find({ classId: classid, completed: false })));
+        const upcomingtests = await Promise.all(classids.map(classid => {
+
+            return TestModel.find({
+                classId: classid,
+                completed:false,
+                startDate: { $gte : today},
+            }).lean()
+        }));
 
         const detailofUpcomingTests = upcomingtests.flat().map((test) => ({
             testId: test.testId,
             startDate: new Date(test.startDate).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }),
             startTime: test.startTime,
         }));
-
-        console.log("details of upcoming test", detailofUpcomingTests);
         res.status(200).json({ detailofUpcomingTests });
     }
     catch (err) {
@@ -337,7 +341,7 @@ const getUncorrectedTestDetails = async (req, res) => {
 
         // logic to get all upcoming tests for the tutor
 
-        const uncorrectedtests = (await Promise.all(classids.map(async classid => await TestModel.find({ classId: classid, completed: true, feedback: {$size:0} })))).flat();
+        const uncorrectedtests = (await Promise.all(classids.map(async classid => await TestModel.find({ classId: classid, completed: true, feedback: { $size: 0 } })))).flat();
 
         const detailofUncorrectedTests = uncorrectedtests.flat().map((test) => ({
             testId: test.testId,
@@ -374,7 +378,7 @@ const getTestDetails = async (req, res) => {
                 options: que.options
             }))
         }
-    
+
         res.status(200).json({ testDetails });
     }
     catch (err) {
@@ -395,12 +399,12 @@ const getAllTests = async (req, res) => {
         // const classid = 'testclassid' // for testing purposes
         const allTests = (await Promise.all(
             classids.map(async cls => {
-                const tests=await TestModel.find({classId:cls.classId});
-                return tests.map(test =>( {
-                    testId:test.testId,
-                    className:cls.className,
-                    startDate:test.startDate,
-                    status:test.completed?"Completed":"Not Completed"
+                const tests = await TestModel.find({ classId: cls.classId });
+                return tests.map(test => ({
+                    testId: test.testId,
+                    className: cls.className,
+                    startDate: test.startDate,
+                    status: test.completed ? "Completed" : "Not Completed"
                 }))
             })
         )).flat();
@@ -425,12 +429,12 @@ const getAllTutorTests = async (req, res) => {
         // const classid = 'testclassid' // for testing purposes
         const allTests = (await Promise.all(
             classids.map(async cls => {
-                const tests=await TestModel.find({classId:cls.classId});
-                return tests.map(test =>( {
-                    testId:test.testId,
-                    className:cls.className,
-                    startDate:test.startDate,
-                    status:!test.completed?"Live":(test.feedback.length==0)?"Completed/Uncorrected":"Corrected"
+                const tests = await TestModel.find({ classId: cls.classId });
+                return tests.map(test => ({
+                    testId: test.testId,
+                    className: cls.className,
+                    startDate: test.startDate,
+                    status: !test.completed ? "Live" : (test.feedback.length == 0) ? "Completed/Uncorrected" : "Corrected"
                 }))
             })
         )).flat();
@@ -481,31 +485,31 @@ const getTestStatistics = async (req, res) => {
     }
 };
 
-const getQuestionPaperForCustomTest=async (req,res) =>{
+const getQuestionPaperForCustomTest = async (req, res) => {
     try {
-        const testId=req.params.testId;
+        const testId = req.params.testId;
 
         const client = new S3Client({
-            region:aws_config.region,
-            credentials:aws_config.S3credentials
+            region: aws_config.region,
+            credentials: aws_config.S3credentials
         });
 
-        const test=await TestModel.findOne({testId});
+        const test = await TestModel.findOne({ testId });
 
-        const command=new GetObjectCommand({
-            Bucket:aws_config.s3BucketName,
-            Key:test.questionForCustomTest
+        const command = new GetObjectCommand({
+            Bucket: aws_config.s3BucketName,
+            Key: test.questionForCustomTest
         });
 
-        const response=await client.send(command);
+        const response = await client.send(command);
 
-        res.setHeader('Content-Type',response.ContentType);
-        res.setHeader('Content-Length',response.ContentLength);
+        res.setHeader('Content-Type', response.ContentType);
+        res.setHeader('Content-Length', response.ContentLength);
 
         response.Body.pipe(res);
-    } catch(err) {
+    } catch (err) {
         console.log(err);
-        res.status(500).json({Error:err});
+        res.status(500).json({ Error: err });
     }
 };
 

@@ -17,10 +17,10 @@ const GetPage = ({ ind ,tool,socket,color,user,roomId}) => {
 
 function Room({socket, roomId, userId, role} ){
   
+  const [searchParms]=useSearchParams();
   const studId=searchParms.get("student");
   const tutorId=searchParms.get("tutor");
 
-  const [searchParms]=useSearchParams();
   const [classId,setClassId]=useState('');
   const [peerId, setPeerId] = useState('');
   const remoteVideoRef = useRef(null);

@@ -1,14 +1,19 @@
 import { Toaster, toast } from 'sonner';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState,useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { crudInstance as axios } from '../components/customAxios'
 
 import logo from '../assets/WhatsApp Image 2025-02-19 at 20.32.04_9336c379.svg';
 import google_logo from '../assets/google.png';
+import { jwtDecode } from 'jwt-decode';
 
 function SignUpPage() {
 
     const navigation=useNavigate();
+    const [searchParams,_]=useSearchParams();
+    const signedInWithGoogle=searchParams.get('signedInWithGoogle');
+    const auth_token_key=searchParams.get('key');
+    const retry_needed=searchParams.get('retryneeded');
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -23,6 +28,67 @@ function SignUpPage() {
     const [degree,setDegree]=useState("");
     const [address,setAddress]=useState("");
     const [yearsOfExperience,setYearsOfExperience]=useState("");
+
+    const handleGoogleSignUp=async ()=>{
+        
+        if (name.trim() == "") {
+            toast.error("Name Cannot be empty");
+            return;
+        }
+
+        const name_length = name.length;
+        for (let i = 0; i < name_length; i++) {
+            if (!((name[i] >= 'a' && name[i] <= 'z') || (name[i] >= 'A' && name[i] <= 'Z') || (name[i] >= '0' && name[i] <= '9') || name[i] == ' ')) {
+                toast.error("Name must contain only alpha numericals and ' ' ");
+                return;
+            }
+        }
+
+        if (String(phoneNumber).trim().length != 10) {
+            toast.error("Phone number must be 10 digits long");
+            return;
+        }
+
+        if (role == "") {
+            toast.error("Role must be mentioned");
+            return;
+        }
+
+        if(role=="Tutor") {
+            if(degree.trim()=='') {
+                toast.error("Degree cannot be empty");
+                return ;
+            }
+            if(yearsOfExperience<0) {
+                toast.error("Experience cannot be negative");
+                return ;
+            }
+        }
+
+        try {
+            const body={
+                age,
+                name: name.trim(),
+                phoneNumber,
+                preferredSubjects,
+                email,
+                password,
+                sessionType: (preferToRemeber) ? "long" : "short",
+                prefession: role,
+                gender,
+                address,
+                yearsofExperience:yearsOfExperience,
+                degree,
+                role:role.toLowerCase()
+            };
+            const response=await axios.post('/signup/authUrl',body);
+            window.open(response.data,"_blank","noreferrer noopener");
+        } catch(err) {
+            console.log(err);
+            toast.error("Error signing with google...try again later");
+        }
+        
+    };
     
 
     const handleSendRequest = async (e) => {
@@ -49,11 +115,6 @@ function SignUpPage() {
                 return;
             }
         }
-
-        // if(Number(age.trim())==undefined||Number(age.trim()) === NaN) {
-        //     toast.error("Age must be a valid number");
-        //     return ;
-        // }
 
         if (String(phoneNumber).trim().length != 10) {
             toast.error("Phone number must be 10 digits long");
@@ -103,6 +164,27 @@ function SignUpPage() {
 
     };
 
+        useEffect(()=>{
+            async function fetchAuthToken() {
+                const response=await axios.post('/signup/authToken',{
+                    key:auth_token_key
+                });
+                localStorage.setItem("jwt",response.data);
+                const decode=jwtDecode(response.data);
+                const role=decode.role;
+                if(role.toLowerCase()=='student') navigation('/');
+                else navigation('/tutor');
+            };
+    
+            if(signedInWithGoogle&&auth_token_key&&retry_needed) {
+                if(signedInWithGoogle!="true"||retry_needed=="true") {
+                    alert("Error occured in signIn...Please sign in again");
+                    navigation('/signIn');
+                }
+                fetchAuthToken();
+            }
+        },[]);
+
     return (
         <div className="signin_page">
             <Toaster richColors />
@@ -147,7 +229,7 @@ function SignUpPage() {
                     </div>
                     <div className="button_section">
                         <button style={{ backgroundColor: "rgb(13, 110, 253)", height: "50px" }} type='submit'>Sign up</button>
-                        <button style={{ backgroundColor: 'white', color: "black", height: "50px" }} type='button'><img src={google_logo} /> Sign in with Google </button>
+                        <button style={{ backgroundColor: 'white', color: "black", height: "50px" }} type='button' onClick={handleGoogleSignUp}><img src={google_logo} /> Sign in with Google </button>
                         <div className="sign_up" style={{ display: "flex", justifyContent: "center" }}>
                             <span>Already have an account?</span> &nbsp;
                             <a href="/signIn">Sign in</a>

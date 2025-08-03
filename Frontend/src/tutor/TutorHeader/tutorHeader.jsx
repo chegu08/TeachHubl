@@ -45,7 +45,8 @@ function TutorHeader() {
                             <button onClick={()=>navigate('/tutor/reviews')}>Reviews</button>
                             <button onClick={()=>{
                                 localStorage.removeItem("jwt");
-                                useNavigate('/signIn');
+                                alert("Logging out");
+                                navigate('/signIn');
                             }}>Log Out</button>
                         </div>
                     </div>

@@ -44,7 +44,7 @@ function TutorProgressChart({attendanceReport}) {
             }
         };
         const data = {
-            labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+            labels: ["Sun","Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
             datasets: [DataSet]
         }
         return (

@@ -7,21 +7,70 @@ const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
 const aws_config = require("../config/aws-config");
 const NotesModel = require("../models/noteBookModel");
 const { renderNotesAsPdf } = require("../utils/renderNotesAsPdf");
-const fs=require("fs");
-const path=require("path");
+const fs = require("fs");
+const path = require("path");
 
 const BASE64PREFIX = "data:image/jpeg;base64,"
 
 const getClassDetailsForStudent = async (req, res) => {
     try {
         const studId = req.params.studId;
-        const classes = await Class.find({ studId: studId });
-        const classDetails = classes.map((val, _) => ({
-            courseName: val.className,
-            totalClasses: val.classCount,
-            completed: val.completedClasses
-        }));
+        const classes = await Class.find({ studId: studId }).lean();
+
+        // the completed classes is purely indicated by number of classes that has passed
+        // there is no mechanism until now to update the completedClasses once the window has passed
+        // only update this collection in db is either student or tutor wants to see this
+        // there might be stale records in DB unless the user wants to use
+
+        // to update this when the user needs 
+        // compare the slots in classSchedule Model with current time
+
+        const curTime = Date.now();
+        const classDetails = await Promise.all(
+            classes.map(async ({ classId, classCount, className }) => {
+                let completedClasses = 0;
+                const schedule = (await ClassScheduleModel.findOne({ classId }))?.schedule;
+                schedule?.forEach(sch => {
+                    const schDay = new Date(sch.date);
+                    schDay.setHours(0, 0, 0, 0);
+                    sch.slots.forEach(slot => {
+                        const [endH, endM] = slot.endTime.split(':').map(Number);
+
+                        const slotTime = new Date(schDay);
+                        slotTime.setHours(endH, endM, 0, 0);
+                        if (curTime > slotTime.getTime()) {
+                            completedClasses++;
+                        }
+                    })
+                })
+                return {
+                    classId,
+                    courseName: className,
+                    totalClasses: classCount,
+                    completed: completedClasses
+                }
+            })
+        )
+
+        // now that we have processed the completed classes 
+        // we can send it to the user first and then 
+        // update it on DB as DB updation network calls 
+        // take longer time
         res.status(200).json({ classDetails: classDetails });
+
+        Promise.all(
+            classDetails.map(
+                ({ classId, completed }) =>
+                (
+                    Class.updateOne({ classId }, {
+                                $set: { completedClasses: completed }
+                            })
+                )
+            )
+        ).catch(err=>{
+            console.log(err);
+        })
+
     } catch (err) {
         console.log(err);
         res.status(500).json({ Error: err });
@@ -31,13 +80,62 @@ const getClassDetailsForStudent = async (req, res) => {
 const getClassDetailsForTutors = async (req, res) => {
     try {
         const tutorId = req.params.tutorId;
-        const classes = await Class.find({ tutorId: tutorId });
-        const classDetails = classes.map((val, _) => ({
-            courseName: val.className,
-            totalClasses: val.classCount,
-            completed: val.completedClasses
-        }));
+        const classes = await Class.find({ tutorId: tutorId }).lean();
+
+        // the completed classes is purely indicated by number of classes that has passed
+        // there is no mechanism until now to update the completedClasses once the window has passed
+        // only update this collection in db is either student or tutor wants to see this
+        // there might be stale records in DB unless the user wants to use
+
+        // to update this when the user needs 
+        // compare the slots in classSchedule Model with current time
+
+        const curTime = Date.now();
+        const classDetails = await Promise.all(
+            classes.map(async ({ classId, classCount, className }) => {
+                let completedClasses = 0;
+                const schedule = (await ClassScheduleModel.findOne({ classId }))?.schedule;
+                schedule?.forEach(sch => {
+                    const schDay = new Date(sch.date);
+                    schDay.setHours(0, 0, 0, 0);
+                    sch.slots.forEach(slot => {
+                        const [endH, endM] = slot.endTime.split(':').map(Number);
+
+                        const slotTime = new Date(schDay);
+                        slotTime.setHours(endH, endM, 0, 0);
+                        if (curTime > slotTime.getTime()) {
+                            completedClasses++;
+                        }
+                    })
+                })
+                return {
+                    classId,
+                    courseName: className,
+                    totalClasses: classCount,
+                    completed: completedClasses
+                }
+            })
+        )
+
+        // now that we have processed the completed classes 
+        // we can send it to the user first and then 
+        // update it on DB as DB updation network calls 
+        // take longer time
         res.status(200).json({ classDetails: classDetails });
+
+        Promise.all(
+            classDetails.map(
+                ({ classId, completed }) =>
+                (
+                    Class.updateOne({ classId }, {
+                                $set: { completedClasses: completed }
+                            })
+                )
+            )
+        ).catch(err=>{
+            console.log(err);
+        })
+
     } catch (err) {
         console.log(err);
         res.status(500).json({ Error: err });
@@ -202,14 +300,14 @@ const getNotesContent = async (req, res) => {
 
         const noteBook = await NotesModel.findOne({ classId });
 
-        res.setHeader('Content-Type','application/pdf');
-        if(!noteBook) {
-            const filePath=path.join(__dirname,"..","public","teachhubl_note_message.pdf");
-            const stream=fs.createReadStream(filePath);
+        res.setHeader('Content-Type', 'application/pdf');
+        if (!noteBook) {
+            const filePath = path.join(__dirname, "..", "public", "teachhubl_note_message.pdf");
+            const stream = fs.createReadStream(filePath);
             return stream.pipe(res);
         }
 
-        const pdfStream=renderNotesAsPdf(noteBook.pages);
+        const pdfStream = renderNotesAsPdf(noteBook.pages);
 
         pdfStream.pipe(res);
 
@@ -219,24 +317,24 @@ const getNotesContent = async (req, res) => {
     }
 };
 
-const getConnectedChatUsers=async (req,res)=>{
+const getConnectedChatUsers = async (req, res) => {
     try {
-        const userId=req.params.userId;
+        const userId = req.params.userId;
 
-        const allusers=await Class.find({
-            $or:[
-                {tutorId:userId},
-                {studId:userId}
+        const allusers = await Class.find({
+            $or: [
+                { tutorId: userId },
+                { studId: userId }
             ]
-        },"studId tutorId -_id");
-        
-        const connectedUserIds=allusers.map(({studId,tutorId})=>(studId==userId?tutorId:studId));
+        }, "studId tutorId -_id");
+
+        const connectedUserIds = allusers.map(({ studId, tutorId }) => (studId == userId ? tutorId : studId));
 
         res.status(200).json([...new Set(connectedUserIds)]);
 
-    } catch(err) {
+    } catch (err) {
         console.log(err);
-        res.status(500).json({Error:err});
+        res.status(500).json({ Error: err });
     }
 };
 

@@ -7,7 +7,8 @@ const auth_secret = process.env.AUTH_SECRET;
 
 async function auth(req, res, next) {
 
-    if (req.originalUrl == '/payment/callback') {
+    
+    if (req.originalUrl == '/payment/callback'||req.originalUrl.startsWith('/login')||req.originalUrl.startsWith('/signup')) {
         return next();
     }
 
